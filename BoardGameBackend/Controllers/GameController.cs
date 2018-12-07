@@ -44,7 +44,8 @@ namespace BoardGame.Backend.Controllers
 
         // GET api/Game/SelectCard/i
         [Route("SelectCard")]
-        public PokerCard[] SelectCard([FromBody]int i)
+        [HttpPost]
+        public PokerCard[] SelectCard(int i)
         {
             string result = string.Empty;
             DateTime start = DateTime.Now;
