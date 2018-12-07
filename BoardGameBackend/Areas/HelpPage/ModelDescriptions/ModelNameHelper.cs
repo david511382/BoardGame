@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace BoardGameBackend.Areas.HelpPage.ModelDescriptions
+namespace BoardGame.Backend.Areas.HelpPage.ModelDescriptions
 {
     internal static class ModelNameHelper
     {

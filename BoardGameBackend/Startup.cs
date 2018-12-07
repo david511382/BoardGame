@@ -4,9 +4,9 @@ using System.Linq;
 using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(BoardGameBackend.Startup))]
+[assembly: OwinStartup(typeof(BoardGame.Backend.Startup))]
 
-namespace BoardGameBackend
+namespace BoardGame.Backend
 {
     public partial class Startup
     {

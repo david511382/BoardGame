@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace BoardGameBackend.Areas.HelpPage
+namespace BoardGame.Backend.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {

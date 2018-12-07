@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace BoardGameBackend.Controllers
+namespace BoardGame.Backend.Controllers
 {
     public class HomeController : Controller
     {

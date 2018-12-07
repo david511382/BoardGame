@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace BoardGameBackend
+namespace BoardGame.Backend
 {
     public class FilterConfig
     {

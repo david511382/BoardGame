@@ -9,9 +9,9 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using BoardGameBackend.Models;
+using BoardGame.Backend.Models;
 
-namespace BoardGameBackend.Providers
+namespace BoardGame.Backend.Providers
 {
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {

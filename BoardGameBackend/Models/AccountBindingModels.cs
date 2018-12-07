@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace BoardGameBackend.Models
+namespace BoardGame.Backend.Models
 {
     // 作為 AccountController 動作之參數的模型。
 

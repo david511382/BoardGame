@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace BoardGameBackend.Areas.HelpPage.ModelDescriptions
+namespace BoardGame.Backend.Areas.HelpPage.ModelDescriptions
 {
     public class ComplexTypeModelDescription : ModelDescription
     {

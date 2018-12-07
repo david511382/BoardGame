@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28306.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoardGameBackend", "BoardGameBackend\BoardGameBackend.csproj", "{B0061CDA-ECDC-4A12-BCD4-5BC4796CD160}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoardGame.Backend", "BoardGameBackend\BoardGame.Backend.csproj", "{B0061CDA-ECDC-4A12-BCD4-5BC4796CD160}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

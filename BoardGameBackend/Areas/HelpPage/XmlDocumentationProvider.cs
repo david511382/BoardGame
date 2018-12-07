@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
 using System.Xml.XPath;
-using BoardGameBackend.Areas.HelpPage.ModelDescriptions;
+using BoardGame.Backend.Areas.HelpPage.ModelDescriptions;
 
-namespace BoardGameBackend.Areas.HelpPage
+namespace BoardGame.Backend.Areas.HelpPage
 {
     /// <summary>
     /// A custom <see cref="IDocumentationProvider"/> that reads the API documentation from an XML documentation file.

@@ -11,10 +11,10 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
-using BoardGameBackend.Areas.HelpPage.ModelDescriptions;
-using BoardGameBackend.Areas.HelpPage.Models;
+using BoardGame.Backend.Areas.HelpPage.ModelDescriptions;
+using BoardGame.Backend.Areas.HelpPage.Models;
 
-namespace BoardGameBackend.Areas.HelpPage
+namespace BoardGame.Backend.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {

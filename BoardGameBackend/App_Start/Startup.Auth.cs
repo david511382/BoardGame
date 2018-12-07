@@ -8,10 +8,10 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
-using BoardGameBackend.Providers;
-using BoardGameBackend.Models;
+using BoardGame.Backend.Providers;
+using BoardGame.Backend.Models;
 
-namespace BoardGameBackend
+namespace BoardGame.Backend
 {
     public partial class Startup
     {

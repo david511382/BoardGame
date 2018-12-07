@@ -1,4 +1,4 @@
-namespace BoardGameBackend.Areas.HelpPage.ModelDescriptions
+namespace BoardGame.Backend.Areas.HelpPage.ModelDescriptions
 {
     public class KeyValuePairModelDescription : ModelDescription
     {

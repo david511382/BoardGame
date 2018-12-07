@@ -13,11 +13,11 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using BoardGameBackend.Models;
-using BoardGameBackend.Providers;
-using BoardGameBackend.Results;
+using BoardGame.Backend.Models;
+using BoardGame.Backend.Providers;
+using BoardGame.Backend.Results;
 
-namespace BoardGameBackend.Controllers
+namespace BoardGame.Backend.Controllers
 {
     [Authorize]
     [RoutePrefix("api/Account")]

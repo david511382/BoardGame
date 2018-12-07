@@ -1,10 +1,10 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using BoardGameBackend.Areas.HelpPage.ModelDescriptions;
-using BoardGameBackend.Areas.HelpPage.Models;
+using BoardGame.Backend.Areas.HelpPage.ModelDescriptions;
+using BoardGame.Backend.Areas.HelpPage.Models;
 
-namespace BoardGameBackend.Areas.HelpPage.Controllers
+namespace BoardGame.Backend.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.

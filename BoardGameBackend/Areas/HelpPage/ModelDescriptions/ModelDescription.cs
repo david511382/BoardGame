@@ -1,6 +1,6 @@
 using System;
 
-namespace BoardGameBackend.Areas.HelpPage.ModelDescriptions
+namespace BoardGame.Backend.Areas.HelpPage.ModelDescriptions
 {
     /// <summary>
     /// Describes a type model.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BoardGameBackend.Models
+namespace BoardGame.Backend.Models
 {
     // AccountController 動作所傳回的模型。
 

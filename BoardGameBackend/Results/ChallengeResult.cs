@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace BoardGameBackend.Results
+namespace BoardGame.Backend.Results
 {
     public class ChallengeResult : IHttpActionResult
     {

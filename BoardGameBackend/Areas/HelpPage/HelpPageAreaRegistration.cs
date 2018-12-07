@@ -1,7 +1,7 @@
 using System.Web.Http;
 using System.Web.Mvc;
 
-namespace BoardGameBackend.Areas.HelpPage
+namespace BoardGame.Backend.Areas.HelpPage
 {
     public class HelpPageAreaRegistration : AreaRegistration
     {
