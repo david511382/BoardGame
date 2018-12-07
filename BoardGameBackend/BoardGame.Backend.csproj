@@ -219,6 +219,23 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BoardGame\BigTwo\BigTwo.cs" />
+    <Compile Include="Models\BoardGame\BigTwo\BigTwoCompare.cs" />
+    <Compile Include="Models\BoardGame\BigTwo\BigTwoPlayer.cs" />
+    <Compile Include="Models\BoardGame\BoardGame.cs" />
+    <Compile Include="Models\BoardGame\BoardGameOption.cs" />
+    <Compile Include="Models\BoardGame\GameBoard.cs" />
+    <Compile Include="Models\BoardGame\GameObj.cs" />
+    <Compile Include="Models\BoardGame\GamePlayer.cs" />
+    <Compile Include="Models\BoardGame\PlayerResource.cs" />
+    <Compile Include="Models\BoardGame\PokerGame\PokerGame.cs" />
+    <Compile Include="Models\BoardGame\Poker\Poker.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCard.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroup.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroupSpecialGroup.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardNormalGroup.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerEnum.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerResource.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
