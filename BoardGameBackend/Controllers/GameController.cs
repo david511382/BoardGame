@@ -7,10 +7,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace BoardGame.Backend.Controllers
 {
     [RoutePrefix("api/Game")]
+    //[EnableCors(origins: "http://mywebclient.azurewebsites.net", headers: "*", methods: "*")]
+    [EnableCors(origins: "*", headers: "*", methods: "get,post")]
     public class GameController : ApiController
     {
         private BigTwoPlayer _thisPlayer;
