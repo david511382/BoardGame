@@ -33,23 +33,6 @@ namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
                     break;
                 }
             }
-
-            _currentTurn = 0;
-            _playerResources[0].SetHandCard(
-                new PokerCard[]
-                {
-                    new PokerCard(PokerSuit.Club,1),
-                    new PokerCard(PokerSuit.Diamond,1),
-                    new PokerCard(PokerSuit.Heart,1),
-                    new PokerCard(PokerSuit.Spade,1),
-                    new PokerCard(PokerSuit.Club,2),
-                    new PokerCard(PokerSuit.Diamond,2),
-                    new PokerCard(PokerSuit.Heart,2),
-                    new PokerCard(PokerSuit.Spade,2),
-                    new PokerCard(PokerSuit.Club,11),
-                    new PokerCard(PokerSuit.Club,12),
-                    new PokerCard(PokerSuit.Club,13),
-                });
         }
 
         public bool IsFreeType()

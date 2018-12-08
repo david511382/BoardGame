@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGame.Backend.Models.Game.BoardGame
+namespace BoardGame.Backend.Models.Game.BoardGame.GameFramework
 {
     public class GamePlayer<Resource> where Resource : PlayerResource
     {
         protected static int Player_Id;
-        protected BoardGame.BoardGame<Resource> _game;
+        protected BoardGame<Resource> _game;
 
         static GamePlayer()
         {
@@ -33,7 +33,7 @@ namespace BoardGame.Backend.Models.Game.BoardGame
             Name = gamePlayer.Name;
         }
 
-        public void JoinGame(BoardGame.BoardGame<Resource> game) 
+        public void JoinGame(BoardGame<Resource> game) 
         {
             game.Join(Id);
             _game = game;
