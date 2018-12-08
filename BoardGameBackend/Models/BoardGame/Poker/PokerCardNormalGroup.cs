@@ -5,7 +5,7 @@ using System.Web;
 
 namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
 {
-    public static partial class PokerCardGroup
+    public partial class PokerCardGroup
     {
         public static PokerCard[] GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType groupType, PokerCard card, List<PokerCard> cards, PokerCard[] containCard)
         {
@@ -71,6 +71,8 @@ namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
                     })
                     .ToArray();
 
+            int cardNumber = (card == null) ? Min_Number : card.Number;
+
             for (int constraintIndex = 0; constraintIndex < constraint.Length; constraintIndex++)
             {
                 requiredCount = constraint[constraintIndex];
@@ -80,7 +82,7 @@ namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
                     .Where(d => d.cardCount >= requiredCount)
                     .Select(d => d.number)
                     .Except(selectedNumbers)
-                    .Where(d => !isMaxConstraint || CompareNumber(d, card.Number) != -1)
+                    .Where(d => !isMaxConstraint || CompareNumber(d, cardNumber) != -1)
                     .ToArray();
 
                 //由點選順序看選定的每個牌號能不能當作最大牌組，最選優先
@@ -143,10 +145,10 @@ namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
         {
             List<PokerCard> resultBuff = new List<PokerCard>();
             int containSuitsCount = containSuits.Length;
-            bool isSameNumber = card.Number == number;
-            int cardSuitIndex = GetIBySuit(card.Suit);
+            bool isSameNumber = (card == null) ? false : card.Number == number;
+            int cardSuitIndex = (card == null) ? 0 : GetIBySuit(card.Suit);// 0 not care, cause isSameNumber is false, and hasGreaterSuitToCard is true
+            bool hasGreaterSuitToCard = (card == null) ? true : false;
 
-            bool hasGreaterSuitToCard = false;
             for (int foundCount = 0, k = 0; foundCount < requiredCount && k < containSuitsCount + suits.Length; k++)
             {
                 bool isUseContainSuit = k < containSuitsCount;
@@ -177,44 +179,6 @@ namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
             }
 
             return resultBuff.ToArray();
-        }
-
-        private static bool CheckConstraint(int[] constraint, PokerCard[] cards, PokerCard[] containCard = null)
-        {
-            int requiredCount = constraint.Sum();
-            int requiredNumberCount = constraint.Length;
-            int minRequiredSuitCount = (requiredNumberCount == 0) ? 0 : constraint.Min();
-
-            bool isCardsEnough = cards.Length >= requiredCount;
-            bool isContainCountAcceptable = true;
-            bool isContainNumbberCountAcceptable = true;
-            bool isContainSuitCountAcceptable = true;
-            bool isContaintExistInCards = true;
-
-            if (containCard != null && containCard.Length > 0)
-            {
-                isContainCountAcceptable = containCard.Length <= requiredCount;
-
-                int[] containCardNumbers = containCard
-                    .GroupBy(d => d.Number)
-                    .Select(d => d.First().Number)
-                    .ToArray();
-                int containNumberCount = containCardNumbers.Count();
-                isContainNumbberCountAcceptable = containNumberCount <= requiredNumberCount;
-
-                int containSuitMaxCount = 0;
-                for (int i = 0, count; i < containCard.Length; i++)
-                {
-                    count = cards.Where(d => d.Number == containCard[i].Number).Count();
-                    if (count > containSuitMaxCount)
-                        containSuitMaxCount = count;
-                }
-                isContainSuitCountAcceptable = containSuitMaxCount >= minRequiredSuitCount;
-
-                isContaintExistInCards = Intersect(cards, containCard).Length == containCard.Length;
-            }
-
-            return isCardsEnough && isContainCountAcceptable && isContainNumbberCountAcceptable && isContainSuitCountAcceptable && isContaintExistInCards;
         }
 
         private static bool CheckNextConstraint(int[] constraint, int currentConstrainIndex, PokerCard[] cards, PokerCard[] containCards)

@@ -12,9 +12,12 @@ namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
         public const int MIN_PLAYERS = 4;
         public const int MAX_CARD_NUMBER = 2;
 
+        private bool _isFreeType;
+
         public BigTwo()
             : base(MAX_PLAYERS, MIN_PLAYERS)
         {
+            _isFreeType = true;
         }
 
         protected override void InitGame()
@@ -47,6 +50,11 @@ namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
                     new PokerCard(PokerSuit.Club,12),
                     new PokerCard(PokerSuit.Club,13),
                 });
+        }
+
+        public bool IsFreeType()
+        {
+            return _isFreeType;
         }
 
         private bool IsCLub3(PokerCard card)

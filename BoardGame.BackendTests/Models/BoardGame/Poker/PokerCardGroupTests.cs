@@ -60,6 +60,33 @@ namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame.Tests
                 if (!isFound)
                     Assert.Fail();
             }
+
+
+
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Full_House, null, handCards.ToList(), selectCards);
+            expectResult =new PokerCard[]{
+                    new PokerCard(PokerSuit.Club,1),
+                    new PokerCard(PokerSuit.Diamond,1),
+                    new PokerCard(PokerSuit.Heart,1),
+                    new PokerCard(PokerSuit.Club,2),
+                    new PokerCard(PokerSuit.Diamond,2)
+              };
+
+            isFound = false;
+            for (int i = 0; i < expectResult.Length; i++)
+            {
+                for (int j = 0; j < result.Length; j++)
+                {
+                    if (expectResult[i].isSame(result[j]))
+                    {
+                        isFound = true;
+                        break;
+                    }
+                }
+
+                if (!isFound)
+                    Assert.Fail();
+            }
         }
     }
 }

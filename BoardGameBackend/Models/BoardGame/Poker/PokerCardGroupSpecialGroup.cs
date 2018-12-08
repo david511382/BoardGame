@@ -5,7 +5,7 @@ using System.Web;
 
 namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
 {
-    public static partial class PokerCardGroup
+    public partial class PokerCardGroup
     {
         private static List<PokerCard[]> Straight(PokerCard[] cards, PokerCard[] containCard)
         {

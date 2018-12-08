@@ -226,6 +226,7 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BoardGame\BigTwo\BigTwoPlayOptions.cs" />
     <Compile Include="Models\BoardGame\BigTwo\BigTwo.cs" />
     <Compile Include="Models\BoardGame\BigTwo\BigTwoCompare.cs" />
     <Compile Include="Models\BoardGame\BigTwo\BigTwoPlayer.cs" />
@@ -238,6 +239,7 @@
     <Compile Include="Models\BoardGame\PokerGame\PokerGame.cs" />
     <Compile Include="Models\BoardGame\Poker\Poker.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCard.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroupMethods.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCardGroup.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCardGroupSpecialGroup.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCardNormalGroup.cs" />
