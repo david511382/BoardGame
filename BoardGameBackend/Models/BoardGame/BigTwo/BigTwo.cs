@@ -1,10 +1,10 @@
-﻿using BoardGame.Backend.Models.Game.BoardGame.PokerGame;
+﻿using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
+namespace BoardGame.Backend.Models.BoardGame.BigTwo
 {
     public partial class BigTwo : PokerGame.PokerGame
     {
@@ -27,7 +27,7 @@ namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
             PokerCard club3 = new PokerCard(PokerSuit.Club, 3);
             for(int i = 0; i < _playerResources.Count; i++)
             {
-                if (_playerResources[i].GetHandCards().Where(d=>d.Suit == club3.Suit && d.Number == club3.Number).Count()>0)
+                if (base.GetResourceAt(i).GetHandCards().Where(d=>d.Suit == club3.Suit && d.Number == club3.Number).Count()>0)
                 {
                     _currentTurn = i;
                     break;

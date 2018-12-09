@@ -1,33 +1,71 @@
-﻿using BoardGame.Backend.Models.Game.BoardGame.BigTwo;
-using BoardGame.Backend.Models.Game.BoardGame.GameFramework;
-using BoardGame.Backend.Models.Game.BoardGame.PokerGame;
+﻿using BoardGame.Backend.Models.BoardGame.BigTwo;
+using BoardGame.Backend.Models.BoardGame.GameFramework;
+using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGameBackend.Models.BoardGame
+namespace BoardGame.Backend.Models.BoardGame
 {
     public static class BoardGameManager
     {
-        public static BigTwoPlayer _thisPlayer;
+        private static List<GameFramework.BoardGame> _games;
+        private static List<GamePlayer> _gamePlayers;
 
         static BoardGameManager()
         {
-            BigTwo bigTwo = new BigTwo();
-            _thisPlayer = new BigTwoPlayer();
-            _thisPlayer.JoinGame(bigTwo);
+            _games = new List<GameFramework.BoardGame>();
+            _gamePlayers = new List<GamePlayer>();
 
-            GamePlayer<PokerResource> bigTwoP2, bigTwoP3, bigTwoP4;
-            bigTwoP2 = new BigTwoPlayer();
-            bigTwoP3 = new BigTwoPlayer();
-            bigTwoP4 = new BigTwoPlayer();
+            CreateGame();
 
-            bigTwoP2.JoinGame(bigTwo);
-            bigTwoP3.JoinGame(bigTwo);
-            bigTwoP4.JoinGame(bigTwo);
+            JoinGame();
+            JoinGame();
+            JoinGame();
 
-            bigTwo.StartGame();
+            StartGame();
+        }
+
+        public static BigTwoPlayer GetPlayerById(int playerId)
+        {
+            try
+            {
+                return (BigTwoPlayer)_gamePlayers
+                    .Where(d => d.Id == playerId)
+                    .First();
+            }
+            catch
+            {
+                throw new Exception("no player");
+            }
+        }
+
+        public static PlayerInfo CreateGame()
+        {
+            BigTwo.BigTwo bigTwo = new BigTwo.BigTwo();
+            _games.Add(bigTwo);
+
+            return JoinGame();
+        }
+
+        public static PlayerInfo JoinGame()
+        {
+            BigTwoPlayer player = new BigTwoPlayer();
+            _gamePlayers.Add(player);
+            player.JoinGame(_games.Last());
+            return player.Info;
+        }
+
+        public static bool StartGame()
+        {
+            try
+            {
+                _games.Last().StartGame();
+                return true;
+            }
+            catch { return false; }
         }
     }
 }

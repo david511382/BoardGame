@@ -1,13 +1,14 @@
-﻿using BoardGame.Backend.Models.Game.BoardGame.GameFramework;
-using BoardGame.Backend.Models.Game.BoardGame.PokerGame;
+﻿using BoardGame.Backend.Models.BoardGame.GameFramework;
+using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
+namespace BoardGame.Backend.Models.BoardGame.BigTwo
 {
-    public class BigTwoPlayer : GamePlayer<PokerResource>
+    public class BigTwoPlayer : GamePlayer
     {
         private BigTwo Game
         {
@@ -20,7 +21,7 @@ namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
             _resource = new PokerResource(Id);
         }
 
-        public BigTwoPlayer(GamePlayer<PokerResource> gamePlayer)
+        public BigTwoPlayer(GamePlayer gamePlayer)
             : base(gamePlayer)
         {
             _resource = new PokerResource(Id);
@@ -28,7 +29,7 @@ namespace BoardGame.Backend.Models.Game.BoardGame.BigTwo
 
         public PokerCard[] GetHandCards()
         {
-            GameObj[] playerResource = _game.GetResource(base.Id).GetHandCards();
+            GameObj[] playerResource = Game.GetResource<PokerResource>(Id).GetHandCards();
             PokerCard[] drawCards = (PokerCard[])playerResource;
             drawCards = drawCards.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
 

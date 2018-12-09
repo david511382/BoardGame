@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BoardGame.Backend.Models.Game.BoardGame.PokerGame;
+using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame.Tests
+namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
 {
     [TestClass()]
     public class PokerCardGroupTests

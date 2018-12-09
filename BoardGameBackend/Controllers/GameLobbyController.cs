@@ -1,5 +1,6 @@
-﻿using BoardGame.Backend.Models.BoardGame.PokerGame;
-using BoardGameBackend.Models.BoardGame;
+﻿using BoardGame.Backend.Models.BoardGame;
+using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+using BoardGame.Backend.Models.GameLobby;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,24 +11,17 @@ using System.Web.Http.Cors;
 
 namespace BoardGame.Backend.Controllers
 {
-    [RoutePrefix("api/Game")]
+    [RoutePrefix("api/GameLobby")]
     //[EnableCors(origins: "http://mywebclient.azurewebsites.net", headers: "*", methods: "*")]
     [EnableCors(origins: "*", headers: "*", methods: "get,post")]
-    public class GameController : ApiController
+    public class GameLobbyController : ApiController
     {
         // GET api/Game/HandCards
-        [Route("HandCards")]
-        public PokerCard[] GetCards(int playerId)
-        {
-            return new GameModels().GetCards(playerId);
-        }
-
-        // GET api/Game/SelectCard/i
-        [Route("SelectCard")]
+        [Route("CreateGame")]
         [HttpPost]
-        public PokerCard[] SelectCard(int playerId, int i)
+        public PlayerInfo CreateGame()
         {
-            return new GameModels().SelectCard(playerId, i);
+            return new GameLobbyModels().CreateGame();
         }
 
         // POST api/values

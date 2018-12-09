@@ -1,4 +1,6 @@
-﻿using BoardGame.Backend.Models.Game.BoardGame.PokerGame;
+﻿using BoardGame.Backend.Models.BoardGame;
+using BoardGame.Backend.Models.BoardGame.BigTwo;
+using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,22 +10,39 @@ namespace BoardGameBackend.Models.BoardGame
 {
     public class GameModels
     {
-        public PokerCard[] GetCards()
+        public PokerCard[] GetCards(int playerId)
         {
-            return BoardGameManager._thisPlayer.GetHandCards();
+            try
+            {
+                return BoardGameManager.GetPlayerById(playerId).GetHandCards();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public PokerCard[] SelectCard(int i)
+        public PokerCard[] SelectCard(int playerId, int i)
         {
             PokerCard[] pokerCards;
-            if (BoardGameManager._thisPlayer.IsOnTurn())
+            BigTwoPlayer player;
+            try
             {
-                pokerCards = BoardGameManager._thisPlayer.GetCardGroup(new int[] { i });
+                player = BoardGameManager.GetPlayerById(playerId);
+            }
+            catch
+            {
+                return null;
+            }
+
+            if (player.IsOnTurn())
+            {
+                pokerCards = player.GetCardGroup(new int[] { i });
                 pokerCards = pokerCards.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
             }
             else
             {
-                pokerCards = new PokerCard[] { BoardGameManager._thisPlayer.GetHandCards()[i] };
+                pokerCards = new PokerCard[] { player.GetHandCards()[i] };
             }
 
             return pokerCards;

@@ -1,12 +1,12 @@
-﻿using BoardGame.Backend.Models.Game.BoardGame.GameFramework;
+﻿using BoardGame.Backend.Models.BoardGame.GameFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
+namespace BoardGame.Backend.Models.BoardGame.PokerGame
 {
-    public abstract class PokerGame : BoardGame<PokerResource>
+    public abstract class PokerGame : GameFramework.BoardGame
     {
         protected Poker _poker;
 
@@ -19,6 +19,11 @@ namespace BoardGame.Backend.Models.Game.BoardGame.PokerGame
         protected override void AddPlayer(int playerId)
         {
             base._playerResources.Add(new PokerResource(playerId));
+        }
+
+        public new PokerResource GetResourceAt(int i)
+        {
+            return (PokerResource)_playerResources[i];
         }
 
         protected override void InitGame()

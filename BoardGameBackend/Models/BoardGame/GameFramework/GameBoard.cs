@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGame.Backend.Models.Game.BoardGame.GameFramework
+namespace BoardGame.Backend.Models.BoardGame.GameFramework
 {
     public class GameBoard
     {
