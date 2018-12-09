@@ -60,7 +60,11 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             bool isFreeType = Game.IsFreeType();
             if (isFreeType)
             {
-                type = PokerGroupType.Full_House;
+                try
+                {
+                    type =PokerCardGroup.GetCardGroupType(cards,containCard);
+                }
+                catch { type = PokerGroupType.Dragon; }
                 maxCard = null;
             }
             else

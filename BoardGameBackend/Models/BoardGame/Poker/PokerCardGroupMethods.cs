@@ -32,6 +32,28 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             throw new Exception("cant identitfy");
         }
 
+        public static PokerGroupType GetCardGroupType(PokerCard[] cards, PokerCard[] containCards)
+        {
+            var constraints = Enum.GetValues(typeof(PokerGroupType))
+                .Cast<PokerGroupType>()
+                .Select(d => new { type = d, constraint = GetConstraintOfType(d) })
+                .OrderBy(d => d.constraint.Count())
+                .ThenBy(d => d.constraint.Max());
+
+            bool isConstraintOk;
+            bool isSpecalConstraintOk;
+            foreach (var data in constraints)
+            {
+                isConstraintOk = CheckConstraint(data.constraint, cards, containCards);
+                isSpecalConstraintOk = CheckSpecailConstraint(data.type, cards, containCards);
+
+                if (isConstraintOk && isSpecalConstraintOk)
+                    return data.type;
+            }
+
+            throw new Exception("cant identitfy");
+        }
+
         private static PokerCard GetMaxValueOfCardGroup(PokerCard[] cards)
         {
             var groupedCards = cards
@@ -44,7 +66,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
             int[] numbers = groupedCards
                 .Where(d => d.count == maxCount)
-                .Select(d=>d.count)
+                .Select(d => d.count)
                 .ToArray();
 
             numbers = OrderNumber(numbers);
@@ -167,7 +189,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                         resultList.Add(cards[i]);
                         intersectList.RemoveAt(j);
                         cardList.RemoveAt(i);
-                        j--;
+                        j = -1;
                     }
             }
 
@@ -232,7 +254,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             return cardData;
         }
 
-        private static PokerSuit GetSuitByI(int i)
+        public static PokerSuit GetSuitByI(int i)
         {
             if (i == 0)
                 return PokerSuit.Club;
@@ -281,6 +303,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             int requiredCount = constraint.Sum();
             int requiredNumberCount = constraint.Length;
             int minRequiredSuitCount = (requiredNumberCount == 0) ? 0 : constraint.Min();
+            int maxRequiredSuitCount = (requiredNumberCount == 0) ? 0 : constraint.Max();
 
             bool isCardsEnough = cards.Length >= requiredCount;
             bool isContainCountAcceptable = true;
@@ -299,6 +322,10 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 int containNumberCount = containCardNumbers.Count();
                 isContainNumbberCountAcceptable = containNumberCount <= requiredNumberCount;
 
+                int containMaxSuitMinCount = containCard
+                    .GroupBy(d => d.Number)
+                    .Select(d => d.Count())
+                    .Max();
                 int containSuitMaxCount = 0;
                 for (int i = 0, count; i < containCard.Length; i++)
                 {
@@ -306,12 +333,42 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     if (count > containSuitMaxCount)
                         containSuitMaxCount = count;
                 }
-                isContainSuitCountAcceptable = containSuitMaxCount >= minRequiredSuitCount;
+                isContainSuitCountAcceptable =
+                    containSuitMaxCount >= minRequiredSuitCount &&
+                    containMaxSuitMinCount <= maxRequiredSuitCount;
 
                 isContaintExistInCards = Intersect(cards, containCard).Length == containCard.Length;
             }
 
             return isCardsEnough && isContainCountAcceptable && isContainNumbberCountAcceptable && isContainSuitCountAcceptable && isContaintExistInCards;
+        }
+
+
+        private static bool CheckSpecailConstraint(PokerGroupType groupType, PokerCard[] cards, PokerCard[] containCard = null)
+        {
+
+            switch (groupType)
+            {
+                case PokerGroupType.Straight:
+                case PokerGroupType.Dragon:
+                    break;
+                case PokerGroupType.Straight_Flush:
+                    if (containCard.GroupBy(d => d.Suit).Count() > 1)
+                        return false;
+                    break;
+                default:
+                    return true;
+            }
+
+
+            int[] constraint = GetConstraintOfType(groupType);
+            int requiredCount = constraint.Sum();
+            int[] containNumbers = OrderNumber(containCard.Select(d => d.Number).ToArray());
+
+            if (containCard.Length != 0)
+                if (CompareNumber(containNumbers.Last(), containNumbers.First() + requiredCount - 1) == 1)
+                    return false;
+            return true;
         }
     }
 }
