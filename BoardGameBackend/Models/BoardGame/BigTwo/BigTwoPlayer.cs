@@ -49,23 +49,23 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         public PokerCard[] GetCardGroup(int[] containCardIndexs)
         {
             PokerCard[] cards = GetHandCards();
-            PokerCard[] containCard = new PokerCard[containCardIndexs.Length];
+            List<PokerCard> containCard = new List<PokerCard>();
             for (int i = 0; i < containCardIndexs.Length; i++)
             {
-                containCard[i] = cards[containCardIndexs[i]];
+                containCard.Add(cards[containCardIndexs[i]]);
             }
 
-            PokerGroupType type;
+            PokerGroupType type = PokerGroupType.Single;
             PokerCard maxCard;
             bool isFreeType = Game.IsFreeType();
             if (isFreeType)
             {
-                try
-                {
-                    type =PokerCardGroup.GetCardGroupType(cards,containCard);
-                }
-                catch { type = PokerGroupType.Dragon; }
                 maxCard = null;
+
+                TryUntilSelected0(containCard, (selectedCards) =>
+                {
+                    type = PokerCardGroup.GetCardGroupType(cards, selectedCards);
+                });         
             }
             else
             {
@@ -77,9 +77,26 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             }
 
             PokerCardGroup.Max_Number = BigTwo.MAX_CARD_NUMBER;
-            PokerCard[] result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, maxCard, cards.ToList(), containCard);
-            result = result ?? containCard;
+            PokerCard[] result = null;
+            TryUntilSelected0(containCard, (selectedCards) =>
+            {
+                result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, maxCard, cards.ToList(), selectedCards);
+            });
+
             return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
+        }
+
+        private void TryUntilSelected0(List<PokerCard> selectedCards,Action<PokerCard[]> action)
+        {
+            for (; selectedCards.Count > 0; selectedCards.RemoveAt(0))
+            {
+                try
+                {
+                    action(selectedCards.ToArray());
+                    break;
+                }
+                catch { }
+            }
         }
 
         private PokerCardGroup GetTableLast()
