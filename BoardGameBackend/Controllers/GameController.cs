@@ -30,6 +30,13 @@ namespace BoardGame.Backend.Controllers
             return new GameModels().SelectCard(playerId, i);
         }
 
+        [Route("PlayCard")]
+        [HttpPost]
+        public bool PlayCard(int playerId, int[] indexs)
+        {
+            return new GameModels().PlayCard(playerId, indexs);
+        }
+
         // POST api/values
         public void Post([FromBody]string value)
         {

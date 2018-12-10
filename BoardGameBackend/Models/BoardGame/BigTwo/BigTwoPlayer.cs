@@ -41,6 +41,13 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             return _game.IsTurn(Id);
         }
 
+        public bool PlayCard(int[] cardIndexs)
+        {
+            List<PokerCard> containCard = GetHandCards(cardIndexs);
+
+            return Game.PlayGroups(new PokerCardGroup(containCard.ToArray()));
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -49,11 +56,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         public PokerCard[] GetCardGroup(int[] containCardIndexs)
         {
             PokerCard[] cards = GetHandCards();
-            List<PokerCard> containCard = new List<PokerCard>();
-            for (int i = 0; i < containCardIndexs.Length; i++)
-            {
-                containCard.Add(cards[containCardIndexs[i]]);
-            }
+            List<PokerCard> containCard = GetHandCards(containCardIndexs);
 
             PokerGroupType type = PokerGroupType.Single;
             PokerCard maxCard;
@@ -84,6 +87,17 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             });
 
             return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
+        }
+
+        private List<PokerCard> GetHandCards(int[] cardIndex)
+        {
+            PokerCard[] cards = GetHandCards();
+            List<PokerCard> containCard = new List<PokerCard>();
+            for (int i = 0; i < cardIndex.Length; i++)
+            {
+                containCard.Add(cards[cardIndex[i]]);
+            }
+            return containCard;
         }
 
         private void TryUntilSelected0(List<PokerCard> selectedCards,Action<PokerCard[]> action)

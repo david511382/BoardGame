@@ -11,7 +11,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         List<PokerCard> _handCards;
 
         public PokerResource(int playerId)
-            :base(playerId)
+            : base(playerId)
         {
             _handCards = new List<PokerCard>();
         }
@@ -25,6 +25,21 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         public void AddHandCard(PokerCard card)
         {
             _handCards.Add(card);
+        }
+
+        public void RemoveHandCards(PokerCard[] card)
+        {
+            for (int i = 0; i < card.Length; i++)
+            {
+                for (int j = 0; j < _handCards.Count; j++)
+                {
+                    if (_handCards[j].isSame(card[i]))
+                    {
+                        _handCards.RemoveAt(j);
+                        break;
+                    }
+                }
+            }
         }
 
         public PokerCard[] GetHandCards()

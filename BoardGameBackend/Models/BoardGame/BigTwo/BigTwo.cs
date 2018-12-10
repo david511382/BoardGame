@@ -12,7 +12,17 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         public const int MIN_PLAYERS = 4;
         public const int MAX_CARD_NUMBER = 2;
 
+        private PokerResource CurrentPlayerResource
+        {
+            get { return GetResourceAt(_currentTurn); }
+        }
+
         private bool _isFreeType;
+
+        private static bool IsCLub3(PokerCard card)
+        {
+            return (card.Number == 3) && (card.Suit == PokerSuit.Club);
+        }
 
         public BigTwo()
             : base(MAX_PLAYERS, MIN_PLAYERS)
@@ -40,9 +50,10 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             return _isFreeType;
         }
 
-        private bool IsCLub3(PokerCard card)
+        private void NextTurn()
         {
-            return (card.Number == 3) && (card.Suit == PokerSuit.Club);
+            if (++_currentTurn >= _playerResources.Count)
+                _currentTurn = 0;
         }
     }
 }

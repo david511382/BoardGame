@@ -48,6 +48,29 @@ namespace BoardGameBackend.Models.BoardGame
             return pokerCards;
         }
 
+        public bool PlayCard(int playerId, int[] indexs)
+        {
+            if (indexs==null || indexs.Length == 0)
+                return false;
+
+            BigTwoPlayer player;
+            try
+            {
+                player = BoardGameManager.GetPlayerById(playerId);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (!player.IsOnTurn())
+            {
+                return false;
+            }
+
+            return player.PlayCard(indexs); 
+        }
+
         private string GetCardInfo(PokerCard pokerCard)
         {
             string suit = string.Empty;

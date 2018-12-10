@@ -43,6 +43,11 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             return _maxCard;
         }
 
+        public PokerCard[] GetCards()
+        {
+            return _cards;
+        }
+
         public PokerGroupType GetGroupType()
         {
             if (_maxCard == null)
