@@ -1,5 +1,6 @@
 ﻿using BoardGame.Backend.Models.BoardGame.PokerGame;
 using BoardGameBackend.Models.BoardGame;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace BoardGame.Backend.Controllers
     {
         // GET api/Game/HandCards
         [Route("HandCards")]
+        [HttpGet]
         public PokerCard[] GetCards(int playerId)
         {
             return new GameModels().GetCards(playerId);
@@ -24,17 +26,30 @@ namespace BoardGame.Backend.Controllers
 
         // GET api/Game/SelectCard/i
         [Route("SelectCard")]
-        [HttpPost]
-        public PokerCard[] SelectCard(int playerId, int i)
+        [HttpGet]
+        public PokerCard[] SelectCard(int playerId, string indexes)
         {
-            return new GameModels().SelectCard(playerId, i);
+            int[] selectedIndex;
+            try
+            {
+                selectedIndex = JsonConvert.DeserializeObject<int[]>(indexes);
+            }
+            catch { return null; }
+            return new GameModels().SelectCard(playerId, selectedIndex);
         }
 
         [Route("PlayCard")]
-        [HttpPost]
-        public bool PlayCard(int playerId, int[] indexs)
+        [HttpGet]
+        public bool PlayCard(int playerId, string indexes)
         {
-            return new GameModels().PlayCard(playerId, indexs);
+            int[] selectedIndex;
+            try
+            {
+                selectedIndex = JsonConvert.DeserializeObject<int[]>(indexes);
+            }
+            catch { return false; }
+
+            return new GameModels().PlayCard(playerId, selectedIndex);
         }
 
         // POST api/values
