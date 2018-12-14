@@ -1,4 +1,5 @@
-﻿using BoardGame.Backend.Models.BoardGame.PokerGame;
+﻿using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+using BoardGame.Backend.Models.BoardGame.PokerGame;
 using BoardGameBackend.Models.BoardGame;
 using Newtonsoft.Json;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -16,55 +18,51 @@ namespace BoardGame.Backend.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "get,post")]
     public class GameController : ApiController
     {
-        // GET api/Game/HandCards
+        private const string PLAYER_INFO = "PlayerInfo";
+        private const string CARD_INDEXES = "Indexes";
+
         [Route("HandCards")]
-        [HttpGet]
-        public PokerCard[] GetCards(int playerId)
+        [HttpPost]
+        public PokerCard[] GetCards(FormDataCollection form)
         {
-            return new GameModels().GetCards(playerId);
+            string playerIdStr = form.Get(PLAYER_INFO);
+            PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+            return new GameModels().GetCards(user.Id);
         }
 
         // GET api/Game/SelectCard/i
         [Route("SelectCard")]
-        [HttpGet]
-        public PokerCard[] SelectCard(int playerId, string indexes)
+        [HttpPost]
+        public PokerCard[] SelectCard(FormDataCollection form)
         {
-            int[] selectedIndex;
             try
             {
-                selectedIndex = JsonConvert.DeserializeObject<int[]>(indexes);
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+
+                string indexesStr = form.Get(CARD_INDEXES);
+                int[] selectedIndex = JsonConvert.DeserializeObject<int[]>(indexesStr);
+                
+                return new GameModels().SelectCard(user.Id, selectedIndex);
             }
             catch { return null; }
-            return new GameModels().SelectCard(playerId, selectedIndex);
         }
 
         [Route("PlayCard")]
-        [HttpGet]
-        public bool PlayCard(int playerId, string indexes)
+        [HttpPost]
+        public bool PlayCard(FormDataCollection form)
         {
-            int[] selectedIndex;
             try
             {
-                selectedIndex = JsonConvert.DeserializeObject<int[]>(indexes);
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+
+                string indexesStr = form.Get(CARD_INDEXES);
+                int[] selectedIndex = JsonConvert.DeserializeObject<int[]>(indexesStr);
+
+                return new GameModels().PlayCard(user.Id, selectedIndex);
             }
             catch { return false; }
-
-            return new GameModels().PlayCard(playerId, selectedIndex);
-        }
-
-        // POST api/values
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
         }
     }
 }
