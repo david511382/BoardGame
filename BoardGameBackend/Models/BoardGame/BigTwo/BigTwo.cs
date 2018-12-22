@@ -12,14 +12,15 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         public const int MIN_PLAYERS = 4;
         public const int MAX_CARD_NUMBER = 2;
 
+        public bool IsFreeType { get; private set; }
+        public bool IsRequiredClub3 { get; private set; }
+
         private PokerResource CurrentPlayerResource
         {
             get { return GetResourceAt(_currentTurn); }
         }
 
-        private bool _isFreeType;
-
-        private static bool IsCLub3(PokerCard card)
+        public static bool IsCLub3(PokerCard card)
         {
             return (card.Number == 3) && (card.Suit == PokerSuit.Club);
         }
@@ -27,7 +28,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         public BigTwo()
             : base(MAX_PLAYERS, MIN_PLAYERS)
         {
-            _isFreeType = true;
+            IsFreeType = true;
+            IsRequiredClub3 = true;
         }
 
         protected override void InitGame()
@@ -43,11 +45,6 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
                     break;
                 }
             }
-        }
-
-        public bool IsFreeType()
-        {
-            return _isFreeType;
         }
 
         private void NextTurn()

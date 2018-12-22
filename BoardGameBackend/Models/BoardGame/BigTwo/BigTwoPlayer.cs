@@ -57,15 +57,23 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         {
             PokerCard[] cards = GetHandCards();
             List<PokerCard> containCard = GetHandCards(containCardIndexs);
+            bool IsRequiredClub3 = Game.IsRequiredClub3;
+            if (IsRequiredClub3)
+            {
+                bool isContainClub3 = false;
+                containCard.ForEach((card) => { if (BigTwo.IsCLub3(card)) isContainClub3 = true; });
+                if (!isContainClub3)
+                    containCard.Add(new PokerCard(PokerSuit.Club, 3));
+            }
 
             PokerGroupType type = PokerGroupType.Single;
             PokerCard maxCard;
-            bool isFreeType = Game.IsFreeType();
+            bool isFreeType = Game.IsFreeType;
             if (isFreeType)
             {
                 maxCard = null;
 
-                TryUntilSelected0(containCard, (selectedCards) =>
+                TryAllUntilExcetion(containCard, (selectedCards) =>
                 {
                     type = PokerCardGroup.GetCardGroupType(cards, selectedCards);
                 });         
@@ -81,10 +89,10 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
             PokerCardGroup.Max_Number = BigTwo.MAX_CARD_NUMBER;
             PokerCard[] result = null;
-            TryUntilSelected0(containCard, (selectedCards) =>
+            TryAllUntilExcetion(containCard, (selectedCards) =>
             {
                 result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, maxCard, cards.ToList(), selectedCards);
-            });
+             });
 
             return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
         }
@@ -100,7 +108,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             return containCard;
         }
 
-        private void TryUntilSelected0(List<PokerCard> selectedCards,Action<PokerCard[]> action)
+        private void TryAllUntilExcetion(List<PokerCard> selectedCards,Action<PokerCard[]> action)
         {
             for (; selectedCards.Count > 0; selectedCards.RemoveAt(0))
             {

@@ -19,7 +19,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             PokerGroupType cardGroupType = cardGroup.GetGroupType();
 
             //check cards playable
-            if (!_isFreeType)
+            if (!IsFreeType)
             {
                 //check previous type
                 PokerCardGroup lastGroup =(PokerCardGroup)GetTable().GetLastItem();
@@ -36,6 +36,9 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
             //play
             _table.Put(cardGroup);
+
+            IsFreeType = false;
+            IsRequiredClub3 = false;
 
             //remove hand cards
             CurrentPlayerResource.RemoveHandCards(cardGroup.GetCards());

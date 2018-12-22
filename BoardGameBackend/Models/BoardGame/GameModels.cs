@@ -24,7 +24,6 @@ namespace BoardGameBackend.Models.BoardGame
 
         public PokerCard[] SelectCard(int playerId, int[] selectedIndex)
         {
-            PokerCard[] pokerCards;
             BigTwoPlayer player;
             try
             {
@@ -35,16 +34,12 @@ namespace BoardGameBackend.Models.BoardGame
                 return null;
             }
 
-            if (player.IsOnTurn())
-            {
-                pokerCards = player.GetCardGroup(selectedIndex);
-                pokerCards = pokerCards.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
-            }
-            else
-            {
-                int lastSelectedIndex = selectedIndex.Last();
-                pokerCards = new PokerCard[] { player.GetHandCards()[lastSelectedIndex] };
-            }
+            if (!player.IsOnTurn())
+                return null;
+
+            PokerCard[] pokerCards;
+            pokerCards = player.GetCardGroup(selectedIndex);
+            pokerCards = pokerCards.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
 
             return pokerCards;
         }
