@@ -118,22 +118,22 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
 
 
             selectCards = new PokerCard[]
-           {
-                 new PokerCard(PokerSuit.Heart,1),
-                 new PokerCard(PokerSuit.Club,10),
-                 new PokerCard(PokerSuit.Club,11)
-           };
+            {
+                new PokerCard(PokerSuit.Heart,1),
+                new PokerCard(PokerSuit.Club,10),
+                new PokerCard(PokerSuit.Club,11)
+            };
 
             result = PokerCardGroup.GetCardGroupType(handCards, selectCards);
             Assert.AreEqual(result, PokerGroupType.Straight);
 
 
             selectCards = new PokerCard[]
-           {
-                     new PokerCard(PokerSuit.Heart,1),
-                     new PokerCard(PokerSuit.Heart,11),
-                     new PokerCard(PokerSuit.Heart,10)
-           };
+            {
+                new PokerCard(PokerSuit.Heart,1),
+                new PokerCard(PokerSuit.Heart,11),
+                new PokerCard(PokerSuit.Heart,10)
+            };
 
             result = PokerCardGroup.GetCardGroupType(handCards, selectCards);
             Assert.AreEqual(result, PokerGroupType.Straight_Flush);
@@ -151,15 +151,53 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
                 new PokerCard(PokerSuit.Spade,3)
             };
 
+            bool isFail = false;
             try
             {
                 result = PokerCardGroup.GetCardGroupType(handCards, selectCards);
-                Assert.Fail();
+                isFail = true;
             }
             catch
             {
 
             }
+            if (isFail)
+                Assert.Fail();
+
+
+            isFail = false;
+            selectCards = new PokerCard[]
+            {
+                new PokerCard(PokerSuit.Heart,6),
+                new PokerCard(PokerSuit.Club,3)
+            };
+            handCards = new PokerCard[]
+            {
+                new PokerCard(PokerSuit.Diamond,1),
+                new PokerCard(PokerSuit.Club,3),
+                new PokerCard(PokerSuit.Diamond,3),
+                new PokerCard(PokerSuit.Spade,3),
+                new PokerCard(PokerSuit.Diamond,4),
+                new PokerCard(PokerSuit.Diamond,5),
+                new PokerCard(PokerSuit.Heart,6),
+                new PokerCard(PokerSuit.Diamond,7),
+                new PokerCard(PokerSuit.Club,8),
+                new PokerCard(PokerSuit.Club,9),
+                new PokerCard(PokerSuit.Spade,10),
+                new PokerCard(PokerSuit.Heart,12),
+                new PokerCard(PokerSuit.Spade,12)
+            };
+            try
+            {
+                result = PokerCardGroup.GetCardGroupType(handCards, selectCards);
+                isFail = true;
+            }
+            catch
+            {
+
+            }
+            if (isFail)
+                Assert.Fail();
         }
 
         private bool CheckEqualPokerCards(PokerCard[] aCards, PokerCard[] bCards)

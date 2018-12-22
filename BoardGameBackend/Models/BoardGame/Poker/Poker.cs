@@ -10,6 +10,8 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         public static readonly int CARD_NUM = 52;
         public static readonly int NUMBER_NUM = 13;
         public static readonly int SUIT_NUM = 4;
+        public static readonly int MAX_NUMBER = 1;
+        public static readonly int MIN_NUMBER = 2;
 
         private List<PokerCard> _cards;
 
@@ -25,6 +27,21 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             if (PokerSuit.Spade == suit)
                 throw new Exception("no bigger");
             return (PokerSuit)((int)suit + 1);
+        }
+
+        public static int Plus_Number(int i,int plus)
+        {
+            if (i == MAX_NUMBER)
+                i = NUMBER_NUM + 1;
+
+            i += plus;
+
+            if (i > NUMBER_NUM)
+                i = MAX_NUMBER;
+            else if (i < MIN_NUMBER)
+                i = MIN_NUMBER;
+
+            return i;
         }
 
         public Poker()
