@@ -306,43 +306,90 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             int maxRequiredSuitCount = (requiredNumberCount == 0) ? 0 : constraint.Max();
 
             bool isCardsEnough = cards.Length >= requiredCount;
-            bool isContainCountAcceptable = true;
-            bool isContainNumbberCountAcceptable = true;
-            bool isContainSuitCountAcceptable = true;
-            bool isContaintExistInCards = true;
+
+            var cardNumberSuitCounts = cards
+                .GroupBy(d => d.Number)
+                .Select(d => new { suitCount = d.Count(), number = d.First().Number })
+                .OrderByDescending(d => d.suitCount)
+                .ToList();
+
+            List<int> constraintList = constraint
+                    .OrderByDescending(d => d)
+                    .ToList();
 
             if (containCard != null && containCard.Length > 0)
             {
-                isContainCountAcceptable = containCard.Length <= requiredCount;
+                bool isContainCountAcceptable = containCard.Length <= requiredCount;
+                if (!isContainCountAcceptable)
+                    return false;
 
-                int[] containCardNumbers = containCard
-                    .GroupBy(d => d.Number)
-                    .Select(d => d.First().Number)
+                IEnumerable<int> containCardNumbers = containCard
+                  .GroupBy(d => d.Number)
+                  .Select(d => d.First().Number);
+
+                var containCardSuitCounts = cardNumberSuitCounts
+                    .Where(d => containCardNumbers.Contains(d.number))
+                   .OrderByDescending(d => d.suitCount)
                     .ToArray();
-                int containNumberCount = containCardNumbers.Count();
-                isContainNumbberCountAcceptable = containNumberCount <= requiredNumberCount;
 
-                int containMaxSuitMinCount = containCard
-                    .GroupBy(d => d.Number)
-                    .Select(d => d.Count())
-                    .Max();
-                int containSuitMaxCount = 0;
-                for (int i = 0, count; i < containCard.Length; i++)
+                bool isContaintExtraCards = containCardSuitCounts.Length > constraintList.Count;
+                if (isContaintExtraCards)
+                    return false;
+
+                bool isContaintExistInCards = Intersect(cards, containCard).Length == containCard.Length;
+                if (!isContaintExistInCards)
+                    return false;
+                
+                for (int i = 0; i < containCardSuitCounts.Length ; i++)
                 {
-                    count = cards.Where(d => d.Number == containCard[i].Number).Count();
-                    if (count > containSuitMaxCount)
-                        containSuitMaxCount = count;
-                }
-                isContainSuitCountAcceptable =
-                    containSuitMaxCount >= minRequiredSuitCount &&
-                    containMaxSuitMinCount <= maxRequiredSuitCount;
+                    for(int j = 0, value; j < constraintList.Count; j++)
+                    {
+                        value = constraintList[j];
 
-                isContaintExistInCards = Intersect(cards, containCard).Length == containCard.Length;
+                        if (containCardSuitCounts[i].suitCount >= value)
+                        {
+                            constraintList.RemoveAt(j);
+                            j--;
+                            break;
+                        }
+                        else if (j == constraintList.Count - 1)
+                            return false;
+                    }
+
+
+                    for (int j = 0; j < cardNumberSuitCounts.Count; j++)
+                    {
+                        if (containCardSuitCounts[i].number == cardNumberSuitCounts[j].number)
+                        {
+                            cardNumberSuitCounts.RemoveAt(j);
+                            break;
+                        }
+                    }
+                }
             }
 
-            return isCardsEnough && isContainCountAcceptable && isContainNumbberCountAcceptable && isContainSuitCountAcceptable && isContaintExistInCards;
-        }
+            if (constraintList.Count > cardNumberSuitCounts.Count)
+                return false;
 
+            for (int i = 0; i < constraintList.Count; i++)
+            {
+                for (int j = 0,value; j < cardNumberSuitCounts.Count; j++)
+                {
+                    value = constraintList[i];
+
+                    if (cardNumberSuitCounts[j].suitCount >= value)
+                    {
+                        constraintList.RemoveAt(j);
+                        j--;
+                        break;
+                    }
+                    else if (j == constraintList.Count - 1)
+                        return false;
+                }
+            }
+
+            return isCardsEnough;
+        }
 
         private static bool CheckSpecailConstraint(PokerGroupType groupType, PokerCard[] cards, PokerCard[] containCard = null)
         {

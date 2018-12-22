@@ -137,6 +137,29 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
 
             result = PokerCardGroup.GetCardGroupType(handCards, selectCards);
             Assert.AreEqual(result, PokerGroupType.Straight_Flush);
+
+            selectCards = new PokerCard[]
+            {
+                new PokerCard(PokerSuit.Club,1),
+                new PokerCard(PokerSuit.Club,3)
+            };
+            handCards = new PokerCard[]
+            {
+                new PokerCard(PokerSuit.Club,1),
+                new PokerCard(PokerSuit.Heart,1),
+                new PokerCard(PokerSuit.Club,3),
+                new PokerCard(PokerSuit.Spade,3)
+            };
+
+            try
+            {
+                result = PokerCardGroup.GetCardGroupType(handCards, selectCards);
+                Assert.Fail();
+            }
+            catch
+            {
+
+            }
         }
 
         private bool CheckEqualPokerCards(PokerCard[] aCards, PokerCard[] bCards)
