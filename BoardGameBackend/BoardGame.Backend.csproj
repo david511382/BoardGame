@@ -243,10 +243,10 @@
     <Compile Include="Models\BoardGame\PokerGame\PokerGame.cs" />
     <Compile Include="Models\BoardGame\Poker\Poker.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCard.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupMethods.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroup.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupSpecialGroup.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardNormalGroup.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroupMethods.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroup.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\StraightGroups.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardNormalGroup.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerEnum.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerResource.cs" />
     <Compile Include="Models\GameLobby\GameLobbyModels.cs" />

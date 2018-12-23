@@ -189,7 +189,8 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                         resultList.Add(cards[i]);
                         intersectList.RemoveAt(j);
                         cardList.RemoveAt(i);
-                        j = -1;
+                        i--;
+                        break;
                     }
             }
 
@@ -339,10 +340,10 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 bool isContaintExistInCards = Intersect(cards, containCard).Length == containCard.Length;
                 if (!isContaintExistInCards)
                     return false;
-                
-                for (int i = 0; i < containCardSuitCounts.Length ; i++)
+
+                for (int i = 0; i < containCardSuitCounts.Length; i++)
                 {
-                    for(int j = 0, value; j < constraintList.Count; j++)
+                    for (int j = 0, value; j < constraintList.Count; j++)
                     {
                         value = constraintList[j];
 
@@ -373,7 +374,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
             for (int i = 0; i < constraintList.Count; i++)
             {
-                for (int j = 0,value; j < cardNumberSuitCounts.Count; j++)
+                for (int j = 0, value; j < cardNumberSuitCounts.Count; j++)
                 {
                     value = constraintList[i];
 
@@ -391,67 +392,5 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             return isCardsEnough;
         }
 
-        private static bool CheckStraightConstraint(PokerGroupType groupType, PokerCard[] cards, PokerCard[] containCard = null)
-        {
-            int length;
-            switch (groupType)
-            {
-                case PokerGroupType.Straight_Flush:
-                    return CheckStraightConstraint(PokerGroupType.Straight, cards, containCard);
-                case PokerGroupType.Straight:
-                    length = 5;
-                    break;
-                case PokerGroupType.Dragon:
-                    length = 13;
-                    break;
-                default:
-                    return true;
-            }
-
-            int maxNumberOfContain = containCard.Max(d => d.Number);
-            int minNumberOfContain = containCard.Min(d => d.Number);
-
-            int minNumber = maxNumberOfContain - (length - 1);
-            if (minNumber<=0)
-                minNumber = 1;
-            if (minNumber > minNumberOfContain)
-                return false;
-            
-            int maxNumber = minNumberOfContain + (length - 1);
-            if (maxNumber > Poker.NUMBER_NUM)
-                maxNumber = 1;
-            if (maxNumber < maxNumberOfContain)
-                return false;
-            
-            cards = cards
-                .Where(d =>
-                    d.Number >= minNumber &&
-                    CompareNumber(d.Number, maxNumber) != 1
-                )
-                .OrderBy(d=>d.Number)
-                .ToArray();
-
-            for (int i = 0,startNumber=minNumber,count=0, number; i <cards.Length;i++)
-            {
-                number = cards[i].Number;
-
-                if (startNumber + count == number)
-                    count++;
-                else
-                {
-                    startNumber = number;
-                    count = 1;
-                }
-
-                if (count == length)
-                {
-                    if (groupType != PokerGroupType.Straight_Flush)
-                        return true;
-
-
-                }
-            }
-            return false;
-        }
     }
 }
