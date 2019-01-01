@@ -61,7 +61,18 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             if (IsRequiredClub3)
             {
                 bool isContainClub3 = false;
-                containCard.ForEach((card) => { if (BigTwo.IsCLub3(card)) isContainClub3 = true; });
+                for(int i = 0; i < containCard.Count; i++)
+                {
+                    if (BigTwo.IsCLub3(containCard[i]))
+                    {
+                        isContainClub3 = true;
+                        PokerCard p = containCard[i];
+                        containCard[i] = containCard.Last();
+                        containCard[containCard.Count - 1] = p;
+                        break;
+                    }
+                }
+
                 if (!isContainClub3)
                     containCard.Add(new PokerCard(PokerSuit.Club, 3));
             }
