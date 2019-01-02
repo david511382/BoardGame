@@ -21,15 +21,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
         public static PokerGroupType GetCardGroupType(PokerCard[] cards)
         {
-            int[] constraints;
-            foreach (PokerGroupType type in Enum.GetValues(typeof(PokerGroupType)))
-            {
-                constraints = GetConstraintOfType(type);
-                if (CheckConstraint(constraints, cards))
-                    return type;
-            }
-
-            throw new Exception("cant identitfy");
+            return GetCardGroupType(cards, cards);
         }
 
         public static PokerGroupType GetCardGroupType(PokerCard[] cards, PokerCard[] containCards)
@@ -58,7 +50,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         {
             var groupedCards = cards
                 .GroupBy(d => d.Number)
-                .Select(d => new { number = d.First(), count = d.Count() });
+                .Select(d => new { number = d.First().Number, count = d.Count() });
 
             int maxCount = groupedCards
                 .Select(d => d.count)
@@ -66,7 +58,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
             int[] numbers = groupedCards
                 .Where(d => d.count == maxCount)
-                .Select(d => d.count)
+                .Select(d => d.number)
                 .ToArray();
 
             numbers = OrderNumber(numbers);
