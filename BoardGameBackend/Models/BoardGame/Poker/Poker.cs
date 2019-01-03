@@ -44,6 +44,18 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             return i;
         }
 
+        public static int Compare_Number(int a, int b)
+        {
+            if (a == MAX_NUMBER) a = NUMBER_NUM + 1;
+            if (b == MAX_NUMBER) b = NUMBER_NUM + 1;
+
+            if (a > b)
+                return 1;
+            else if (a == b)
+                return 0;
+            else return -1;
+        }
+
         public Poker()
         {
             _cards = new List<PokerCard>();

@@ -10,13 +10,13 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         private const int STRAIGHT_LENGHT = 5;
         private const int DRAGON_LENGHT = 13;
 
-        private static bool CheckStraightConstraint(PokerGroupType groupType, PokerCard[] cards, PokerCard[] containCard = null)
+        private static PokerCard[] GetStraightGreater(PokerGroupType groupType, PokerCard[] cards, PokerCard[] containCard = null, PokerCard value = null)
         {
             int length;
             switch (groupType)
             {
                 case PokerGroupType.Straight_Flush:
-                    return CheckStraightFlush(cards, containCard);
+                    return GetStraightFlushGreater(cards, containCard, value);
                 case PokerGroupType.Straight:
                     length = STRAIGHT_LENGHT;
                     break;
@@ -24,50 +24,180 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     length = DRAGON_LENGHT;
                     break;
                 default:
-                    return true;
+                    return null;
             }
 
-            return CheckStraight(length, cards, containCard);
+            PokerCard[] result = GetStaright10ToAGreater(cards, containCard, value);
+            if (result != null)
+                return result;
+
+            cards = GetCardsInContainCardGreater(length, cards, containCard, value);
+            if (cards == null)
+                return null;
+
+            return GetStraightNumber(cards, length, value);
         }
 
-        private static bool CheckStraight(int length, PokerCard[] cards, PokerCard[] containCard = null)
+        private static bool CheckStraightConstraint(PokerGroupType groupType, PokerCard[] cards, PokerCard[] containCard = null)
         {
-            if (CheckStaright10ToA(cards, containCard))
-                return true;
+            switch (groupType)
+            {
+                case PokerGroupType.Straight_Flush:
+                case PokerGroupType.Straight:
+                case PokerGroupType.Dragon:
+                    PokerCard[] result = GetStraightGreater(groupType, cards, containCard);
+                    if (result == null)
+                        return false;
+                    else
+                        return true;
+                default:
+                    return true;
+            }
+        }
 
+        private static PokerCard[] GetCardsInContainCardGreater(int length, PokerCard[] cards, PokerCard[] containCard = null,PokerCard value = null)
+        {
+            int straightMinus = length - 1;
+
+            List<PokerCard> resultCards = new List<PokerCard>();
             if (containCard != null && containCard.Length != 0)
             {
                 int maxNumberOfContain = containCard.Max(d => d.Number);
                 int minNumberOfContain = containCard.Min(d => d.Number);
 
-                int minNumber = maxNumberOfContain - (length - 1);
+                int minNumber = maxNumberOfContain - straightMinus;
                 if (minNumber <= 0)
                     minNumber = 1;
                 if (minNumber > minNumberOfContain)
-                    return false;
+                    return null;
 
-                int maxNumber = minNumberOfContain + (length - 1);
+                int maxNumber = minNumberOfContain + straightMinus;
                 if (maxNumber > Poker.NUMBER_NUM)
                     maxNumber = Poker.NUMBER_NUM;
                 if (maxNumber < maxNumberOfContain)
-                    return false;
+                    return null;
 
-                cards = cards
-                    .Where(d =>
-                        d.Number >= minNumber &&
-                        d.Number <= maxNumber
+                resultCards.AddRange(
+                    cards
+                        .Where(d =>
+                            d.Number >= minNumber &&
+                            d.Number <= maxNumber
+                        )
+                );
+            }
+            else
+                resultCards.AddRange(cards);
+
+            if (value != null)
+            {
+                int straightFirstNumber = (value.Number == Poker.MAX_NUMBER) ?
+                    10 :
+                    value.Number - straightMinus;
+
+                resultCards = resultCards
+                    .Where(d => d.Number >= straightFirstNumber ||
+                        (d.Number >= BigTwo.BigTwo.MAX_CARD_NUMBER &&
+                            d.Number <= BigTwo.BigTwo.MAX_CARD_NUMBER + straightMinus)
                     )
-                    .ToArray();
+                    .ToList();
             }
 
-            return CheckStraightNumber(cards, length);
+            return resultCards.ToArray();
+        }
+
+        private static PokerCard[] CombineStraightContainCards(PokerCard[] cards, PokerCard[] containCard = null)
+        {
+            var containCardGroup = containCard
+                .GroupBy(d => d.Number)
+                .Select(d => new { number = d.First().Number, count = d.Count() });
+
+            IEnumerable<int> containCardNumber = containCardGroup
+                .Select(d => d.number);
+            int[] numbers = cards
+                .Select(d => d.Number)
+                .Except(containCardNumber)
+                .ToArray();
+
+            List<PokerCard> resultCards = new List<PokerCard>();
+            resultCards = cards
+                .Where(d => numbers.Contains(d.Number))
+                .GroupBy(d => d.Number)
+                .Select(d => new PokerCard(d.Min(c => c.Suit), d.First().Number))
+                .ToList();
+
+            resultCards.AddRange(containCard);
+            return resultCards.ToArray();
+        }
+        
+        private static bool IsContainCard10ToA(PokerCard[] containCard = null)
+        {
+            bool containCardNotIn10ToA = true;
+
+            if (containCard != null && containCard.Length != 0)
+            {
+                containCardNotIn10ToA = containCard
+                    .Where(d => !IsNumberIn10ToA(d))
+                    .Count()
+                    >
+                    0;
+            }
+            return !containCardNotIn10ToA;
+        }
+
+        private static PokerCard[] GetStaright10ToAGreater(PokerCard[] cards, PokerCard[] containCard = null,PokerCard value=null)
+        {
+            if (!IsContainCard10ToA(containCard))
+                return null;
+
+            IEnumerable<PokerCard> As;
+            if (containCard!=null && containCard.Where(d=>d.Number == Poker.MAX_NUMBER).Count()>0)
+                As = containCard
+                   .Where(d => d.Number == Poker.MAX_NUMBER);
+            else
+                As = cards
+                    .Where(d => d.Number == Poker.MAX_NUMBER);
+            
+            if (value!=null)
+            {
+                As = As
+                    .Where(d => BigTwo.BigTwo.CompareCard(d, value) > 0);
+            }
+
+            if (As.Count() == 0)
+                return null;
+
+            PokerCard A = As
+                .OrderBy(d => d.Suit)
+                .First();
+            
+            cards = CombineStraightContainCards(cards, containCard);
+            cards = cards
+                .Where(d => IsNumberIn10ToA(d) && d.Number != Poker.MAX_NUMBER)
+                .OrderBy(d => d.Number)
+                .ToArray();
+
+            if (cards.Length != STRAIGHT_LENGHT - 1)
+                return null;
+
+            const int START_NUMBER = 10;
+            for(int i = 0; i < cards.Length; i++)
+            {
+                if (cards[i].Number != START_NUMBER + i)
+                    return null;
+            }
+
+            List<PokerCard> result = new List<PokerCard>();
+            result.AddRange(cards);
+            result.Add(A);
+
+            return result.ToArray();
         }
 
         private static bool CheckStraightNumber(PokerCard[] cards, int length)
         {
             int[] cardNumbers = cards
-                .GroupBy(d=>d.Number)
-                .Select(d=>d.First().Number)
+                .GroupBy(d => d.Number)
+                .Select(d => d.First().Number)
                 .OrderBy(d => d)
                 .ToArray();
 
@@ -90,34 +220,83 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             return false;
         }
 
-        private static bool CheckStaright10ToA(PokerCard[] cards, PokerCard[] containCard = null)
+        private static PokerCard[] GetStraightNumber(PokerCard[] cards, int length,PokerCard value = null)
         {
-            if (containCard != null && containCard.Length != 0)
-            {
-                bool containCardNotIn10ToA = containCard
-                    .Where(d => !IsNumberIn10ToA(d))
-                    .Count()
-                    >
-                    0;
-                if (containCardNotIn10ToA)
-                    return false;
-            }
-                        
-            PokerCard[] cardsBuf = cards
-                .Where(d => IsNumberIn10ToA(d))
-                .Select(d => d)
+            int[] cardNumbers = cards
+                .GroupBy(d => d.Number)
+                .Select(d => d.First().Number)
+                .OrderBy(d => d)
                 .ToArray();
             
-            PokerCard[] checkCards=new PokerCard[cardsBuf.Length];
-            for (int i = 0,num; i < checkCards.Length; i++) {
-                num = cardsBuf[i].Number;
-                if (num==1)
-                    num = Poker.NUMBER_NUM + 1;
+            List<PokerCard> twoTosix = new List<PokerCard>(); 
+            for (int i = 0, startNumber = cardNumbers.Min(d => d), count = 0, number; i < cardNumbers.Length; i++)
+            {
+                number = cardNumbers[i];
 
-                checkCards[i] = new PokerCard(cardsBuf[i].Suit, num);
+                if (startNumber + count == number)
+                    count++;
+                else
+                {
+                    startNumber = number;
+                    count = 1;
+                }
+
+                if (count == length)
+                {
+                    List<PokerCard> result = new List<PokerCard>();
+
+                    if (value != null)
+                    {
+                        int compareNumber = number;
+                        if (startNumber == BigTwo.BigTwo.MAX_CARD_NUMBER)
+                            compareNumber = startNumber;
+
+                        IEnumerable<PokerCard> maxValues = cards
+                          .Where(d => d.Number == compareNumber);
+                        maxValues = maxValues
+                            .Where(d => BigTwo.BigTwo.CompareCard(d, value) > 0);
+
+                        if (maxValues.Count() <= 0)
+                        {
+                            count--;
+                            startNumber++;
+                            continue;
+                        }
+
+                        cards = cards
+                           .Where(d => d.Number != compareNumber)
+                           .ToArray();
+
+                        result.Add(
+                            maxValues
+                                .OrderBy(d => d.Suit)
+                                .First()
+                        );
+                    }
+
+                    result.AddRange(
+                        cards
+                            .Where(d => d.Number <= number && d.Number >= startNumber)
+                            .GroupBy(d => d.Number)
+                            .Select(d => new PokerCard(d.Min(c => c.Suit), d.First().Number))
+                    );
+
+                    if (startNumber == BigTwo.BigTwo.MAX_CARD_NUMBER)
+                    {
+                        twoTosix.AddRange(result);
+                        result.Clear();
+                        count--;
+                        startNumber++;
+                        continue;
+                    }
+
+                    return result.ToArray();
+                }
             }
 
-            return CheckStraightNumber(checkCards, STRAIGHT_LENGHT);
+            if (twoTosix.Count == 0)
+                return null;
+            return twoTosix.ToArray();
         }
 
         private static bool IsNumberIn10ToA(PokerCard card)
@@ -126,7 +305,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             return cardNum >= 10 || cardNum == 1;
         }
 
-        private static bool CheckStraightFlush(PokerCard[] cards, PokerCard[] containCard = null)
+        private static PokerCard[] GetStraightFlushGreater(PokerCard[] cards, PokerCard[] containCard = null, PokerCard value = null)
         {
             PokerSuit[] suits;
 
@@ -142,13 +321,13 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             else
             {
                 bool isContainCardSameSuit = containCard
-                          .GroupBy(d => d.Suit)
-                          .Count()
-                          ==
-                          1;
+                    .GroupBy(d => d.Suit)
+                    .Count()
+                    ==
+                    1;
 
                 if (!isContainCardSameSuit)
-                    return false;
+                    return null;
 
                 suits = new PokerSuit[] { containCard.First().Suit };
             }
@@ -157,14 +336,15 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             for (int i = 0; i < suits.Length; i++)
             {
                 checkCards = cards
-               .Where(d => d.Suit == suits[i])
-               .ToArray();
+                   .Where(d => d.Suit == suits[i])
+                   .ToArray();
 
-                if (CheckStraightConstraint(PokerGroupType.Straight, checkCards, containCard))
-                    return true;
+                checkCards =  GetStraightGreater(PokerGroupType.Straight, checkCards, containCard, value);
+                if (checkCards != null)
+                    return checkCards;
             }
 
-            return false;
+            return null;
         }
     }
 }

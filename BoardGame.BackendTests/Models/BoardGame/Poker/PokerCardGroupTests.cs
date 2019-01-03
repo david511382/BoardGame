@@ -24,6 +24,13 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
                     new PokerCard(PokerSuit.Diamond,2),
                     new PokerCard(PokerSuit.Heart,2),
                     new PokerCard(PokerSuit.Spade,2),
+                    new PokerCard(PokerSuit.Diamond,3),
+                    new PokerCard(PokerSuit.Spade,4),
+                    new PokerCard(PokerSuit.Spade,5),
+                    new PokerCard(PokerSuit.Spade,6),
+                    new PokerCard(PokerSuit.Heart,7),
+                    new PokerCard(PokerSuit.Heart,9),
+                    new PokerCard(PokerSuit.Diamond,10),
                     new PokerCard(PokerSuit.Club,11),
                     new PokerCard(PokerSuit.Club,12),
                     new PokerCard(PokerSuit.Club,13)
@@ -44,9 +51,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
                     new PokerCard(PokerSuit.Diamond,2),
                     new PokerCard(PokerSuit.Spade,2)
               };
-
             CheckEqualPokerCards(result, expectResult);
-
 
 
             result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Full_House, null, handCards.ToList(), selectCards);
@@ -57,8 +62,38 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
                     new PokerCard(PokerSuit.Club,2),
                     new PokerCard(PokerSuit.Diamond,2)
               };
-
             CheckEqualPokerCards(result, expectResult);
+
+
+            selectCards = new PokerCard[]{
+                new PokerCard(PokerSuit.Diamond,3)
+            };
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Straight, currentMax, handCards.ToList(), selectCards);
+            expectResult = new PokerCard[]{
+                    new PokerCard(PokerSuit.Spade,2),
+                    new PokerCard(PokerSuit.Diamond,3),
+                    new PokerCard(PokerSuit.Spade,4),
+                    new PokerCard(PokerSuit.Spade,5),
+                    new PokerCard(PokerSuit.Spade,6)
+              };
+            CheckEqualPokerCards(result, expectResult);
+
+
+            selectCards = new PokerCard[]{
+                new PokerCard(PokerSuit.Diamond,10)
+            };
+            currentMax = new PokerCard(PokerSuit.Heart, 13);
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Straight, currentMax, handCards.ToList(), selectCards);
+            expectResult = new PokerCard[]{
+                    new PokerCard(PokerSuit.Club,1),
+                    new PokerCard(PokerSuit.Diamond,10),
+                    new PokerCard(PokerSuit.Club,11),
+                    new PokerCard(PokerSuit.Club,12),
+                    new PokerCard(PokerSuit.Club,13)
+              };
+            CheckEqualPokerCards(result, expectResult);
+
+
         }
 
         [TestMethod()]
@@ -70,7 +105,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
                 for (int j = 0; j < Poker.SUIT_NUM; j++)
                     handCards[i * Poker.SUIT_NUM + j] = new PokerCard(PokerCardGroup.GetSuitByI(j), i + 1);
             }
-
+            
             PokerCard[] selectCards = new PokerCard[]
              {
                  new PokerCard(PokerSuit.Heart,1),
@@ -202,6 +237,9 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
 
         private bool CheckEqualPokerCards(PokerCard[] aCards, PokerCard[] bCards)
         {
+            if (aCards == null && aCards == bCards)
+                return true;
+
             bool isFound = false;
             for (int i = 0; i < aCards.Length; i++)
             {

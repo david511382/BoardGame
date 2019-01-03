@@ -11,8 +11,8 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         {
             int[] constraint = GetConstraintOfType(groupType);
             bool isRightConstraint = CheckConstraint(constraint, cards.ToArray(), containCard);
-            bool isRightContain = CheckCardsContainCards(cards.ToArray(), containCard);
-            if (!isRightConstraint || !isRightContain)
+            bool isContainCardInCards = CheckCardsContainCards(cards.ToArray(), containCard);
+            if (!isRightConstraint || !isContainCardInCards)
                 return null;
 
             switch (groupType)
@@ -23,11 +23,9 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 case PokerGroupType.Full_House:
                     return GetMinCardGroupInConstraintGreaterThenCard(constraint, card, cards, containCard);
                 case PokerGroupType.Straight:
-                    return null;// Straight(cards, containCard);
                 case PokerGroupType.Straight_Flush:
-                    return null;//Straight_Flush(cards, containCard);
                 case PokerGroupType.Dragon:
-                    return null;
+                    return GetStraightGreater(groupType, cards.ToArray(), containCard, card);
                 default:
                     throw new Exception("undefine");
             }

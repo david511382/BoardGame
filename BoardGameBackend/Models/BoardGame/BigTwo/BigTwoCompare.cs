@@ -8,16 +8,10 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 {
     public partial class BigTwo
     {
-        private static int CompareCard(PokerCard a, PokerCard b)
+        public static int CompareCard(PokerCard a, PokerCard b)
         {
-            int aNum = a.Number + ((a.Number <= MAX_CARD_NUMBER) ? Poker.NUMBER_NUM : 0);
-            int bNum = b.Number + ((b.Number <= MAX_CARD_NUMBER) ? Poker.NUMBER_NUM : 0);
-
-            if (aNum > bNum)
-                return 1;
-            else if (aNum < bNum)
-                return -1;
-            else
+            int compareNumber = CompareNumber(a.Number, b.Number);
+            if (compareNumber == 0)
             {
                 if (a.Suit > b.Suit)
                     return 1;
@@ -26,6 +20,23 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
                 else
                     return 0;
             }
+            else
+                return compareNumber;
+        }
+        
+        public static int CompareNumber(int a, int b)
+        {
+            bool aIsMax = a == MAX_CARD_NUMBER;
+            bool bIsMax = b == MAX_CARD_NUMBER;
+
+            if (aIsMax && !bIsMax)
+                return 1;
+            else if (aIsMax && bIsMax)
+                return 0;
+            else if (!aIsMax && bIsMax)
+                return -1;
+            else
+                return Poker.Compare_Number(a, b);
         }
     }
 }
