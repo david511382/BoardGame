@@ -28,43 +28,32 @@ namespace BoardGameBackend.Models.BoardGame
             try
             {
                 player = BoardGameManager.GetPlayerById(playerId);
+
+                PokerCard[] pokerCards;
+                pokerCards = player.GetCardGroup(selectedIndex);
+                pokerCards = pokerCards.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
+
+                return pokerCards;
             }
             catch
             {
                 return null;
             }
-
-            if (!player.IsOnTurn())
-                return null;
-
-            PokerCard[] pokerCards;
-            pokerCards = player.GetCardGroup(selectedIndex);
-            pokerCards = pokerCards.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
-
-            return pokerCards;
         }
 
         public bool PlayCard(int playerId, int[] indexs)
         {
-            if (indexs==null || indexs.Length == 0)
-                return false;
-
             BigTwoPlayer player;
             try
             {
                 player = BoardGameManager.GetPlayerById(playerId);
+
+                return player.PlayCard(indexs);
             }
             catch
             {
                 return false;
             }
-
-            if (!player.IsOnTurn())
-            {
-                return false;
-            }
-
-            return player.PlayCard(indexs); 
         }
 
         private string GetCardInfo(PokerCard pokerCard)

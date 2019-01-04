@@ -8,6 +8,18 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 {
     public partial class BigTwo : PokerGame.PokerGame
     {
+        public bool Pass()
+        {
+            //can not pass
+            if (IsFreeType)
+                return false;
+
+            //next turn
+            NextTurn();
+
+            return true;
+        }
+
         public bool PlayGroups(PokerCardGroup cardGroup)
         {
             //check group

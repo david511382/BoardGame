@@ -41,8 +41,20 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             return _game.IsTurn(Id);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cardIndexs">cardIndexs == null is pass </param>
+        /// <returns></returns>
         public bool PlayCard(int[] cardIndexs)
         {
+            if (!this.IsOnTurn())
+                return false;
+
+            // pass
+            if (cardIndexs == null || cardIndexs.Length == 0)
+                return Game.Pass();
+
             List<PokerCard> containCard = GetHandCards(cardIndexs);
 
             return Game.PlayGroups(new PokerCardGroup(containCard.ToArray()));
@@ -55,6 +67,9 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         /// <returns></returns>
         public PokerCard[] GetCardGroup(int[] containCardIndexs)
         {
+            if (!this.IsOnTurn())
+                return null;
+
             PokerCard[] cards = GetHandCards();
             List<PokerCard> containCard = GetHandCards(containCardIndexs);
             bool IsRequiredClub3 = Game.IsRequiredClub3;
