@@ -1,12 +1,11 @@
-﻿using BoardGame.Backend.Models.BoardGame;
-using BoardGame.Backend.Models.BoardGame.BigTwo;
+﻿using BoardGame.Backend.Models.BoardGame.BigTwo;
 using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGameBackend.Models.BoardGame
+namespace BoardGame.Backend.Models.BoardGame
 {
     public class GameModels
     {
@@ -53,6 +52,21 @@ namespace BoardGameBackend.Models.BoardGame
             catch
             {
                 return false;
+            }
+        }
+
+        public PokerCard[] GetTable(int playerId)
+        {
+            GameFramework.GameBoard gameBoard;
+            try
+            {
+                gameBoard = BoardGameManager.GetGameBoardByPlayerId(playerId);
+
+                return ((PokerCardGroup) gameBoard.GetLastItem()).GetCards();
+            }
+            catch
+            {
+                return null;
             }
         }
 

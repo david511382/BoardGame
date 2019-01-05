@@ -34,6 +34,11 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
             _info = new PlayerInfo(gamePlayer.Name, gamePlayer.Id);
         }
 
+        public  GameBoard GetGameTable() 
+        {
+            return _game.GetTable();
+        }
+
         public void JoinGame(BoardGame game)
         {
             game.Join(Id);

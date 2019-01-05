@@ -1,6 +1,6 @@
-﻿using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+﻿using BoardGame.Backend.Models.BoardGame;
+using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
 using BoardGame.Backend.Models.BoardGame.PokerGame;
-using BoardGameBackend.Models.BoardGame;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -77,6 +77,20 @@ namespace BoardGame.Backend.Controllers
                 return new GameModels().CheckTurn(user.Id);
             }
             catch { return false; }
+        }
+
+        [Route("GetTable")]
+        [HttpPost]
+        public PokerCard[] GetTable(FormDataCollection form)
+        {
+            try
+            {
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+
+                return new GameModels().GetTable(user.Id);
+            }
+            catch { return null; }
         }
     }
 }

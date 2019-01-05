@@ -42,6 +42,22 @@ namespace BoardGame.Backend.Models.BoardGame
             }
         }
 
+        public static GameBoard GetGameBoardByPlayerId(int playerId)
+        {
+            try
+            {
+                 GamePlayer gp = _gamePlayers
+                    .Where(d => d.Id == playerId)
+                    .First();
+
+                return gp.GetGameTable();
+            }
+            catch
+            {
+                throw new Exception("no player");
+            }
+        }
+
         public static PlayerInfo CreateGame()
         {
             BigTwo.BigTwo bigTwo = new BigTwo.BigTwo();
