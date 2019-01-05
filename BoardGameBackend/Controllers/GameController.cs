@@ -64,5 +64,19 @@ namespace BoardGame.Backend.Controllers
             }
             catch { return false; }
         }
+
+        [Route("CheckTurn")]
+        [HttpPost]
+        public bool CheckTurn(FormDataCollection form)
+        {
+            try
+            {
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+
+                return new GameModels().CheckTurn(user.Id);
+            }
+            catch { return false; }
+        }
     }
 }

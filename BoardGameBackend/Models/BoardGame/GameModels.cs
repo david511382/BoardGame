@@ -41,6 +41,21 @@ namespace BoardGameBackend.Models.BoardGame
             }
         }
 
+        public bool CheckTurn(int playerId)
+        {
+            BigTwoPlayer player;
+            try
+            {
+                player = BoardGameManager.GetPlayerById(playerId);
+
+                return player.IsOnTurn();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool PlayCard(int playerId, int[] indexs)
         {
             BigTwoPlayer player;
