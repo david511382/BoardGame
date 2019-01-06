@@ -14,6 +14,8 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
         [TestMethod()]
         public void GetMinCardGroupInGroupTypeGreaterThenCardTest()
         {
+            PokerCardGroup.Max_Number = BigTwo.BigTwo.MAX_CARD_NUMBER;
+
             PokerCard[] handCards = new PokerCard[]
               {
                     new PokerCard(PokerSuit.Club,1),
@@ -94,11 +96,37 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
             CheckEqualPokerCards(result, expectResult);
 
 
+            handCards = new PokerCard[]
+             {
+                    new PokerCard(PokerSuit.Diamond,1),
+                    new PokerCard(PokerSuit.Heart,1),
+                    new PokerCard(PokerSuit.Club,2),
+                    new PokerCard(PokerSuit.Club,4),
+                    new PokerCard(PokerSuit.Heart,4),
+                    new PokerCard(PokerSuit.Spade,6),
+                    new PokerCard(PokerSuit.Diamond,8),
+                    new PokerCard(PokerSuit.Heart,8),
+                    new PokerCard(PokerSuit.Club,10),
+                    new PokerCard(PokerSuit.Spade,10),
+                    new PokerCard(PokerSuit.Spade,12),
+                    new PokerCard(PokerSuit.Diamond,13)
+             };
+            selectCards = new PokerCard[]{
+                new PokerCard(PokerSuit.Club,10)
+            };
+            currentMax = new PokerCard(PokerSuit.Heart, 12);
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Single, currentMax, handCards.ToList(), selectCards);
+            expectResult = new PokerCard[]{
+                    new PokerCard(PokerSuit.Spade,12)
+              };
+            CheckEqualPokerCards(result, expectResult);
         }
 
         [TestMethod()]
         public void GetCardGroupTypeTest()
         {
+            PokerCardGroup.Max_Number = BigTwo.BigTwo.MAX_CARD_NUMBER;
+
             PokerCard[] handCards = new PokerCard[52];
             for (int i = 0; i < Poker.NUMBER_NUM; i++)
             {

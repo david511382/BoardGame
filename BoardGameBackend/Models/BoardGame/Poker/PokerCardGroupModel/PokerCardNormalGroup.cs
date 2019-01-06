@@ -83,6 +83,8 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     .Where(d => !isMaxConstraint || CompareNumber(d, cardNumber) != -1)
                     .ToArray();
 
+                numbers = OrderNumber(numbers);
+
                 //由點選順序看選定的每個牌號能不能當作最大牌組，最選優先
                 int[] containNumbers = SpiltContainNumber(ref numbers, containCards);
 
@@ -102,7 +104,9 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                             PokerCard[] nextContainCards = Except(containCards, result.ToArray());
                             PokerCard[] nextCard = Except(cards.ToArray(), result.ToArray());
                             //is constraint satisfied
-                            if (!CheckNextConstraint(constraint, constraintIndex, nextCard, nextContainCards))
+
+                            bool moreConstraint = constraint.Length > 1;
+                            if (moreConstraint && !CheckNextConstraint(constraint, constraintIndex, nextCard, nextContainCards))
                                 continue;
                         }
 

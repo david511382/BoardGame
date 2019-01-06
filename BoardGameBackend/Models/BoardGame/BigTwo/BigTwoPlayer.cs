@@ -118,6 +118,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             TryAllUntilExcetion(containCard, (selectedCards) =>
             {
                 result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, maxCard, cards.ToList(), selectedCards);
+                if (result == null)
+                    throw new Exception();
              });
 
             return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
