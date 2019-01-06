@@ -42,6 +42,10 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
                 if (base.GetResourceAt(i).GetHandCards().Where(d=>d.Suit == club3.Suit && d.Number == club3.Number).Count()>0)
                 {
                     _currentTurn = i;
+                    _lastPlayTurnId = ((_currentTurn == 0) ?
+                        _playerResources.Count :
+                        _currentTurn)
+                        - 1;
                     break;
                 }
             }

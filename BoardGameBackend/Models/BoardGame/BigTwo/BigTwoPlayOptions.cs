@@ -8,6 +8,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 {
     public partial class BigTwo : PokerGame.PokerGame
     {
+        private int _lastPlayTurnId;
+
         public bool Pass()
         {
             //can not pass
@@ -16,6 +18,9 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
             //next turn
             NextTurn();
+
+            if (_lastPlayTurnId == _currentTurn)
+                IsFreeType = true;
 
             return true;
         }
@@ -54,6 +59,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
             //remove hand cards
             CurrentPlayerResource.RemoveHandCards(cardGroup.GetCards());
+
+            _lastPlayTurnId = _currentTurn;
 
             //next turn
             NextTurn();
