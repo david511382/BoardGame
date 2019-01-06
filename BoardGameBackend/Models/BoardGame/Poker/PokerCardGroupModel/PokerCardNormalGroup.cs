@@ -83,6 +83,10 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     .Where(d => !isMaxConstraint || CompareNumber(d, cardNumber) != -1)
                     .ToArray();
 
+                bool isNotFoundFitNumber = numbers.Length == 0;
+                if (isNotFoundFitNumber)
+                    return null;
+
                 numbers = OrderNumber(numbers);
 
                 //由點選順序看選定的每個牌號能不能當作最大牌組，最選優先
@@ -90,6 +94,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
                 int containNumbersCount = containNumbers.Length;
                 int number;
+                isNotFoundFitNumber = true;
                 for (int j = numberStartIndexs[constraintIndex]; j < containNumbersCount + numbers.Length; j++)
                 {
                     bool isUseContainNumber = j < containNumbersCount;
@@ -128,8 +133,12 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     numberStartIndexs[constraintIndex] = ++j;
                     selectedNumbers[constraintIndex] = number;
                     result.AddRange(resultBuff);
+                    isNotFoundFitNumber = false;
                     break;
                 }
+                
+                if (isNotFoundFitNumber)
+                    return null;
 
                 isMaxConstraint = false;
             }

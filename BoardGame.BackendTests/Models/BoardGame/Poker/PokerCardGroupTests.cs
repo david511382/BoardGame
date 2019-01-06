@@ -96,6 +96,15 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
             CheckEqualPokerCards(result, expectResult);
 
 
+            selectCards = new PokerCard[]{
+                new PokerCard(PokerSuit.Club,1)
+            };
+            currentMax = new PokerCard(PokerSuit.Spade, 2);
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Full_House, currentMax, handCards.ToList(), selectCards);
+            expectResult = null;
+            CheckEqualPokerCards(result, expectResult);
+
+
             handCards = new PokerCard[]
              {
                     new PokerCard(PokerSuit.Diamond,1),
