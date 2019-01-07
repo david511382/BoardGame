@@ -243,6 +243,7 @@
     <Compile Include="Models\BoardGame\PokerGame\PokerGame.cs" />
     <Compile Include="Models\BoardGame\Poker\Poker.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCard.cs" />
+    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroupCompare.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroupMethods.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroup.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\StraightGroups.cs" />

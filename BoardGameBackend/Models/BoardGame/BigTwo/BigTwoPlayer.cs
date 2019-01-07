@@ -92,37 +92,67 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
                     containCard.Add(new PokerCard(PokerSuit.Club, 3));
             }
 
-            PokerGroupType type = PokerGroupType.Single;
+            PokerCardGroup.Max_Number = BigTwo.MAX_CARD_NUMBER;
             PokerCard maxCard;
+            PokerGroupType type = PokerGroupType.Single;
             bool isFreeType = Game.IsFreeType;
             if (isFreeType)
             {
                 maxCard = null;
-
                 TryAllUntilExcetion(containCard, (selectedCards) =>
                 {
-                    type = PokerCardGroup.GetCardGroupType(cards, selectedCards);
-                });         
+                    type = PokerCardGroup.GetMinCardGroupType(cards, selectedCards);
+                });
             }
             else
             {
                 //check previous type
                 PokerCardGroup lastGroup = GetTableLast();
-
                 type = lastGroup.GetGroupType();
                 maxCard = lastGroup.GetMaxValue();
             }
 
-            PokerCardGroup.Max_Number = BigTwo.MAX_CARD_NUMBER;
             PokerCard[] result = null;
             TryAllUntilExcetion(containCard, (selectedCards) =>
             {
-                result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, maxCard, cards.ToList(), selectedCards);
+                result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, cards.ToList(), selectedCards, maxCard);
                 if (result == null)
                     throw new Exception();
              });
 
+            if (result == null)
+            {
+                TryAllUntilExcetion(containCard, (selectedCards) =>
+                {
+                    IEnumerable< PokerGroupType>types = PokerCardGroup.GetCardGroupType(cards, selectedCards)
+                        .Intersect(BigTwo.SUPER_GROUP_TYPE_ORDERS);
+                    type = PokerCardGroup.OrderGroupType(types).First();
+
+                    result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, cards.ToList(), selectedCards, maxCard);
+                });
+            }
+
             return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
+        }
+
+        private PokerGroupType[] GetSuperGroupTypeGreater(PokerGroupType type)
+        {
+            if (type == PokerGroupType.Dragon)
+                return null;
+
+            PokerGroupType[] superGroupTypes = BigTwo.SUPER_GROUP_TYPE_ORDERS;
+            superGroupTypes = superGroupTypes.Reverse().ToArray();
+            int index = superGroupTypes.ToList().IndexOf(type);
+            if (index == -1)
+                index = superGroupTypes.Length;
+
+            List<PokerGroupType> result = new List<PokerGroupType>();
+            for (int i = 0; i < index; i++)
+                result.Add(superGroupTypes[i]);
+
+            result.Reverse();
+
+            return result.ToArray();
         }
 
         private List<PokerCard> GetHandCards(int[] cardIndex)
@@ -138,11 +168,14 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
         private void TryAllUntilExcetion(List<PokerCard> selectedCards,Action<PokerCard[]> action)
         {
-            for (; selectedCards.Count > 0; selectedCards.RemoveAt(0))
+            List<PokerCard> cards = new List<PokerCard>();
+            cards.AddRange(selectedCards);
+
+            for (; cards.Count > 0; cards.RemoveAt(0))
             {
                 try
                 {
-                    action(selectedCards.ToArray());
+                    action(cards.ToArray());
                     break;
                 }
                 catch { }

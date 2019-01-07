@@ -19,18 +19,29 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             Max_Number = 1;
         }
 
-        public static PokerGroupType GetCardGroupType(PokerCard[] cards)
+        public static PokerGroupType GetMinCardGroupType(PokerCard[] cards)
         {
-            return GetCardGroupType(cards, cards);
+            return GetMinCardGroupType(cards, null);
         }
 
-        public static PokerGroupType GetCardGroupType(PokerCard[] cards, PokerCard[] containCards)
+        public static PokerGroupType GetMinCardGroupType(PokerCard[] cards, PokerCard[] containCards = null)
         {
-            var constraints = Enum.GetValues(typeof(PokerGroupType))
-                .Cast<PokerGroupType>()
-                .Select(d => new { type = d, constraint = GetConstraintOfType(d) })
-                .OrderBy(d => d.constraint.Count())
-                .ThenBy(d => d.constraint.Max());
+            return GetCardGroupType(cards, containCards, true).First();
+        }
+
+        public static PokerGroupType[] GetCardGroupType(PokerCard[] cards, PokerCard[] containCards= null, bool requireMin = false)
+        {
+            if (containCards == null)
+                containCards = cards;
+
+            List<PokerGroupType> result = new List<PokerGroupType>();
+
+            IEnumerable< PokerGroupType> groupTypes = Enum.GetValues(typeof(PokerGroupType))
+                .Cast<PokerGroupType>();
+            groupTypes = OrderGroupType(groupTypes);
+
+            var constraints = groupTypes
+                .Select(d => new { type = d, constraint = GetConstraintOfType(d) });
 
             bool isConstraintOk;
             bool isSpecalConstraintOk;
@@ -40,10 +51,17 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 isSpecalConstraintOk = CheckStraightConstraint(data.type, cards, containCards);
 
                 if (isConstraintOk && isSpecalConstraintOk)
-                    return data.type;
+                {
+                    result.Add(data.type);
+                    if (requireMin)
+                        return result.ToArray();
+                }
             }
 
-            throw new Exception("cant identitfy");
+            if (result.Count == 0)
+                throw new Exception("cant identitfy");
+
+            return result.ToArray();
         }
 
         private static PokerCard GetMaxValueOfCardGroup(PokerCard[] cards)
@@ -316,8 +334,10 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 if (!isContainCountAcceptable)
                     return false;
 
-                IEnumerable<int> containCardNumbers = containCard
-                  .GroupBy(d => d.Number)
+                var containGroupByNumber = containCard
+                      .GroupBy(d => d.Number);
+
+                IEnumerable<int> containCardNumbers = containGroupByNumber
                   .Select(d => d.First().Number);
 
                 var containCardSuitCounts = cardNumberSuitCounts
@@ -331,6 +351,19 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
                 bool isContaintExistInCards = Intersect(cards, containCard).Length == containCard.Length;
                 if (!isContaintExistInCards)
+                    return false;
+
+                int containSuitMaxCount = containCardSuitCounts
+                       .Select(d => d.suitCount)
+                       .Min();
+                int containMaxSuitMinCount = containGroupByNumber
+                       .Select(d => d.Count())
+                       .Max();
+                bool isContainSuitCountAcceptable = true;
+                isContainSuitCountAcceptable =
+                    containSuitMaxCount >= minRequiredSuitCount &&
+                    containMaxSuitMinCount <= maxRequiredSuitCount;
+                if (!isContainSuitCountAcceptable)
                     return false;
 
                 for (int i = 0; i < containCardSuitCounts.Length; i++)

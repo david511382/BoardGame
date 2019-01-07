@@ -8,6 +8,13 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 {
     public partial class BigTwo
     {
+        public static readonly PokerGroupType[] SUPER_GROUP_TYPE_ORDERS =
+         {
+             PokerGroupType.Four_Of_A_Kind,
+             PokerGroupType.Straight_Flush,
+             PokerGroupType.Dragon
+        };
+
         public static int CompareCard(PokerCard a, PokerCard b)
         {
             int compareNumber = CompareNumber(a.Number, b.Number);
@@ -37,6 +44,13 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
                 return -1;
             else
                 return Poker.Compare_Number(a, b);
+        }
+
+        public static int GetCompareValue(int number)
+        {
+            if (number <= BigTwo.MAX_CARD_NUMBER)
+                number += Poker.NUMBER_NUM;
+            return number;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 {
     public partial class PokerCardGroup
     {
-        public static PokerCard[] GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType groupType, PokerCard card, List<PokerCard> cards, PokerCard[] containCard)
+        public static PokerCard[] GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType groupType, List<PokerCard> cards, PokerCard[] containCard, PokerCard card = null)
         {
             int[] constraint = GetConstraintOfType(groupType);
             bool isRightConstraint = CheckConstraint(constraint, cards.ToArray(), containCard);
@@ -21,7 +21,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 case PokerGroupType.Pair:
                 case PokerGroupType.Four_Of_A_Kind:
                 case PokerGroupType.Full_House:
-                    return GetMinCardGroupInConstraintGreaterThenCard(constraint, card, cards, containCard);
+                    return GetMinCardGroupInConstraintGreaterThenCard(constraint, cards, containCard, card);
                 case PokerGroupType.Straight:
                 case PokerGroupType.Straight_Flush:
                 case PokerGroupType.Dragon:
@@ -39,16 +39,16 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         /// <param name="cards"></param>
         /// <param name="containCard">last is last selected</param>
         /// <returns></returns>
-        private static PokerCard[] GetMinCardGroupInConstraintGreaterThenCard(int[] constraint, PokerCard card, List<PokerCard> cards, PokerCard[] containCards = null)
+        private static PokerCard[] GetMinCardGroupInConstraintGreaterThenCard(int[] constraint, List<PokerCard> cards, PokerCard[] containCards = null, PokerCard card = null)
         {
             if (constraint.Length == 0)
                 return null;
             constraint = constraint.OrderByDescending(d => d).ToArray();
 
-            return SelectedCardGroupGreaterCard(constraint, card, cards, containCards);
+            return SelectedCardGroupGreaterCard(constraint, cards, containCards, card);
         }
 
-        private static PokerCard[] SelectedCardGroupGreaterCard(int[] constraint, PokerCard card, List<PokerCard> cards, PokerCard[] containCards = null)
+        private static PokerCard[] SelectedCardGroupGreaterCard(int[] constraint, List<PokerCard> cards, PokerCard[] containCards = null, PokerCard card = null)
         {
             bool[,] cardData = TransStruct(cards.ToArray());
 
@@ -136,7 +136,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     isNotFoundFitNumber = false;
                     break;
                 }
-                
+
                 if (isNotFoundFitNumber)
                     return null;
 
@@ -152,7 +152,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             int[] containSuits,
             bool isMaxConstraint,
             int number,
-             PokerCard card)
+             PokerCard card = null)
         {
             List<PokerCard> resultBuff = new List<PokerCard>();
             int containSuitsCount = containSuits.Length;
