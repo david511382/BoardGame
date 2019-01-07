@@ -19,23 +19,29 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             Max_Number = 1;
         }
 
-        public static PokerGroupType GetMinCardGroupType(PokerCard[] cards)
+        public static PokerGroupType GetMaxCardGroupType(PokerCard[] cards, PokerCard[] containCards = null)
         {
-            return GetMinCardGroupType(cards, null);
+            return GetCardGroupType(cards, containCards, 1).First();
         }
 
         public static PokerGroupType GetMinCardGroupType(PokerCard[] cards, PokerCard[] containCards = null)
         {
-            return GetCardGroupType(cards, containCards, true).First();
+            return GetCardGroupType(cards, containCards, -1).First();
         }
 
-        public static PokerGroupType[] GetCardGroupType(PokerCard[] cards, PokerCard[] containCards= null, bool requireMin = false)
+        public static PokerGroupType[] GetCardGroupType(PokerCard[] cards, PokerCard[] containCards = null, int groupCompare = 0)
         {
             List<PokerGroupType> result = new List<PokerGroupType>();
 
-            IEnumerable< PokerGroupType> groupTypes = Enum.GetValues(typeof(PokerGroupType))
+            IEnumerable<PokerGroupType> groupTypes = Enum.GetValues(typeof(PokerGroupType))
                 .Cast<PokerGroupType>();
-            groupTypes = OrderGroupType(groupTypes);
+            groupTypes = OrderGroupType
+            (
+                groupTypes,
+                (groupCompare == 1) ?
+                    false :
+                    true
+            );
 
             var constraints = groupTypes
                 .Select(d => new { type = d, constraint = GetConstraintOfType(d) });
@@ -50,7 +56,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 if (isConstraintOk && isSpecalConstraintOk)
                 {
                     result.Add(data.type);
-                    if (requireMin)
+                    if (groupCompare != 0)
                         return result.ToArray();
                 }
             }

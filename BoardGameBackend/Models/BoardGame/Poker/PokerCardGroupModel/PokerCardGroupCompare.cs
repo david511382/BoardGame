@@ -19,12 +19,16 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
              PokerGroupType.Dragon
         };
 
-        public static IEnumerable<PokerGroupType> OrderGroupType(IEnumerable<PokerGroupType> groupTypes)
+        public static IEnumerable<PokerGroupType> OrderGroupType(IEnumerable<PokerGroupType> groupTypes,bool asc = true)
         {
             List<PokerGroupType> orderList = new List<PokerGroupType>();
             orderList.AddRange(GROUP_TYPE_ORDERS);
-            return groupTypes
-                .OrderBy(d => orderList.IndexOf(d));
+
+            return (asc) ?
+                groupTypes
+                    .OrderBy(d => orderList.IndexOf(d)) :
+                groupTypes
+                    .OrderByDescending(d => orderList.IndexOf(d));
         }
     }
 }

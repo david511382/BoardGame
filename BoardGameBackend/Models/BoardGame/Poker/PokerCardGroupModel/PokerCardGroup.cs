@@ -18,7 +18,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
         }
 
         public PokerCardGroup(PokerCard[] cards)
-            :this()
+            : this()
         {
             if (cards == null)
                 return;
@@ -26,7 +26,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             PokerGroupType type;
             try
             {
-                type = GetCardGroupType(cards).Last();
+                type = GetMaxCardGroupType(cards);
             }
             catch
             {
