@@ -12,6 +12,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         public const int MIN_PLAYERS = 4;
         public const int MAX_CARD_NUMBER = 2;
 
+        public static readonly PokerCard CLUB_3;
+
         public bool IsFreeType { get; private set; }
         public bool IsRequiredClub3 { get; private set; }
 
@@ -23,6 +25,11 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         public static bool IsCLub3(PokerCard card)
         {
             return (card.Number == 3) && (card.Suit == PokerSuit.Club);
+        }
+
+        static BigTwo()
+        {
+            CLUB_3 = new PokerCard(PokerSuit.Club, 3);
         }
 
         public BigTwo()
