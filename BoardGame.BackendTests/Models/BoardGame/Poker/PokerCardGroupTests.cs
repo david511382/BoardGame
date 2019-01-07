@@ -149,6 +149,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
                  new PokerCard(PokerSuit.Spade,1)
              };
 
+            PokerGroupType[] results;
             PokerGroupType result = PokerCardGroup.GetMinCardGroupType(handCards, selectCards);
             Assert.AreEqual(result, PokerGroupType.Pair);
 
@@ -264,13 +265,44 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
 
 
             selectCards = new PokerCard[]
-          {
+            {
                 new PokerCard(PokerSuit.Heart,1),
                 new PokerCard(PokerSuit.Heart,11),
                 new PokerCard(PokerSuit.Heart,10)
-          };
+            };
             result = PokerCardGroup.GetMinCardGroupType(handCards, selectCards);
             Assert.AreEqual(result, PokerGroupType.Straight_Flush);
+
+
+            handCards = new PokerCard[]
+            {
+                new PokerCard(PokerSuit.Diamond,1),
+                new PokerCard(PokerSuit.Heart,2),
+                new PokerCard(PokerSuit.Spade,2),
+                new PokerCard(PokerSuit.Spade,4),
+                new PokerCard(PokerSuit.Club,5),
+                new PokerCard(PokerSuit.Heart,6),
+                new PokerCard(PokerSuit.Club,8),
+                new PokerCard(PokerSuit.Heart,9),
+                new PokerCard(PokerSuit.Spade,9),
+                new PokerCard(PokerSuit.Diamond,10),
+                new PokerCard(PokerSuit.Club,11),
+                new PokerCard(PokerSuit.Spade,11),
+                new PokerCard(PokerSuit.Club,12),
+            };
+            selectCards = new PokerCard[]
+            {
+                new PokerCard(PokerSuit.Diamond,10)
+            };
+            results = PokerCardGroup.GetCardGroupType(handCards, selectCards);
+            Assert.AreEqual(results.First(), PokerGroupType.Single);
+            Assert.AreEqual(results.Last(), PokerGroupType.Straight);
+            Assert.AreEqual(results.Count(), 2);
+            results = PokerCardGroup.GetCardGroupType(handCards);
+            Assert.AreEqual(results.First(), PokerGroupType.Single);
+            Assert.AreEqual(results[1], PokerGroupType.Pair);
+            Assert.AreEqual(results.Last(), PokerGroupType.Straight);
+            Assert.AreEqual(results.Count(), 3);
         }
 
         private bool CheckEqualPokerCards(PokerCard[] aCards, PokerCard[] bCards)

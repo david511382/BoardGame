@@ -124,11 +124,15 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             {
                 TryAllUntilExcetion(containCard, (selectedCards) =>
                 {
-                    IEnumerable< PokerGroupType>types = PokerCardGroup.GetCardGroupType(cards, selectedCards)
-                        .Intersect(BigTwo.SUPER_GROUP_TYPE_ORDERS);
-                    type = PokerCardGroup.OrderGroupType(types).First();
+                    foreach(PokerGroupType t in BigTwo.SUPER_GROUP_TYPE_ORDERS)
+                    {
+                        result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(t, cards.ToList(), selectedCards, maxCard);
+                        if (result != null)
+                            break;
+                    }
 
-                    result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, cards.ToList(), selectedCards, maxCard);
+                    if (result == null)
+                        throw new Exception();
                 });
             }
 

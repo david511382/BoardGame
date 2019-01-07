@@ -171,7 +171,9 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 .Select(d => new PokerCard(d.Min(c => c.Suit), d.First().Number))
                 .OrderBy(d => d.Number)
                 .ToArray();
-            
+            if (cards.Length != STRAIGHT_LENGHT - 1)
+                return null;
+
             const int START_NUMBER = 10;
             for(int i = 0; i < cards.Length; i++)
             {

@@ -31,9 +31,6 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
         public static PokerGroupType[] GetCardGroupType(PokerCard[] cards, PokerCard[] containCards= null, bool requireMin = false)
         {
-            if (containCards == null)
-                containCards = cards;
-
             List<PokerGroupType> result = new List<PokerGroupType>();
 
             IEnumerable< PokerGroupType> groupTypes = Enum.GetValues(typeof(PokerGroupType))

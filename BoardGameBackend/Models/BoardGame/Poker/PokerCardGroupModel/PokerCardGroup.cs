@@ -26,7 +26,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
             PokerGroupType type;
             try
             {
-                type = GetMinCardGroupType(cards);
+                type = GetCardGroupType(cards).Last();
             }
             catch
             {
