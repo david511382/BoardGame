@@ -75,19 +75,16 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             bool IsRequiredClub3 = Game.IsRequiredClub3;
             if (IsRequiredClub3)
             {
-                bool isContainClub3 = false;
                 for(int i = 0; i < containCard.Count; i++)
                 {
                     if (BigTwo.IsCLub3(containCard[i]))
                     {
-                        isContainClub3 = true;
                         containCard.RemoveAt(i);
                         break;
                     }
                 }
 
-                if (!isContainClub3)
-                    containCard.Add(BigTwo.CLUB_3);
+                containCard.Add(BigTwo.CLUB_3);
             }
 
             PokerCardGroup.Max_Number = BigTwo.MAX_CARD_NUMBER;
