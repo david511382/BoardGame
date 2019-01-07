@@ -27,6 +27,8 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     return null;
             }
 
+            cards = CombineStraightContainCards(cards, containCard);
+
             PokerCard[] result = GetStaright10ToAGreater(cards, containCard, value, isSameSuit);
             if (result != null)
                 return result;
@@ -107,6 +109,9 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
 
         private static PokerCard[] CombineStraightContainCards(PokerCard[] cards, PokerCard[] containCard = null)
         {
+            if (containCard == null)
+                return cards;
+
             var containCardGroup = containCard
                .GroupBy(d => d.Number)
                .Select(d => new { number = d.First().Number, count = d.Count() });
@@ -152,8 +157,6 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                .Where(d => IsNumberIn10ToA(d))
                .ToArray();
             
-            cards = CombineStraightContainCards(cards, containCard);
-
             PokerCard A = GetMinA(cards, containCard, value);
             if (A == null)
                 return null;

@@ -82,6 +82,20 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
 
 
             selectCards = new PokerCard[]{
+                new PokerCard(PokerSuit.Spade,2)
+            };
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Straight, handCards.ToList(), selectCards, currentMax);
+            expectResult = new PokerCard[]{
+                    new PokerCard(PokerSuit.Club,1),
+                    new PokerCard(PokerSuit.Spade,2),
+                    new PokerCard(PokerSuit.Diamond,3),
+                    new PokerCard(PokerSuit.Spade,4),
+                    new PokerCard(PokerSuit.Spade,5)
+              };
+            CheckEqualPokerCards(result, expectResult);
+
+
+            selectCards = new PokerCard[]{
                 new PokerCard(PokerSuit.Diamond,10)
             };
             currentMax = new PokerCard(PokerSuit.Heart, 13);
