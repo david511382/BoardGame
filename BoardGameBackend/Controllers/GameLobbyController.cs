@@ -1,11 +1,14 @@
 ﻿using BoardGame.Backend.Models.BoardGame;
 using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
 using BoardGame.Backend.Models.GameLobby;
+using BoardGame.Data.ApiParameters;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -16,22 +19,62 @@ namespace BoardGame.Backend.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "get,post")]
     public class GameLobbyController : ApiController
     {
-        // GET api/Game/HandCards
+        private const string GAME_ID = ApiParameterNames.GAME_ID;
+        private const string PLAYER_INFO = ApiParameterNames.PLAYER_INFO;
+        private const string CARD_INDEXES = ApiParameterNames.HAND_CARD_INDEXES;
+
+        [Route("RegisterPlayer")]
+        [HttpPost]
+        public PlayerInfoModels Register(FormDataCollection form)
+        {
+           return  new GameLobbyModels().Register().Models;
+        }
+
         [Route("CreateGame")]
         [HttpPost]
-        public PlayerInfo CreateGame()
+        public bool CreateGame(FormDataCollection form)
         {
-            return new GameLobbyModels().CreateGame();
+            try
+            {
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
+
+                return new GameLobbyModels().CreateGame(new PlayerInfo(user.Name, user.Id));
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        // POST api/values
-        public void Post([FromBody]string value)
+        [Route("GetGameRooms")]
+        [HttpPost]
+        public GameRoomModels[] GetGameRooms()
         {
+            return new GameLobbyModels()
+                .GetGameRooms()
+                .Select(d=>d.Models)
+                .ToArray();
         }
 
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
+        [Route("JoinGameRoom")]
+        [HttpPost]
+        public bool JoinGameRoom(FormDataCollection form)
         {
+            try
+            {
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
+
+                string gameIdStr = form.Get(GAME_ID);
+                int gameId = JsonConvert.DeserializeObject<int>(gameIdStr);
+
+                return BoardGameManager.JoinGameRoom(new PlayerInfo(user), gameId);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         // DELETE api/values/5

@@ -14,24 +14,22 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
             Player_Id = 1;
         }
 
-        public string Name { get { return Info.Name; } set { _info.Name = value; } }
+        public string Name { get { return Info.Name; } set { Info.Name = value; } }
         public int Id { get { return Info.Id; } }
-        public PlayerInfo Info { get { return _info; } }
+        public PlayerInfo Info { get; }
 
         protected BoardGame _game;
         protected PlayerResource _resource;
 
-        private PlayerInfo _info;
-
         public GamePlayer()
         {
-            _info = new PlayerInfo($"Player {Id}", Player_Id);
+            Info = new PlayerInfo($"Player {Id}", Player_Id);
             Player_Id++;
         }
 
-        public GamePlayer(GamePlayer gamePlayer)
+        public GamePlayer(PlayerInfo player)
         {
-            _info = new PlayerInfo(gamePlayer.Name, gamePlayer.Id);
+            Info = new PlayerInfo(player.Name, player.Id);
         }
 
         public  GameBoard GetGameTable() 

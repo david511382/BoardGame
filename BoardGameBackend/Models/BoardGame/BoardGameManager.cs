@@ -1,7 +1,7 @@
 ﻿using BoardGame.Backend.Models.BoardGame.BigTwo;
 using BoardGame.Backend.Models.BoardGame.GameFramework;
 using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
-using BoardGame.Backend.Models.BoardGame.PokerGame;
+using BoardGame.Backend.Models.GameLobby;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +12,34 @@ namespace BoardGame.Backend.Models.BoardGame
     public static class BoardGameManager
     {
         private static List<GameFramework.BoardGame> _games;
+        private static List<GameRoom> _gameRooms;
         private static List<GamePlayer> _gamePlayers;
+
+        private static int _newGameRoomId;
 
         static BoardGameManager()
         {
+            _gameRooms = new List<GameRoom>();
             _games = new List<GameFramework.BoardGame>();
             _gamePlayers = new List<GamePlayer>();
+            _newGameRoomId = 0;
 
-            CreateGame();
+            //CreateGame();
 
-            JoinGame();
-            JoinGame();
-            JoinGame();
+            //JoinGame();
+            //JoinGame();
+            //JoinGame();
 
-            StartGame();
+            //StartGame();
+        }
+
+        public static PlayerInfo Register()
+        {
+            PlayerInfo player = new GamePlayer().Info;
+            BigTwoPlayer gamePlayer = new BigTwoPlayer(player);
+            _gamePlayers.Add(gamePlayer);
+
+            return player;
         }
 
         public static BigTwoPlayer GetPlayerById(int playerId)
@@ -54,16 +68,31 @@ namespace BoardGame.Backend.Models.BoardGame
             }
             catch
             {
-                throw new Exception("no player");
+                throw new Exception("not in room");
             }
         }
 
-        public static PlayerInfo CreateGame()
+        public static bool CreateGame(PlayerInfo host)
         {
+            try
+            {
+                GetGameBoardByPlayerId(host.Id);
+                return false;
+            }
+            catch
+            { }
+
             BigTwo.BigTwo bigTwo = new BigTwo.BigTwo();
             _games.Add(bigTwo);
 
-            return JoinGame();
+            _gameRooms.Add(NewGameRoom(host));
+
+            return true;
+        }
+
+        public static GameRoom[] GetGameRooms()
+        {
+            return _gameRooms.ToArray();
         }
 
         public static GameFramework.BoardGame GetGameById(int gameId)
@@ -78,12 +107,16 @@ namespace BoardGame.Backend.Models.BoardGame
             }
         }
 
-        public static PlayerInfo JoinGame()
+        public static bool JoinGameRoom(PlayerInfo player, int gameId)
         {
-            BigTwoPlayer player = new BigTwoPlayer();
-            _gamePlayers.Add(player);
-            player.JoinGame(_games.Last());
-            return player.Info;
+            GameRoom gameRoom = _gameRooms.Last();
+            if (!gameRoom.AddPlayer(player))
+                return false;
+
+            BigTwoPlayer gamePlayer = GetPlayerById(player.Id);
+            gamePlayer.JoinGame(_games.Last());
+
+            return true;
         }
 
         public static bool StartGame()
@@ -94,6 +127,11 @@ namespace BoardGame.Backend.Models.BoardGame
                 return true;
             }
             catch { return false; }
+        }
+
+        private static GameRoom NewGameRoom(PlayerInfo host)
+        {
+            return new GameRoom(_newGameRoomId++, host, BigTwo.BigTwo.MAX_PLAYERS, BigTwo.BigTwo.MIN_PLAYERS);
         }
     }
 }

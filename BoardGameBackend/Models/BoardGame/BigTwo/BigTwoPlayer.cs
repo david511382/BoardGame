@@ -21,8 +21,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             _resource = new PokerResource(Id);
         }
 
-        public BigTwoPlayer(GamePlayer gamePlayer)
-            : base(gamePlayer)
+        public BigTwoPlayer(PlayerInfo player)
+            : base(player)
         {
             _resource = new PokerResource(Id);
         }

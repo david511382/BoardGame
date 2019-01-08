@@ -46,10 +46,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BoardGame.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BoardGameCommon.1.0.5\lib\BoardGame.Data.dll</HintPath>
+      <HintPath>..\packages\BoardGameCommon.1.0.6\lib\BoardGame.Data.dll</HintPath>
     </Reference>
     <Reference Include="BoardGame.Interface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BoardGameCommon.1.0.5\lib\BoardGame.Interface.dll</HintPath>
+      <HintPath>..\packages\BoardGameCommon.1.0.6\lib\BoardGame.Interface.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -258,6 +258,7 @@
     <Compile Include="Models\BoardGame\Poker\PokerEnum.cs" />
     <Compile Include="Models\BoardGame\Poker\PokerResource.cs" />
     <Compile Include="Models\GameLobby\GameLobbyModels.cs" />
+    <Compile Include="Models\GameLobby\GameRoom.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
