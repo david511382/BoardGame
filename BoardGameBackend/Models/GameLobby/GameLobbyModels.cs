@@ -22,7 +22,11 @@ namespace BoardGame.Backend.Models.GameLobby
 
         public GameRoom[] GetGameRooms()
         {
-            return BoardGameManager.GetGameRooms();
+            GameRoom[] gameRooms = BoardGameManager.GetGameRooms();
+            if (gameRooms.Length == 0)
+                return null;
+
+            return gameRooms;
         }
 
         public bool JoinGameRoom(PlayerInfo player, int gameId)

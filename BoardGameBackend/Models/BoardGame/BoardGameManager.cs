@@ -76,12 +76,16 @@ namespace BoardGame.Backend.Models.BoardGame
         {
             try
             {
-                GetGameBoardByPlayerId(host.Id);
-                return false;
+                host = GetPlayerById(host.Id).Info;
             }
-            catch
-            { }
+            catch(Exception e)
+            {
+                throw e;
+            }
 
+            if (host.IsInRoom)
+                return false;
+            
             BigTwo.BigTwo bigTwo = new BigTwo.BigTwo();
             _games.Add(bigTwo);
 
@@ -107,11 +111,32 @@ namespace BoardGame.Backend.Models.BoardGame
             }
         }
 
-        public static bool JoinGameRoom(PlayerInfo player, int gameId)
+        public static GameRoom GetRoomById(int roomId)
         {
-            GameRoom gameRoom = _gameRooms.Last();
-            if (!gameRoom.AddPlayer(player))
-                return false;
+            try
+            {
+                return _gameRooms
+                    .Where(d => d.RoomId == roomId)
+                    .First();
+            }
+            catch
+            {
+                throw new Exception("no room");
+            }
+        }
+
+        public static bool JoinGameRoom(PlayerInfo player, int roomId)
+        {
+            try
+            {
+                GameRoom gameRoom = GetRoomById(roomId);
+                if (!gameRoom.AddPlayer(player))
+                    return false;
+            }
+            catch
+            {
+                throw new Exception("no room");
+            }
 
             BigTwoPlayer gamePlayer = GetPlayerById(player.Id);
             gamePlayer.JoinGame(_games.Last());

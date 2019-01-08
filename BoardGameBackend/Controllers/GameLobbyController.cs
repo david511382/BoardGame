@@ -27,7 +27,7 @@ namespace BoardGame.Backend.Controllers
         [HttpPost]
         public PlayerInfoModels Register(FormDataCollection form)
         {
-           return  new GameLobbyModels().Register().Models;
+            return new GameLobbyModels().Register().Models;
         }
 
         [Route("CreateGame")]
@@ -51,9 +51,13 @@ namespace BoardGame.Backend.Controllers
         [HttpPost]
         public GameRoomModels[] GetGameRooms()
         {
-            return new GameLobbyModels()
-                .GetGameRooms()
-                .Select(d=>d.Models)
+            GameRoom[] gameRooms = new GameLobbyModels()
+                .GetGameRooms();
+            if (gameRooms == null || gameRooms.Length == 0)
+                return null;
+
+            return gameRooms
+                .Select(d => d.Models)
                 .ToArray();
         }
 

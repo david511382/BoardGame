@@ -23,7 +23,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
 
         public GamePlayer()
         {
-            Info = new PlayerInfo($"Player {Id}", Player_Id);
+            Info = new PlayerInfo($"Player{Player_Id}", Player_Id);
             Player_Id++;
         }
 
