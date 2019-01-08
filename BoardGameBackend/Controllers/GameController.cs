@@ -19,9 +19,9 @@ namespace BoardGame.Backend.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "get,post")]
     public class GameController : ApiController
     {
-        private const string GAME_ID= "GameId";
-        private const string PLAYER_INFO = "PlayerInfo";
-        private const string CARD_INDEXES = "Indexes";
+        private const string GAME_ID= Data.ApiParameters.ApiParameterNames.GAME_ID;
+        private const string PLAYER_INFO = Data.ApiParameters.ApiParameterNames.PLAYER_INFO;
+        private const string CARD_INDEXES = Data.ApiParameters.ApiParameterNames.HAND_CARD_INDEXES;
 
         [Route("HandCards")]
         [HttpPost]
