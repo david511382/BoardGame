@@ -9,6 +9,9 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
     {
         public void StartGame()
         {
+            if (!IsGameOver())
+                throw new Exception("game playing");
+
             if (_playerResources.Count < MIN_GAME_PLAYERS)
                 throw new Exception("not enough players");
             _currentTurn = 0;
@@ -18,6 +21,9 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
 
         public void Join(int playerId)
         {
+            if (!IsGameOver())
+                throw new Exception("game playing");
+
             if (_playerResources.Count >= MAX_GAME_PLAYERS)
                 throw new Exception("game full");
 
@@ -26,9 +32,16 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
 
         protected abstract void AddPlayer(int playerId);
 
-        public void Surrender()
+        public virtual void Surrender()
         {
-            throw new NotImplementedException();
+            if (IsGameOver())
+                throw new Exception("no game");
+
+        }
+
+        public GameStatus GetGameStatus()
+        {
+            return _gameStaus;
         }
 
         public bool IsTurn(int id)

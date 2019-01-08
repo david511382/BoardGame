@@ -19,7 +19,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             //next turn
             NextTurn();
 
-            if (_lastPlayTurnId == _currentTurn)
+            if (_lastPlayTurnId == currentTurn)
                 IsFreeType = true;
 
             return true;
@@ -60,7 +60,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             //remove hand cards
             CurrentPlayerResource.RemoveHandCards(cardGroup.GetCards());
 
-            _lastPlayTurnId = _currentTurn;
+            _lastPlayTurnId = currentTurn;
 
             //next turn
             NextTurn();

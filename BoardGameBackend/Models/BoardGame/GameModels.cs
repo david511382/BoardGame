@@ -1,4 +1,5 @@
 ﻿using BoardGame.Backend.Models.BoardGame.BigTwo;
+using BoardGame.Backend.Models.BoardGame.GameFramework;
 using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
@@ -40,18 +41,18 @@ namespace BoardGame.Backend.Models.BoardGame
             }
         }
 
-        public bool CheckTurn(int playerId)
+        public GameStatus GetGameStatus(int gameId)
         {
-            BigTwoPlayer player;
+            GameFramework.BoardGame game;
             try
             {
-                player = BoardGameManager.GetPlayerById(playerId);
+                game = BoardGameManager.GetGameById(gameId);
 
-                return player.IsOnTurn();
+                return game.GetGameStatus();
             }
-            catch
+            catch(Exception e)
             {
-                return false;
+                throw e;
             }
         }
 

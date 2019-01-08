@@ -38,7 +38,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
         public bool IsOnTurn()
         {
-            return _game.IsTurn(Id);
+            return _game.GetGameStatus().CurrentPlayerId == Id;
         }
 
         /// <summary>

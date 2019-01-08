@@ -1,4 +1,5 @@
 ﻿using BoardGame.Backend.Models.BoardGame;
+using BoardGame.Backend.Models.BoardGame.GameFramework;
 using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
 using BoardGame.Backend.Models.BoardGame.PokerGame;
 using Newtonsoft.Json;
@@ -18,6 +19,7 @@ namespace BoardGame.Backend.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "get,post")]
     public class GameController : ApiController
     {
+        private const string GAME_ID= "GameId";
         private const string PLAYER_INFO = "PlayerInfo";
         private const string CARD_INDEXES = "Indexes";
 
@@ -65,18 +67,18 @@ namespace BoardGame.Backend.Controllers
             catch { return false; }
         }
 
-        [Route("CheckTurn")]
+        [Route("GetGameStatus")]
         [HttpPost]
-        public bool CheckTurn(FormDataCollection form)
+        public GameStatus GetGameStatus(FormDataCollection form)
         {
             try
             {
-                string playerIdStr = form.Get(PLAYER_INFO);
-                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+                string gameIdStr = form.Get(GAME_ID);
+                int gameId= JsonConvert.DeserializeObject<int>(gameIdStr);
 
-                return new GameModels().CheckTurn(user.Id);
+                return new GameModels().GetGameStatus(gameId);
             }
-            catch { return false; }
+            catch { return new GameStatus();}
         }
 
         [Route("GetTable")]

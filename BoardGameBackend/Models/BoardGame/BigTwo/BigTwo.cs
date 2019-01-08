@@ -19,7 +19,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
         private PokerResource CurrentPlayerResource
         {
-            get { return GetResourceAt(_currentTurn); }
+            get { return GetResourceAt(currentTurn); }
         }
 
         public static bool IsCLub3(PokerCard card)
@@ -48,10 +48,10 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             {
                 if (base.GetResourceAt(i).GetHandCards().Where(d=>d.Suit == club3.Suit && d.Number == club3.Number).Count()>0)
                 {
-                    _currentTurn = i;
-                    _lastPlayTurnId = ((_currentTurn == 0) ?
+                    currentTurn = i;
+                    _lastPlayTurnId = ((currentTurn == 0) ?
                         _playerResources.Count :
-                        _currentTurn)
+                        currentTurn)
                         - 1;
                     break;
                 }
@@ -60,8 +60,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
         private void NextTurn()
         {
-            if (++_currentTurn >= _playerResources.Count)
-                _currentTurn = 0;
+            if (++currentTurn >= _playerResources.Count)
+                currentTurn = 0;
         }
     }
 }

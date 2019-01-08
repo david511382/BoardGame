@@ -238,6 +238,7 @@
     <Compile Include="Models\BoardGame\GameFramework\GameObj.cs" />
     <Compile Include="Models\BoardGame\GameFramework\GamePlayer\GamePlayer.cs" />
     <Compile Include="Models\BoardGame\GameFramework\GamePlayer\PlayerInfo.cs" />
+    <Compile Include="Models\BoardGame\GameFramework\GameStateModels.cs" />
     <Compile Include="Models\BoardGame\GameFramework\PlayerResource.cs" />
     <Compile Include="Models\BoardGame\GameModels.cs" />
     <Compile Include="Models\BoardGame\PokerGame\PokerGame.cs" />

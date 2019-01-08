@@ -9,9 +9,21 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
     {
         protected readonly int MAX_GAME_PLAYERS = 4;
         protected readonly int MIN_GAME_PLAYERS = 2;
+
+        protected int currentTurn
+        {
+            get { return _currentTurn; }
+            set
+            {
+                _currentTurn = value;
+                _gameStaus.CurrentPlayerId = GetResourceAt(_currentTurn).PlayerId;
+            }
+        }
+
         protected List<PlayerResource> _playerResources;
         protected GameBoard _table;
-        protected int _currentTurn;
+        private int _currentTurn;
+        protected GameStatus _gameStaus;
 
         protected int playerNum
         {
@@ -25,6 +37,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
 
             _playerResources = new List<PlayerResource>();
             _table = new GameBoard();
+            _gameStaus = new GameStatus(GameStatus.GameState.Game_Over);
         }
 
         public GameBoard GetTable()
@@ -56,5 +69,10 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
         }
 
         protected abstract void InitGame();
+
+        protected bool IsGameOver()
+        {
+            return _gameStaus.State == GameStatus.GameState.Game_Over;
+        }
     }
 }

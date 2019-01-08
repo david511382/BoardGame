@@ -66,6 +66,18 @@ namespace BoardGame.Backend.Models.BoardGame
             return JoinGame();
         }
 
+        public static GameFramework.BoardGame GetGameById(int gameId)
+        {
+            try
+            {
+                return _games[gameId];
+            }
+            catch
+            {
+                throw new Exception("no game");
+            }
+        }
+
         public static PlayerInfo JoinGame()
         {
             BigTwoPlayer player = new BigTwoPlayer();
