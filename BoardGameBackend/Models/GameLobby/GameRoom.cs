@@ -13,7 +13,7 @@ namespace BoardGame.Backend.Models.GameLobby
         public string HostName { get { return Players[0].Name; } }
         public int MaxPlayerCount { get; set; }
         public int MinPlayerCount { get; set; }
-        public int CurrentPlayerCount { get { return Players.Count + 1; } }
+        public int CurrentPlayerCount { get { return Players.Count; } }
 
         public GameRoomModels Models { get { return new GameRoomModels(RoomId, Players[0].Models, MaxPlayerCount, MinPlayerCount); } }
 
