@@ -94,6 +94,38 @@ namespace BoardGame.Backend.Models.BoardGame
             return true;
         }
 
+        public static bool JoinGameRoom(PlayerInfo player, int roomId)
+        {
+            try
+            {
+                GameRoom gameRoom = GetRoomById(roomId);
+                if (!gameRoom.AddPlayer(player))
+                    return false;
+            }
+            catch
+            {
+                throw new Exception("no room");
+            }
+
+            BigTwoPlayer gamePlayer;
+            try
+            {
+                gamePlayer = GetPlayerById(player.Id);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            player = gamePlayer.Info;
+            if (player.IsInRoom)
+                return false;
+
+            gamePlayer.JoinGame(_games.Last());
+
+            return true;
+        }
+
         public static GameRoom[] GetGameRooms()
         {
             return _gameRooms.ToArray();
@@ -123,25 +155,6 @@ namespace BoardGame.Backend.Models.BoardGame
             {
                 throw new Exception("no room");
             }
-        }
-
-        public static bool JoinGameRoom(PlayerInfo player, int roomId)
-        {
-            try
-            {
-                GameRoom gameRoom = GetRoomById(roomId);
-                if (!gameRoom.AddPlayer(player))
-                    return false;
-            }
-            catch
-            {
-                throw new Exception("no room");
-            }
-
-            BigTwoPlayer gamePlayer = GetPlayerById(player.Id);
-            gamePlayer.JoinGame(_games.Last());
-
-            return true;
         }
 
         public static bool StartGame()
