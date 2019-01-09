@@ -15,7 +15,7 @@ namespace BoardGame.Backend.Models.GameLobby
             return BoardGameManager.Register();
         }
 
-        public bool CreateGame(PlayerInfo host)
+        public PlayerInfo CreateGame(PlayerInfo host)
         {
             return BoardGameManager.CreateGame(host);
         }
@@ -29,7 +29,7 @@ namespace BoardGame.Backend.Models.GameLobby
             return gameRooms;
         }
 
-        public bool JoinGameRoom(PlayerInfo player, int gameId)
+        public PlayerInfo JoinGameRoom(PlayerInfo player, int gameId)
         {
             return BoardGameManager.JoinGameRoom(player, gameId);
         }

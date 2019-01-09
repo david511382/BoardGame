@@ -12,9 +12,9 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
         public int Id;
         public bool IsInRoom { get { return RoomId != -1; } }
         public int RoomId { get; private set; }
-        public PlayerInfoModels Models { get { return new PlayerInfoModels(Name, Id); } }
+        public PlayerInfoModels Models { get { return new PlayerInfoModels(Name, Id, RoomId); } }
 
-        public PlayerInfo (string name,int id)
+        public PlayerInfo(string name, int id)
         {
             this.Name = name;
             this.Id = id;
@@ -22,7 +22,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
         }
 
         public PlayerInfo(PlayerInfoModels models)
-            :this(models.Name,models.Id)
+            : this(models.Name, models.Id)
         {
         }
 

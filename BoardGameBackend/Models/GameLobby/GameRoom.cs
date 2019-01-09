@@ -15,7 +15,15 @@ namespace BoardGame.Backend.Models.GameLobby
         public int MinPlayerCount { get; set; }
         public int CurrentPlayerCount { get { return Players.Count; } }
 
-        public GameRoomModels Models { get { return new GameRoomModels(RoomId, Players[0].Models, MaxPlayerCount, MinPlayerCount); } }
+        public GameRoomModels Models { get
+        {
+            return new GameRoomModels(
+                RoomId, 
+                Players.Select(d=>d.Models).ToArray(), 
+                MaxPlayerCount, 
+                MinPlayerCount);
+            }
+        }
 
         public List<PlayerInfo> Players { get; }
 

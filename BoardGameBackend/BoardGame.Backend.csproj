@@ -46,10 +46,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BoardGame.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BoardGameCommon.1.0.6\lib\BoardGame.Data.dll</HintPath>
+      <HintPath>..\packages\BoardGameCommon.1.0.8\lib\BoardGame.Data.dll</HintPath>
     </Reference>
     <Reference Include="BoardGame.Interface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BoardGameCommon.1.0.6\lib\BoardGame.Interface.dll</HintPath>
+      <HintPath>..\packages\BoardGameCommon.1.0.8\lib\BoardGame.Interface.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />

@@ -15,7 +15,10 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
             get { return _currentTurn; }
             set
             {
-                _currentTurn = value;
+                _currentTurn =(value >= _playerResources.Count) ?
+                    0 :
+                    value;
+
                 _gameStaus.CurrentPlayerId = GetResourceAt(_currentTurn).PlayerId;
             }
         }

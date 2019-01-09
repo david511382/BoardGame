@@ -32,18 +32,18 @@ namespace BoardGame.Backend.Controllers
 
         [Route("CreateGame")]
         [HttpPost]
-        public bool CreateGame(FormDataCollection form)
+        public PlayerInfoModels CreateGame(FormDataCollection form)
         {
             try
             {
                 string playerIdStr = form.Get(PLAYER_INFO);
                 PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
 
-                return new GameLobbyModels().CreateGame(new PlayerInfo(user.Name, user.Id));
+                return new GameLobbyModels().CreateGame(new PlayerInfo(user.Name, user.Id)).Models;
             }
             catch
             {
-                return false;
+                return new PlayerInfoModels();
             }
         }
 
@@ -63,7 +63,7 @@ namespace BoardGame.Backend.Controllers
 
         [Route("JoinGameRoom")]
         [HttpPost]
-        public bool JoinGameRoom(FormDataCollection form)
+        public PlayerInfoModels JoinGameRoom(FormDataCollection form)
         {
             try
             {
@@ -73,11 +73,11 @@ namespace BoardGame.Backend.Controllers
                 string gameIdStr = form.Get(GAME_ID);
                 int gameId = JsonConvert.DeserializeObject<int>(gameIdStr);
 
-                return BoardGameManager.JoinGameRoom(new PlayerInfo(user), gameId);
+                return BoardGameManager.JoinGameRoom(new PlayerInfo(user), gameId).Models;
             }
             catch
             {
-                return false;
+                return new PlayerInfoModels();
             }
         }
 

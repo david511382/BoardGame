@@ -2,6 +2,7 @@
 using BoardGame.Backend.Models.BoardGame.GameFramework;
 using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
 using BoardGame.Backend.Models.BoardGame.PokerGame;
+using BoardGame.Data.ApiParameters;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace BoardGame.Backend.Controllers
         public PokerCard[] GetCards(FormDataCollection form)
         {
             string playerIdStr = form.Get(PLAYER_INFO);
-            PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+            PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
             return new GameModels().GetCards(user.Id);
         }
 
@@ -40,7 +41,7 @@ namespace BoardGame.Backend.Controllers
             try
             {
                 string playerIdStr = form.Get(PLAYER_INFO);
-                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+                PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
 
                 string indexesStr = form.Get(CARD_INDEXES);
                 int[] selectedIndex = JsonConvert.DeserializeObject<int[]>(indexesStr);
@@ -57,7 +58,7 @@ namespace BoardGame.Backend.Controllers
             try
             {
                 string playerIdStr = form.Get(PLAYER_INFO);
-                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+                PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
 
                 string indexesStr = form.Get(CARD_INDEXES);
                 int[] selectedIndex = JsonConvert.DeserializeObject<int[]>(indexesStr);
@@ -88,7 +89,7 @@ namespace BoardGame.Backend.Controllers
             try
             {
                 string playerIdStr = form.Get(PLAYER_INFO);
-                PlayerInfo user = JsonConvert.DeserializeObject<PlayerInfo>(playerIdStr);
+                PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
 
                 return new GameModels().GetTable(user.Id);
             }

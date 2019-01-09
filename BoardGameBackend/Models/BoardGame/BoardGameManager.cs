@@ -24,12 +24,10 @@ namespace BoardGame.Backend.Models.BoardGame
             _gamePlayers = new List<GamePlayer>();
             _newGameRoomId = 0;
 
-            //CreateGame();
-
-            //JoinGame();
-            //JoinGame();
-            //JoinGame();
-
+            //CreateGame(Register());
+            //JoinGameRoom(Register(),0);
+            //JoinGameRoom(Register(),0);
+            //JoinGameRoom(Register(), 0);
             //StartGame();
         }
 
@@ -72,11 +70,13 @@ namespace BoardGame.Backend.Models.BoardGame
             }
         }
 
-        public static bool CreateGame(PlayerInfo host)
+        public static PlayerInfo CreateGame(PlayerInfo host)
         {
+            GamePlayer gamePlayer;
             try
             {
-                host = GetPlayerById(host.Id).Info;
+                gamePlayer = GetPlayerById(host.Id);
+                host = gamePlayer.Info;
             }
             catch(Exception e)
             {
@@ -84,23 +84,26 @@ namespace BoardGame.Backend.Models.BoardGame
             }
 
             if (host.IsInRoom)
-                return false;
+                return host;
             
             BigTwo.BigTwo bigTwo = new BigTwo.BigTwo();
             _games.Add(bigTwo);
 
             _gameRooms.Add(NewGameRoom(host));
 
-            return true;
+            gamePlayer.JoinGame(_games.Last());
+
+            return host;
         }
 
-        public static bool JoinGameRoom(PlayerInfo player, int roomId)
+        public static PlayerInfo JoinGameRoom(PlayerInfo player, int roomId)
         {
+            GameRoom gameRoom;
             try
             {
-                GameRoom gameRoom = GetRoomById(roomId);
+                gameRoom = GetRoomById(roomId);
                 if (!gameRoom.AddPlayer(player))
-                    return false;
+                    return player;
             }
             catch
             {
@@ -119,11 +122,13 @@ namespace BoardGame.Backend.Models.BoardGame
 
             player = gamePlayer.Info;
             if (player.IsInRoom)
-                return false;
+                return player;
 
             gamePlayer.JoinGame(_games.Last());
 
-            return true;
+            player.JoinRoom(gameRoom.RoomId);
+
+            return player;
         }
 
         public static GameRoom[] GetGameRooms()

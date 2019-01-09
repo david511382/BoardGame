@@ -60,8 +60,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
         private void NextTurn()
         {
-            if (++currentTurn >= _playerResources.Count)
-                currentTurn = 0;
+            ++currentTurn;
         }
     }
 }
