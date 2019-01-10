@@ -30,6 +30,20 @@ namespace BoardGame.Backend.Controllers
             return new GameLobbyModels().Register().Models;
         }
 
+        [Route("GetPlayerOrRegister")]
+        [HttpPost]
+        public PlayerInfoModels GetPlayerOrRegister(FormDataCollection form)
+        {
+            string playerIdStr = form.Get(PLAYER_INFO);
+            PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
+
+            PlayerInfo player = new GameLobbyModels().GetPlayer(new PlayerInfo(user));
+            if (player == null)
+                return Register(form);
+
+            return player.Models;
+        }
+
         [Route("CreateGame")]
         [HttpPost]
         public PlayerInfoModels CreateGame(FormDataCollection form)

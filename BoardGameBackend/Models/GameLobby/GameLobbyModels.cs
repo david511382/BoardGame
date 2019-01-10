@@ -15,6 +15,18 @@ namespace BoardGame.Backend.Models.GameLobby
             return BoardGameManager.Register();
         }
 
+        public PlayerInfo GetPlayer(PlayerInfo user)
+        {
+            try
+            {
+                return BoardGameManager.GetPlayerById(user.Id);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public PlayerInfo CreateGame(PlayerInfo host)
         {
             return BoardGameManager.CreateGame(host);

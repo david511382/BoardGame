@@ -54,7 +54,7 @@ namespace BoardGame.Backend.Models.BoardGame
             try
             {
                 int roomId = GetPlayerById(playerId).RoomId;
-                return  (BigTwoPlayer) GetRoomById(roomId).GetGamePlayer(playerId);
+                return (BigTwoPlayer)GetRoomById(roomId).GetGamePlayer(playerId);
             }
             catch
             {
@@ -136,7 +136,7 @@ namespace BoardGame.Backend.Models.BoardGame
             {
                 throw e;
             }
-  
+
             if (!player.IsInRoom)
                 return player;
 
