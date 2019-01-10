@@ -16,7 +16,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
 
         public string Name { get { return Info.Name; } set { Info.Name = value; } }
         public int Id { get { return Info.Id; } }
-        public PlayerInfo Info { get; }
+        public PlayerInfo Info { get; private set; }
 
         protected BoardGame _game;
         protected PlayerResource _resource;
@@ -25,11 +25,13 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
         {
             Info = new PlayerInfo($"Player{Player_Id}", Player_Id);
             Player_Id++;
+            _game = null;
         }
 
         public GamePlayer(PlayerInfo player)
         {
             Info = new PlayerInfo(player.Name, player.Id);
+            _game = null;
         }
 
         public  GameBoard GetGameTable() 
@@ -37,10 +39,19 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
             return _game.GetTable();
         }
 
-        public void JoinGame(BoardGame game)
+        public void JoinGame(ref BoardGame game)
         {
-            game.Join(Id);
             _game = game;
+            game.Join(Id);
+        }
+
+        public void QuitGame()
+        {
+            if (_game != null)
+            {
+                _game.Quit(Id);
+                _game = null;
+            }
         }
     }
 }

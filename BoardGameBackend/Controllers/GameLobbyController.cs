@@ -39,7 +39,7 @@ namespace BoardGame.Backend.Controllers
                 string playerIdStr = form.Get(PLAYER_INFO);
                 PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
 
-                return new GameLobbyModels().CreateGame(new PlayerInfo(user.Name, user.Id)).Models;
+                return new GameLobbyModels().CreateGame(new PlayerInfo(user)).Models;
             }
             catch
             {
@@ -73,7 +73,7 @@ namespace BoardGame.Backend.Controllers
                 string gameIdStr = form.Get(GAME_ID);
                 int gameId = JsonConvert.DeserializeObject<int>(gameIdStr);
 
-                return BoardGameManager.JoinGameRoom(new PlayerInfo(user), gameId).Models;
+                return new GameLobbyModels().JoinGameRoom(new PlayerInfo(user), gameId).Models;
             }
             catch
             {
@@ -81,9 +81,21 @@ namespace BoardGame.Backend.Controllers
             }
         }
 
-        // DELETE api/values/5
-        public void Delete(int id)
+        [Route("LeaveGameRoom")]
+        [HttpPost]
+        public PlayerInfoModels LeaveGameRoom(FormDataCollection form)
         {
+            try
+            {
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
+
+                return new GameLobbyModels().LeaveGameRoom(new PlayerInfo(user)).Models;
+            }
+            catch
+            {
+                return new PlayerInfoModels();
+            }
         }
     }
 }

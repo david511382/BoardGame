@@ -30,6 +30,19 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
             AddPlayer(playerId);
         }
 
+        public void Quit(int playerId)
+        {
+            if (!IsGameOver())
+                throw new Exception("game playing");
+
+
+            PlayerResource target = _playerResources
+                .Where(d => d.PlayerId == playerId)
+                .First();
+
+            _playerResources.Remove(target);
+        }
+
         protected abstract void AddPlayer(int playerId);
 
         public virtual void Surrender()

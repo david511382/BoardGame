@@ -14,7 +14,7 @@ namespace BoardGame.Backend.Models.BoardGame
         {
             try
             {
-                return BoardGameManager.GetPlayerById(playerId).GetHandCards();
+                return BoardGameManager.GetGamePlayerById(playerId).GetHandCards();
             }
             catch
             {
@@ -27,7 +27,7 @@ namespace BoardGame.Backend.Models.BoardGame
             BigTwoPlayer player;
             try
             {
-                player = BoardGameManager.GetPlayerById(playerId);
+                player = BoardGameManager.GetGamePlayerById(playerId);
 
                 PokerCard[] pokerCards;
                 pokerCards = player.GetCardGroup(selectedIndex);
@@ -41,12 +41,12 @@ namespace BoardGame.Backend.Models.BoardGame
             }
         }
 
-        public GameStatus GetGameStatus(int gameId)
+        public GameStatus GetGameStatus(int roomId)
         {
             GameFramework.BoardGame game;
             try
             {
-                game = BoardGameManager.GetGameById(gameId);
+                game = BoardGameManager.GetGameById(roomId);
 
                 return game.GetGameStatus();
             }
@@ -76,7 +76,7 @@ namespace BoardGame.Backend.Models.BoardGame
             BigTwoPlayer player;
             try
             {
-                player = BoardGameManager.GetPlayerById(playerId);
+                player = BoardGameManager.GetGamePlayerById(playerId);
 
                 return player.PlayCard(indexs);
             }

@@ -11,17 +11,15 @@ namespace BoardGame.Backend.Models.BoardGame
 {
     public static class BoardGameManager
     {
-        private static List<GameFramework.BoardGame> _games;
         private static List<GameRoom> _gameRooms;
-        private static List<GamePlayer> _gamePlayers;
+        private static Dictionary<int, PlayerInfo> _players;
 
         private static int _newGameRoomId;
 
         static BoardGameManager()
         {
             _gameRooms = new List<GameRoom>();
-            _games = new List<GameFramework.BoardGame>();
-            _gamePlayers = new List<GamePlayer>();
+            _players = new Dictionary<int, PlayerInfo>();
             _newGameRoomId = 0;
 
             //CreateGame(Register());
@@ -34,19 +32,29 @@ namespace BoardGame.Backend.Models.BoardGame
         public static PlayerInfo Register()
         {
             PlayerInfo player = new GamePlayer().Info;
-            BigTwoPlayer gamePlayer = new BigTwoPlayer(player);
-            _gamePlayers.Add(gamePlayer);
+            _players.Add(player.Id, player);
 
             return player;
         }
 
-        public static BigTwoPlayer GetPlayerById(int playerId)
+        public static PlayerInfo GetPlayerById(int playerId)
         {
             try
             {
-                return (BigTwoPlayer)_gamePlayers
-                    .Where(d => d.Id == playerId)
-                    .First();
+                return _players[playerId];
+            }
+            catch
+            {
+                throw new Exception("no player");
+            }
+        }
+
+        public static BigTwoPlayer GetGamePlayerById(int playerId)
+        {
+            try
+            {
+                int roomId = GetPlayerById(playerId).RoomId;
+                return  (BigTwoPlayer) GetRoomById(roomId).GetGamePlayer(playerId);
             }
             catch
             {
@@ -58,9 +66,9 @@ namespace BoardGame.Backend.Models.BoardGame
         {
             try
             {
-                 GamePlayer gp = _gamePlayers
-                    .Where(d => d.Id == playerId)
-                    .First();
+                PlayerInfo player = GetPlayerById(playerId);
+                GameRoom gameRoom = GetRoomById(player.RoomId);
+                GamePlayer gp = gameRoom.GetGamePlayer(player.Id);
 
                 return gp.GetGameTable();
             }
@@ -72,37 +80,42 @@ namespace BoardGame.Backend.Models.BoardGame
 
         public static PlayerInfo CreateGame(PlayerInfo host)
         {
-            GamePlayer gamePlayer;
+            PlayerInfo player;
             try
             {
-                gamePlayer = GetPlayerById(host.Id);
-                host = gamePlayer.Info;
+                player = GetPlayerById(host.Id);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
 
-            if (host.IsInRoom)
-                return host;
-            
-            BigTwo.BigTwo bigTwo = new BigTwo.BigTwo();
-            _games.Add(bigTwo);
+            if (player.IsInRoom)
+                return player;
 
-            _gameRooms.Add(NewGameRoom(host));
+            _gameRooms.Add(NewGameRoom(ref player));
 
-            gamePlayer.JoinGame(_games.Last());
-
-            return host;
+            return player;
         }
 
         public static PlayerInfo JoinGameRoom(PlayerInfo player, int roomId)
         {
+            try
+            {
+                player = GetPlayerById(player.Id);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            if (player.IsInRoom)
+                return player;
+
             GameRoom gameRoom;
             try
             {
                 gameRoom = GetRoomById(roomId);
-                if (!gameRoom.AddPlayer(player))
+                if (!gameRoom.AddPlayer(ref player))
                     return player;
             }
             catch
@@ -110,25 +123,36 @@ namespace BoardGame.Backend.Models.BoardGame
                 throw new Exception("no room");
             }
 
-            BigTwoPlayer gamePlayer;
+            return player;
+        }
+
+        public static PlayerInfo LeaveGameRoom(PlayerInfo player)
+        {
             try
             {
-                gamePlayer = GetPlayerById(player.Id);
+                player = GetPlayerById(player.Id);
             }
             catch (Exception e)
             {
                 throw e;
             }
-
-            player = gamePlayer.Info;
-            if (player.IsInRoom)
+  
+            if (!player.IsInRoom)
                 return player;
 
-            gamePlayer.JoinGame(_games.Last());
 
-            player.JoinRoom(gameRoom.RoomId);
-
-            return player;
+            int roomId = player.RoomId;
+            GameRoom gameRoom;
+            try
+            {
+                gameRoom = GetRoomById(roomId);
+                gameRoom.LeavePlayer(ref player);
+                return player;
+            }
+            catch
+            {
+                throw new Exception("no room");
+            }
         }
 
         public static GameRoom[] GetGameRooms()
@@ -136,11 +160,11 @@ namespace BoardGame.Backend.Models.BoardGame
             return _gameRooms.ToArray();
         }
 
-        public static GameFramework.BoardGame GetGameById(int gameId)
+        public static GameFramework.BoardGame GetGameById(int roomId)
         {
             try
             {
-                return _games[gameId];
+                return GetRoomById(roomId).GetGame();
             }
             catch
             {
@@ -162,19 +186,11 @@ namespace BoardGame.Backend.Models.BoardGame
             }
         }
 
-        public static bool StartGame()
+        private static GameRoom NewGameRoom(ref PlayerInfo host)
         {
-            try
-            {
-                _games.Last().StartGame();
-                return true;
-            }
-            catch { return false; }
-        }
+            BigTwo.BigTwo bigTwo = new BigTwo.BigTwo();
 
-        private static GameRoom NewGameRoom(PlayerInfo host)
-        {
-            return new GameRoom(_newGameRoomId++, host, BigTwo.BigTwo.MAX_PLAYERS, BigTwo.BigTwo.MIN_PLAYERS);
+            return new GameRoom(bigTwo, _newGameRoomId++, ref host, BigTwo.BigTwo.MAX_PLAYERS, BigTwo.BigTwo.MIN_PLAYERS);
         }
     }
 }

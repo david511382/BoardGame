@@ -10,48 +10,97 @@ namespace BoardGame.Backend.Models.GameLobby
     public class GameRoom
     {
         public int RoomId { get; set; }
-        public string HostName { get { return Players[0].Name; } }
+        public string HostName { get { return GamePlayers[0].Name; } }
         public int MaxPlayerCount { get; set; }
         public int MinPlayerCount { get; set; }
-        public int CurrentPlayerCount { get { return Players.Count; } }
+        public int CurrentPlayerCount { get { return GamePlayers.Count; } }
+
+        private BoardGame.GameFramework.BoardGame _game;
 
         public GameRoomModels Models { get
         {
             return new GameRoomModels(
-                RoomId, 
-                Players.Select(d=>d.Models).ToArray(), 
+                RoomId,
+                GamePlayers.Select(d=>d.Info.Models).ToArray(), 
                 MaxPlayerCount, 
                 MinPlayerCount);
             }
         }
 
-        public List<PlayerInfo> Players { get; }
+        public List<GamePlayer> GamePlayers { get; }
 
-        public GameRoom(int gameId, PlayerInfo host, int maxPlayerCount, int minPlayerCount)
+        public GameRoom(BoardGame.GameFramework.BoardGame game, int gameId,ref PlayerInfo host, int maxPlayerCount, int minPlayerCount)
         {
+            _game = game;
+
             RoomId = gameId;
 
             MaxPlayerCount = maxPlayerCount;
             MinPlayerCount = minPlayerCount;
 
-            Players = new List<PlayerInfo>();
-            AddPlayer(host);
+            GamePlayers = new List<GamePlayer>();
+            AddPlayer(ref host);
         }
 
-        public bool AddPlayer(PlayerInfo player)
+        public bool Start()
+        {
+            foreach(GamePlayer gamePlayer in GamePlayers)
+                gamePlayer.JoinGame(ref _game);
+
+            try
+            {
+                _game.StartGame();
+                return true;
+            }
+            catch
+            {
+                return false;   
+            }
+        }
+
+        public void GameOver()
+        {
+            foreach (GamePlayer gamePlayer in GamePlayers)
+                gamePlayer.QuitGame();
+        }
+
+        public GamePlayer GetGamePlayer(int playerId)
+        {
+            return GamePlayers.Where(d => d.Id == playerId).First();
+        }
+
+        public bool AddPlayer(ref PlayerInfo player)
         {
             if (IsFull())
                 return false;
 
-            Players.Add(player);
+            GamePlayer gamePlayer = new GamePlayer(player);
+            GamePlayers.Add(gamePlayer);
+
             player.JoinRoom(RoomId);
 
             return true;
         }
 
+        public void LeavePlayer(ref PlayerInfo player)
+        {
+            int playerId = player.Id;
+            GamePlayer gamePlayer = GamePlayers
+                .Where(d => d.Id == playerId)
+                .First();
+            GamePlayers.Remove(gamePlayer);
+
+            player.LeaveRoom();
+        }
+
         public bool IsFull()
         {
             return CurrentPlayerCount >= MaxPlayerCount;
+        }
+
+        public BoardGame.GameFramework.BoardGame GetGame()
+        {
+            return _game;
         }
     }
 }
