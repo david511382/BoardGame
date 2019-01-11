@@ -31,11 +31,11 @@ namespace BoardGame.Backend.Models.GameLobby
 
         public List<GamePlayer> GamePlayers { get; }
 
-        public GameRoom(BoardGame.GameFramework.BoardGame game, int gameId,ref PlayerInfo host, int maxPlayerCount, int minPlayerCount)
+        public GameRoom(BoardGame.GameFramework.BoardGame game, int roomId, ref PlayerInfo host, int maxPlayerCount, int minPlayerCount)
         {
             _game = game;
 
-            RoomId = gameId;
+            RoomId = roomId;
 
             MaxPlayerCount = maxPlayerCount;
             MinPlayerCount = minPlayerCount;

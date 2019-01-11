@@ -13,7 +13,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
         public bool IsInRoom { get { return RoomId != -1; } }
         public int RoomId { get; private set; }
         public bool IsHost { get; set; }
-        public PlayerInfoModels Models { get { return new PlayerInfoModels(Name, Id, RoomId); } }
+        public PlayerInfoModels Models { get { return new PlayerInfoModels(Name, Id, RoomId, IsHost); } }
 
         public PlayerInfo(string name, int id)
         {
