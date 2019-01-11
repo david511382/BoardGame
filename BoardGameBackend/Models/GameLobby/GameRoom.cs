@@ -15,6 +15,8 @@ namespace BoardGame.Backend.Models.GameLobby
         public int MinPlayerCount { get; set; }
         public int CurrentPlayerCount { get { return GamePlayers.Count; } }
 
+        public int HostId { get { return GamePlayers.First().Id; } }
+
         private BoardGame.GameFramework.BoardGame _game;
 
         public GameRoomModels Models { get
@@ -37,6 +39,8 @@ namespace BoardGame.Backend.Models.GameLobby
 
             MaxPlayerCount = maxPlayerCount;
             MinPlayerCount = minPlayerCount;
+
+            host.IsHost = true;
 
             GamePlayers = new List<GamePlayer>();
             AddPlayer(ref host);
@@ -91,6 +95,17 @@ namespace BoardGame.Backend.Models.GameLobby
             GamePlayers.Remove(gamePlayer);
 
             player.LeaveRoom();
+
+            if (CurrentPlayerCount == 0)
+            {
+                //close room
+            }
+            else
+            {
+                // change host
+                gamePlayer = GamePlayers.First();
+                gamePlayer.Info.IsHost = true;
+            }
         }
 
         public bool IsFull()

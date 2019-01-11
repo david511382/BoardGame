@@ -97,18 +97,20 @@ namespace BoardGame.Backend.Controllers
 
         [Route("LeaveGameRoom")]
         [HttpPost]
-        public PlayerInfoModels LeaveGameRoom(FormDataCollection form)
+        public PlayerInfoModels[] LeaveGameRoom(FormDataCollection form)
         {
             try
             {
                 string playerIdStr = form.Get(PLAYER_INFO);
                 PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
 
-                return new GameLobbyModels().LeaveGameRoom(new PlayerInfo(user)).Models;
+                return new GameLobbyModels().LeaveGameRoom(new PlayerInfo(user))
+                    .Select(d=>d.Models)
+                    .ToArray();
             }
             catch
             {
-                return new PlayerInfoModels();
+                return new PlayerInfoModels[0];
             }
         }
     }

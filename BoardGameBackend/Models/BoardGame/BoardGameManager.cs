@@ -11,14 +11,14 @@ namespace BoardGame.Backend.Models.BoardGame
 {
     public static class BoardGameManager
     {
-        private static List<GameRoom> _gameRooms;
+        private static Dictionary<int,GameRoom> _gameRooms;
         private static Dictionary<int, PlayerInfo> _players;
 
         private static int _newGameRoomId;
 
         static BoardGameManager()
         {
-            _gameRooms = new List<GameRoom>();
+            _gameRooms = new Dictionary<int, GameRoom>();
             _players = new Dictionary<int, PlayerInfo>();
             _newGameRoomId = 0;
 
@@ -93,7 +93,8 @@ namespace BoardGame.Backend.Models.BoardGame
             if (player.IsInRoom)
                 return player;
 
-            _gameRooms.Add(NewGameRoom(ref player));
+            GameRoom gameRoom = NewGameRoom(ref player);
+            _gameRooms.Add(gameRoom.RoomId, gameRoom);
 
             return player;
         }
@@ -126,28 +127,48 @@ namespace BoardGame.Backend.Models.BoardGame
             return player;
         }
 
-        public static PlayerInfo LeaveGameRoom(PlayerInfo player)
+        public static PlayerInfo[] LeaveGameRoom(PlayerInfo player)
         {
             try
             {
                 player = GetPlayerById(player.Id);
+
+                if (!player.IsInRoom)
+                    throw new Exception();
             }
             catch (Exception e)
             {
                 throw e;
             }
-
-            if (!player.IsInRoom)
-                return player;
-
-
+            
+            PlayerInfo[] result = new PlayerInfo[2];
             int roomId = player.RoomId;
             GameRoom gameRoom;
             try
             {
                 gameRoom = GetRoomById(roomId);
+                int oldHostId = gameRoom.HostId;
                 gameRoom.LeavePlayer(ref player);
-                return player;
+                result[0] = player;
+                result[1] = player;
+
+                if (gameRoom.CurrentPlayerCount == 0)
+                {
+                    // close room
+                    _gameRooms.Remove(gameRoom.RoomId);
+                }
+                else
+                {
+                    int newHostId = gameRoom.HostId;
+                    bool isChangeHost = oldHostId != newHostId;
+                    if (isChangeHost)
+                    {
+                        _players[newHostId].IsHost = true;
+                        result[1] = GetPlayerById(newHostId);
+                    }
+                }
+
+                return result;
             }
             catch
             {
@@ -157,7 +178,9 @@ namespace BoardGame.Backend.Models.BoardGame
 
         public static GameRoom[] GetGameRooms()
         {
-            return _gameRooms.ToArray();
+            return _gameRooms
+                .Select(d=>d.Value)
+                .ToArray();
         }
 
         public static GameFramework.BoardGame GetGameById(int roomId)
@@ -176,9 +199,7 @@ namespace BoardGame.Backend.Models.BoardGame
         {
             try
             {
-                return _gameRooms
-                    .Where(d => d.RoomId == roomId)
-                    .First();
+                return _gameRooms[roomId];
             }
             catch
             {

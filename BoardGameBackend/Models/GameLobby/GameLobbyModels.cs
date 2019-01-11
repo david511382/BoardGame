@@ -46,7 +46,7 @@ namespace BoardGame.Backend.Models.GameLobby
             return BoardGameManager.JoinGameRoom(player, gameId);
         }
 
-        public PlayerInfo LeaveGameRoom(PlayerInfo player)
+        public PlayerInfo[] LeaveGameRoom(PlayerInfo player)
         {
             return BoardGameManager.LeaveGameRoom(player);
         }

@@ -8,10 +8,11 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
 {
     public class PlayerInfo
     {
-        public string Name;
-        public int Id;
+        public string Name { get; set; }
+        public int Id { get; set; }
         public bool IsInRoom { get { return RoomId != -1; } }
         public int RoomId { get; private set; }
+        public bool IsHost { get; set; }
         public PlayerInfoModels Models { get { return new PlayerInfoModels(Name, Id, RoomId); } }
 
         public PlayerInfo(string name, int id)
@@ -34,6 +35,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
         public void LeaveRoom()
         {
             RoomId = -1;
+            IsHost = false;
         }
     }
 }
