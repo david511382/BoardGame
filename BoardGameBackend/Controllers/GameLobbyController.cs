@@ -65,14 +65,7 @@ namespace BoardGame.Backend.Controllers
         [HttpPost]
         public GameRoomModels[] GetGameRooms()
         {
-            GameRoom[] gameRooms = new GameLobbyModels()
-                .GetGameRooms();
-            if (gameRooms == null || gameRooms.Length == 0)
-                return null;
-
-            return gameRooms
-                .Select(d => d.Models)
-                .ToArray();
+            return new GameLobbyModels().GetGameRooms();
         }
 
         [Route("JoinGameRoom")]
@@ -111,6 +104,23 @@ namespace BoardGame.Backend.Controllers
             catch
             {
                 return new PlayerInfoModels[0];
+            }
+        }
+
+        [Route("StartGame")]
+        [HttpPost]
+        public bool StartGame(FormDataCollection form)
+        {
+            try
+            {
+                string playerIdStr = form.Get(PLAYER_INFO);
+                PlayerInfoModels user = JsonConvert.DeserializeObject<PlayerInfoModels>(playerIdStr);
+
+                return new GameLobbyModels().StartGame(new PlayerInfo(user));
+            }
+            catch
+            {
+                return false;
             }
         }
     }

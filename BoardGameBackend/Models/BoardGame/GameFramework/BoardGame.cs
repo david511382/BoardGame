@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
 
 namespace BoardGame.Backend.Models.BoardGame.GameFramework
 {
@@ -66,13 +67,15 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
             return (T)target.First();
         }
 
+        public abstract GamePlayer.GamePlayer CreatePlayer(PlayerInfo playerInfo);
+
         protected virtual PlayerResource GetResourceAt(int i)
         {
             return _playerResources[i];
         }
 
         protected abstract void InitGame();
-
+        
         protected bool IsGameOver()
         {
             return _gameStaus.State == GameStatus.GameState.Game_Over;

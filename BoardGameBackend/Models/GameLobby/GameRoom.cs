@@ -7,7 +7,9 @@ using System.Web;
 
 namespace BoardGame.Backend.Models.GameLobby
 {
-    public class GameRoom
+    public class GameRoom<GameT, PlayerT>
+        where GameT : BoardGame.GameFramework.BoardGame
+        where PlayerT : GamePlayer
     {
         public int RoomId { get; set; }
         public string HostName { get { return GamePlayers[0].Name; } }
@@ -17,21 +19,23 @@ namespace BoardGame.Backend.Models.GameLobby
 
         public int HostId { get { return GamePlayers.First().Id; } }
 
-        private BoardGame.GameFramework.BoardGame _game;
+        private GameT _game;
 
-        public GameRoomModels Models { get
+        public GameRoomModels Models
         {
-            return new GameRoomModels(
-                RoomId,
-                GamePlayers.Select(d=>d.Info.Models).ToArray(), 
-                MaxPlayerCount, 
-                MinPlayerCount);
+            get
+            {
+                return new GameRoomModels(
+                    RoomId,
+                    GamePlayers.Select(d => d.Info.Models).ToArray(),
+                    MaxPlayerCount,
+                    MinPlayerCount);
             }
         }
 
-        public List<GamePlayer> GamePlayers { get; }
+        public List<PlayerT> GamePlayers { get; private set; }
 
-        public GameRoom(BoardGame.GameFramework.BoardGame game, int roomId, ref PlayerInfo host, int maxPlayerCount, int minPlayerCount)
+        public GameRoom(GameT game, int roomId, ref PlayerInfo host, int maxPlayerCount, int minPlayerCount)
         {
             _game = game;
 
@@ -42,35 +46,39 @@ namespace BoardGame.Backend.Models.GameLobby
 
             host.IsHost = true;
 
-            GamePlayers = new List<GamePlayer>();
+            GamePlayers = new List<PlayerT>();
             AddPlayer(ref host);
         }
 
         public bool Start()
         {
-            foreach(GamePlayer gamePlayer in GamePlayers)
-                gamePlayer.JoinGame(ref _game);
-
             try
             {
+                foreach (PlayerT gamePlayer in GamePlayers)
+                    gamePlayer.JoinGame(ref _game);
+
                 _game.StartGame();
                 return true;
             }
             catch
             {
-                return false;   
+                return false;
             }
         }
 
         public void GameOver()
         {
-            foreach (GamePlayer gamePlayer in GamePlayers)
+            foreach (PlayerT gamePlayer in GamePlayers)
                 gamePlayer.QuitGame();
         }
 
-        public GamePlayer GetGamePlayer(int playerId)
+        public PlayerT GetGamePlayer(int playerId)
         {
-            return GamePlayers.Where(d => d.Id == playerId).First();
+            PlayerT gp = GamePlayers
+                .Where(d => d.Id == playerId)
+                .First();
+
+            return gp;
         }
 
         public bool AddPlayer(ref PlayerInfo player)
@@ -78,10 +86,10 @@ namespace BoardGame.Backend.Models.GameLobby
             if (IsFull())
                 return false;
 
-            GamePlayer gamePlayer = new GamePlayer(player);
-            GamePlayers.Add(gamePlayer);
-
             player.JoinRoom(RoomId);
+
+            PlayerT gamePlayer = (PlayerT)_game.CreatePlayer(player);
+            GamePlayers.Add(gamePlayer);
 
             return true;
         }
@@ -89,7 +97,7 @@ namespace BoardGame.Backend.Models.GameLobby
         public void LeavePlayer(ref PlayerInfo player)
         {
             int playerId = player.Id;
-            GamePlayer gamePlayer = GamePlayers
+            PlayerT gamePlayer = GamePlayers
                 .Where(d => d.Id == playerId)
                 .First();
             GamePlayers.Remove(gamePlayer);
@@ -113,7 +121,12 @@ namespace BoardGame.Backend.Models.GameLobby
             return CurrentPlayerCount >= MaxPlayerCount;
         }
 
-        public BoardGame.GameFramework.BoardGame GetGame()
+        public bool IsEnoughPlayer()
+        {
+            return CurrentPlayerCount >= MinPlayerCount;
+        }
+
+        public GameT GetGame()
         {
             return _game;
         }

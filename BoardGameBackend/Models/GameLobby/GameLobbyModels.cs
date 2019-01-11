@@ -32,11 +32,14 @@ namespace BoardGame.Backend.Models.GameLobby
             return BoardGameManager.CreateGame(host);
         }
 
-        public GameRoom[] GetGameRooms()
+        public GameRoomModels[] GetGameRooms()
         {
-            GameRoom[] gameRooms = BoardGameManager.GetGameRooms();
+            GameRoomModels[] gameRooms = BoardGameManager.GetGameRooms()
+                .Select(d => d.Models)
+                .ToArray();
+
             if (gameRooms.Length == 0)
-                return null;
+                return new GameRoomModels[0];
 
             return gameRooms;
         }
@@ -49,6 +52,11 @@ namespace BoardGame.Backend.Models.GameLobby
         public PlayerInfo[] LeaveGameRoom(PlayerInfo player)
         {
             return BoardGameManager.LeaveGameRoom(player);
+        }
+
+        public bool StartGame(PlayerInfo player)
+        {
+            return BoardGameManager.StartGame(player);
         }
     }
 }

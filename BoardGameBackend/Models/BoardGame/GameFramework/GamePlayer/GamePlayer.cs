@@ -39,7 +39,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer
             return _game.GetTable();
         }
 
-        public void JoinGame(ref BoardGame game)
+        public void JoinGame<GameT>(ref GameT game) where GameT : BoardGame
         {
             _game = game;
             game.Join(Id);

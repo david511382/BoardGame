@@ -27,6 +27,12 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
             _resource = new PokerResource(Id);
         }
 
+        public BigTwoPlayer(GamePlayer gamePlayer)
+            : base(gamePlayer.Info)
+        {
+            _resource = new PokerResource(Id);
+        }
+
         public PokerCard[] GetHandCards()
         {
             GameObj[] playerResource = Game.GetResource<PokerResource>(Id).GetHandCards();

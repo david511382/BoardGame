@@ -1,4 +1,5 @@
-﻿using BoardGame.Backend.Models.BoardGame.PokerGame;
+﻿using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+using BoardGame.Backend.Models.BoardGame.PokerGame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,11 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
         {
             IsFreeType = true;
             IsRequiredClub3 = true;
+        }
+
+        public override GamePlayer CreatePlayer(PlayerInfo playerInfo)
+        {
+            return new BigTwoPlayer(playerInfo);
         }
 
         protected override void InitGame()
