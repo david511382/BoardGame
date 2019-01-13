@@ -36,7 +36,7 @@ namespace BoardGame.Backend.Controllers
         // GET api/Game/SelectCard/i
         [Route("SelectCard")]
         [HttpPost]
-        public PokerCard[] SelectCard(FormDataCollection form)
+        public int[] SelectCard(FormDataCollection form)
         {
             try
             {
