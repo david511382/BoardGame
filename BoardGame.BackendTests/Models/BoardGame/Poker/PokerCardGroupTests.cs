@@ -143,6 +143,46 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame.Tests
                     new PokerCard(PokerSuit.Spade,12)
               };
             CheckEqualPokerCards(result, expectResult);
+
+
+            handCards = new PokerCard[]
+            {
+                    new PokerCard(PokerSuit.Heart,1),
+                    new PokerCard(PokerSuit.Heart,2),
+                    new PokerCard(PokerSuit.Heart,3),
+                    new PokerCard(PokerSuit.Heart,4),
+                    new PokerCard(PokerSuit.Heart,5),
+                    new PokerCard(PokerSuit.Heart,6),
+                    new PokerCard(PokerSuit.Heart,7),
+                    new PokerCard(PokerSuit.Heart,8),
+                    new PokerCard(PokerSuit.Heart,9),
+                    new PokerCard(PokerSuit.Heart,10),
+                    new PokerCard(PokerSuit.Heart,11),
+                    new PokerCard(PokerSuit.Heart,12),
+                    new PokerCard(PokerSuit.Heart,13)
+            };
+            selectCards = new PokerCard[]{
+                new PokerCard(PokerSuit.Heart,2),
+                new PokerCard(PokerSuit.Heart,7)
+            };
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(PokerGroupType.Dragon, handCards.ToList(), selectCards);
+            expectResult = new PokerCard[]
+            {
+                    new PokerCard(PokerSuit.Heart,1),
+                    new PokerCard(PokerSuit.Heart,2),
+                    new PokerCard(PokerSuit.Heart,3),
+                    new PokerCard(PokerSuit.Heart,4),
+                    new PokerCard(PokerSuit.Heart,5),
+                    new PokerCard(PokerSuit.Heart,6),
+                    new PokerCard(PokerSuit.Heart,7),
+                    new PokerCard(PokerSuit.Heart,8),
+                    new PokerCard(PokerSuit.Heart,9),
+                    new PokerCard(PokerSuit.Heart,10),
+                    new PokerCard(PokerSuit.Heart,11),
+                    new PokerCard(PokerSuit.Heart,12),
+                    new PokerCard(PokerSuit.Heart,13)
+            };
+            CheckEqualPokerCards(result, expectResult);
         }
 
         [TestMethod()]

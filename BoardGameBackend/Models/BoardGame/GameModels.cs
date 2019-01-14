@@ -1,6 +1,7 @@
 ﻿using BoardGame.Backend.Models.BoardGame.BigTwo;
 using BoardGame.Backend.Models.BoardGame.GameFramework;
 using BoardGame.Backend.Models.BoardGame.PokerGame;
+using BoardGame.Data.ApiParameters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,14 +66,15 @@ namespace BoardGame.Backend.Models.BoardGame
             return result.ToArray();
         }
 
-        public GameStatus GetGameStatus(int roomId)
+        public GameStatusModels GetGameStatus(int roomId)
         {
             GameFramework.BoardGame game;
             try
             {
                 game = BoardGameManager.GetGameById(roomId);
+                GameStatus gameStatus = game.GetGameStatus();
 
-                return game.GetGameStatus();
+                return  gameStatus.Models(BoardGameManager._playerManager);
             }
             catch(Exception e)
             {

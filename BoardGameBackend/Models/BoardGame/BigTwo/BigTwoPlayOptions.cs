@@ -12,6 +12,9 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
         public bool Pass()
         {
+            if (IsGameOver())
+                return false;
+
             //can not pass
             if (IsFreeType)
                 return false;
@@ -27,6 +30,9 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
         public bool PlayGroups(PokerCardGroup cardGroup)
         {
+            if (IsGameOver())
+                return false;
+
             //check group
             PokerCard cardGroupMaxCard = cardGroup.GetMaxValue();
             if (cardGroupMaxCard == null)
@@ -62,10 +68,22 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
             _lastPlayTurnId = currentTurn;
 
-            //next turn
-            NextTurn();
+            if (CurrentPlayerResource.GetHandCards().Length == 0)
+            {
+                GameOver();
+            }
+            else
+            {
+                //next turn
+                NextTurn();
+            }
 
             return true;
+        }
+
+        private void GameOver()
+        {
+            base.GameOver(new int[] { CurrentPlayerResource.PlayerId });
         }
     }
 }

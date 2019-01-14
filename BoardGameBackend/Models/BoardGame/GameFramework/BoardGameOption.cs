@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BoardGame.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,7 +15,9 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
 
             if (_playerResources.Count < MIN_GAME_PLAYERS)
                 throw new Exception("not enough players");
+
             _currentTurn = 0;
+            _gameStaus.State = GameState.OnTurn;
 
             InitGame();
         }
@@ -35,12 +38,20 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
             if (!IsGameOver())
                 throw new Exception("game playing");
 
-
             PlayerResource target = _playerResources
                 .Where(d => d.PlayerId == playerId)
                 .First();
 
             _playerResources.Remove(target);
+        }
+
+        public virtual void GameOver(int[] winnerId)
+        {
+            if (IsGameOver())
+                throw new Exception("no game");
+
+            this._gameStaus.State = GameState.Game_Over;
+            _gameStaus.WinPlayerIds = winnerId;
         }
 
         protected abstract void AddPlayer(int playerId);

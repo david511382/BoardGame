@@ -70,16 +70,17 @@ namespace BoardGame.Backend.Controllers
 
         [Route("GetGameStatus")]
         [HttpPost]
-        public GameStatus GetGameStatus(FormDataCollection form)
+        public GameStatusModels GetGameStatus(FormDataCollection form)
         {
+            int gameId;
             try
             {
                 string gameIdStr = form.Get(GAME_ID);
-                int gameId= JsonConvert.DeserializeObject<int>(gameIdStr);
-
-                return new GameModels().GetGameStatus(gameId);
+                gameId = JsonConvert.DeserializeObject<int>(gameIdStr);
             }
-            catch { return new GameStatus();}
+            catch { return new GameStatusModels(); }
+
+            return new GameModels().GetGameStatus(gameId);
         }
 
         [Route("GetTable")]

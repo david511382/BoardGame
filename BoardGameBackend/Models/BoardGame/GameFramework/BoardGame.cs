@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+using BoardGame.Data.Enums;
 
 namespace BoardGame.Backend.Models.BoardGame.GameFramework
 {
@@ -41,7 +42,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
 
             _playerResources = new List<PlayerResource>();
             _table = new GameBoard();
-            _gameStaus = new GameStatus(GameStatus.GameState.Game_Over);
+            _gameStaus = new GameStatus(GameState.Game_Over);
         }
 
         public GameBoard GetTable()
@@ -78,7 +79,7 @@ namespace BoardGame.Backend.Models.BoardGame.GameFramework
         
         protected bool IsGameOver()
         {
-            return _gameStaus.State == GameStatus.GameState.Game_Over;
+            return _gameStaus.State == GameState.Game_Over;
         }
     }
 }

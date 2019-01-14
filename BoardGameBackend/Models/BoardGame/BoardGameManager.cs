@@ -2,6 +2,7 @@
 using BoardGame.Backend.Models.BoardGame.GameFramework;
 using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
 using BoardGame.Backend.Models.GameLobby;
+using BoardGameBackend.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,16 @@ namespace BoardGame.Backend.Models.BoardGame
 {
     public static class BoardGameManager
     {
+        public static PlayerManager _playerManager;
+
         private static Dictionary<int,GameRoom<BigTwo.BigTwo,BigTwoPlayer>> _gameRooms;
-        private static Dictionary<int, PlayerInfo> _players;
 
         private static int _newGameRoomId;
 
         static BoardGameManager()
         {
             _gameRooms =new Dictionary<int, GameRoom<BigTwo.BigTwo, BigTwoPlayer>>();
-            _players = new Dictionary<int, PlayerInfo>();
+            _playerManager = new PlayerManager();
             _newGameRoomId = 0;
 
             //CreateGame(Register());
@@ -32,7 +34,7 @@ namespace BoardGame.Backend.Models.BoardGame
         public static PlayerInfo Register()
         {
             PlayerInfo player = new GamePlayer().Info;
-            _players.Add(player.Id, player);
+            _playerManager.AddPlayer(player);
 
             return player;
         }
@@ -41,7 +43,7 @@ namespace BoardGame.Backend.Models.BoardGame
         {
             try
             {
-                return _players[playerId];
+                return _playerManager.GetPlayer(playerId);
             }
             catch
             {
@@ -164,7 +166,7 @@ namespace BoardGame.Backend.Models.BoardGame
                     bool isChangeHost = oldHostId != newHostId;
                     if (isChangeHost)
                     {
-                        _players[newHostId].IsHost = true;
+                        _playerManager[newHostId].IsHost = true;
                         result[1] = GetPlayerById(newHostId);
                     }
                 }
