@@ -95,6 +95,7 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
 
             PokerCardGroup.Max_Number = BigTwo.MAX_CARD_NUMBER;
             PokerCard maxCard;
+            List<PokerGroupType> types = new List<PokerGroupType>();
             PokerGroupType type = PokerGroupType.Single;
             bool isFreeType = Game.IsFreeType;
             if (isFreeType)
@@ -104,6 +105,8 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
                 {
                     type = PokerCardGroup.GetMinCardGroupType(cards, selectedCards);
                 });
+
+                types.Add(type);
             }
             else
             {
@@ -111,31 +114,27 @@ namespace BoardGame.Backend.Models.BoardGame.BigTwo
                 PokerCardGroup lastGroup = GetTableLast();
                 type = lastGroup.GetGroupType();
                 maxCard = lastGroup.GetMaxValue();
+
+                types.Add(type);
+                types.AddRange(
+                    BigTwo.SUPER_GROUP_TYPE_ORDERS
+                        .Where(d => PokerCardGroup.Compare_Type(d, type) > 0)
+                );
             }
 
             PokerCard[] result = null;
             TryAllUntilExcetion(containCard, (selectedCards) =>
             {
-                result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(type, cards.ToList(), selectedCards, maxCard);
+                foreach(PokerGroupType t in types)
+                {
+                    result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(t, cards.ToList(), selectedCards, maxCard);
+                    if (result != null)
+                        break;
+                }
+
                 if (result == null)
                     throw new Exception();
-             });
-
-            if (result == null)
-            {
-                TryAllUntilExcetion(containCard, (selectedCards) =>
-                {
-                    foreach(PokerGroupType t in BigTwo.SUPER_GROUP_TYPE_ORDERS)
-                    {
-                        result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard(t, cards.ToList(), selectedCards, maxCard);
-                        if (result != null)
-                            break;
-                    }
-
-                    if (result == null)
-                        throw new Exception();
-                });
-            }
+            });
 
             return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
         }

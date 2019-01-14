@@ -30,5 +30,24 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 groupTypes
                     .OrderByDescending(d => orderList.IndexOf(d));
         }
+
+        public static int Compare_Type(PokerGroupType a, PokerGroupType b)
+        {
+            bool aEql, bEql;
+            foreach(PokerGroupType t in GROUP_TYPE_ORDERS)
+            {
+                aEql = t.Equals(a);
+                bEql = t.Equals(b);
+
+                if (aEql && bEql)
+                    return 0;
+                else if (aEql)
+                    return -1;
+                else if (bEql)
+                    return 1;
+            }
+
+            throw new Exception("undefind type");
+        }
     }
 }
