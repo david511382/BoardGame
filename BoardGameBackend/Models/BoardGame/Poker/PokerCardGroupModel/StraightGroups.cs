@@ -325,7 +325,7 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                 if (count == length)
                 {
                     List<PokerCard> result = new List<PokerCard>();
-
+                    PokerCard[] bufCards = cards;
                     if (value != null)
                     {
                         int compareNumber = number;
@@ -344,7 +344,8 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                             continue;
                         }
 
-                        cards = cards
+
+                        bufCards = cards
                            .Where(d => d.Number != compareNumber)
                            .ToArray();
 
@@ -356,10 +357,10 @@ namespace BoardGame.Backend.Models.BoardGame.PokerGame
                     }
 
                     if (suitEqul == SuitEqul.notSame)
-                        cards = GetNotSameSuitStraight(cards.Where(d => d.Number <= number && d.Number >= startNumber));
+                        bufCards = GetNotSameSuitStraight(bufCards.Where(d => d.Number <= number && d.Number >= startNumber));
 
                     result.AddRange(
-                        cards
+                        bufCards
                             .GroupBy(d => d.Number)
                             .Select(d => new PokerCard(d.Min(c => c.Suit), d.First().Number))
                     );

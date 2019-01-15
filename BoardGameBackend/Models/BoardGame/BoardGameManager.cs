@@ -28,7 +28,7 @@ namespace BoardGame.Backend.Models.BoardGame
             //JoinGameRoom(Register(), 0);
             //JoinGameRoom(Register(), 0);
             //JoinGameRoom(Register(), 0);
-            //StartGame(_players[1]);
+            //StartGame(_playerManager[1]);
         }
 
         public static PlayerInfo Register()
