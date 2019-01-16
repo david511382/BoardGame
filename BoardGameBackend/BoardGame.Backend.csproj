@@ -233,7 +233,7 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\BoardGame\BoardGameManager.cs" />
+    <Compile Include="Models\BoardGameManager.cs" />
     <Compile Include="Models\BoardGame\GameModels.cs" />
     <Compile Include="Models\GameLobby\GameLobbyModels.cs" />
     <Compile Include="Models\GameLobby\GameRoom.cs" />

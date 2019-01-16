@@ -30,6 +30,8 @@ namespace GameFramework.Game
         private int _currentTurn;
         protected GameStatus _gameStaus;
 
+        private Action GameOverNotifier;
+
         protected int playerNum
         {
             get { return _playerResources.Count; }

@@ -52,6 +52,13 @@ namespace GameFramework.Game
 
             this._gameStaus.State = GameState.Game_Over;
             _gameStaus.WinPlayerIds = winnerId;
+
+            GameOverNotifier?.Invoke();
+        }
+
+        public void RegisterGameOverEvent(Action caller)
+        {
+            this.GameOverNotifier = caller;
         }
 
         protected abstract void AddPlayer(int playerId);

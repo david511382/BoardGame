@@ -38,6 +38,7 @@ namespace BoardGame.Backend.Models.GameLobby
         public GameRoom(GameT game, int roomId, ref PlayerInfo host, int maxPlayerCount, int minPlayerCount)
         {
             _game = game;
+            _game.RegisterGameOverEvent(this.GameOver);
 
             RoomId = roomId;
 

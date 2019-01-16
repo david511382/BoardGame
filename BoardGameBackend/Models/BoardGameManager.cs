@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGame.Backend.Models.BoardGame
+namespace BoardGame.Backend.Models
 {
     public static class BoardGameManager
     {
