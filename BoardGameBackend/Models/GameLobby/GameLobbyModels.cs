@@ -1,6 +1,6 @@
 ﻿using BoardGame.Backend.Models.BoardGame;
-using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
 using BoardGame.Data.ApiParameters;
+using GameFramework.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;

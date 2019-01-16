@@ -55,7 +55,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupTests.cs" />
+    <Compile Include="GameLogics\BigTwoModels\BigTwoCardGroupTests.cs" />
+    <Compile Include="GameLogics\PokerModels\PokerCardGroupTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +64,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BoardGameBackend\BoardGame.Backend.csproj">
-      <Project>{B0061CDA-ECDC-4A12-BCD4-5BC4796CD160}</Project>
-      <Name>BoardGame.Backend</Name>
+    <ProjectReference Include="..\BigTwo\BigTwo.csproj">
+      <Project>{93f7596a-b0a9-4ce2-bc34-5f1901d61bf3}</Project>
+      <Name>BigTwo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameFramework\GameFramework.csproj">
+      <Project>{b2a40f3b-3d72-4db5-ab39-ac015542808e}</Project>
+      <Name>GameFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

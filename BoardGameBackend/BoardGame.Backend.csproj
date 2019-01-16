@@ -233,34 +233,11 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\BoardGame\BigTwo\BigTwoPlayOptions.cs" />
-    <Compile Include="Models\BoardGame\BigTwo\BigTwo.cs" />
-    <Compile Include="Models\BoardGame\BigTwo\BigTwoCompare.cs" />
-    <Compile Include="Models\BoardGame\BigTwo\BigTwoPlayer.cs" />
     <Compile Include="Models\BoardGame\BoardGameManager.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\BoardGame.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\BoardGameOption.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\GameBoard.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\GameObj.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\GamePlayer\GamePlayer.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\GamePlayer\PlayerInfo.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\GameStateModels.cs" />
-    <Compile Include="Models\BoardGame\GameFramework\PlayerResource.cs" />
     <Compile Include="Models\BoardGame\GameModels.cs" />
-    <Compile Include="Models\BoardGame\PokerGame\PokerGame.cs" />
-    <Compile Include="Models\BoardGame\Poker\Poker.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCard.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroupCompare.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroupMethods.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardGroup.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\StraightGroups.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerCardGroupModel\PokerCardNormalGroup.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerEnum.cs" />
-    <Compile Include="Models\BoardGame\Poker\PokerResource.cs" />
     <Compile Include="Models\GameLobby\GameLobbyModels.cs" />
     <Compile Include="Models\GameLobby\GameRoom.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\IPlayerManager.cs" />
     <Compile Include="Models\PlayerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -355,6 +332,16 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BigTwo\BigTwo.csproj">
+      <Project>{93f7596a-b0a9-4ce2-bc34-5f1901d61bf3}</Project>
+      <Name>BigTwo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameFramework\GameFramework.csproj">
+      <Project>{b2a40f3b-3d72-4db5-ab39-ac015542808e}</Project>
+      <Name>GameFramework</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

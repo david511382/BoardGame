@@ -1,7 +1,6 @@
-﻿using BoardGame.Backend.Models.BoardGame;
-using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
-using BoardGame.Backend.Models.GameLobby;
+﻿using BoardGame.Backend.Models.GameLobby;
 using BoardGame.Data.ApiParameters;
+using GameFramework.Player;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

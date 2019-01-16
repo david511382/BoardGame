@@ -1,5 +1,5 @@
-﻿using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
-using BoardGame.Data.ApiParameters;
+﻿using BoardGame.Data.ApiParameters;
+using GameFramework.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,15 @@ using System.Web;
 
 namespace BoardGameBackend.Models
 {
-    public class PlayerManager:IPlayerManager
+    public class PlayerManager
     {
+        private static int newPlayer_Id;
+
+        static PlayerManager()
+        {
+            newPlayer_Id = 1;
+        }
+
         public PlayerInfo this[int id]
         {
             get
@@ -22,6 +29,16 @@ namespace BoardGameBackend.Models
         public PlayerManager()
         {
             _players = new Dictionary<int, PlayerInfo>();
+        }
+
+        public PlayerInfo RegisterPlayer()
+        {
+            int playerId = newPlayer_Id++;
+            string playerName = $"Player{playerId}";
+            PlayerInfo player = new PlayerInfo(playerName, playerId);
+            _players.Add(player.Id, player);
+
+            return player;
         }
 
         public void AddPlayer(PlayerInfo player)

@@ -1,8 +1,8 @@
-﻿using BoardGame.Backend.Models.BoardGame.BigTwo;
-using BoardGame.Backend.Models.BoardGame.GameFramework;
-using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
+﻿using BigTwo;
 using BoardGame.Backend.Models.GameLobby;
 using BoardGameBackend.Models;
+using GameFramework.Game;
+using GameFramework.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,10 +33,7 @@ namespace BoardGame.Backend.Models.BoardGame
 
         public static PlayerInfo Register()
         {
-            PlayerInfo player = new GamePlayer().Info;
-            _playerManager.AddPlayer(player);
-
-            return player;
+            return _playerManager.RegisterPlayer();
         }
 
         public static PlayerInfo GetPlayerById(int playerId)
@@ -216,7 +213,7 @@ namespace BoardGame.Backend.Models.BoardGame
                 .ToArray();
         }
 
-        public static GameFramework.BoardGame GetGameById(int roomId)
+        public static GameFramework.Game.BoardGame GetGameById(int roomId)
         {
             try
             {

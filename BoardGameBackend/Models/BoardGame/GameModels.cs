@@ -1,7 +1,8 @@
-﻿using BoardGame.Backend.Models.BoardGame.BigTwo;
-using BoardGame.Backend.Models.BoardGame.GameFramework;
-using BoardGame.Backend.Models.BoardGame.PokerGame;
+﻿using BigTwo;
 using BoardGame.Data.ApiParameters;
+using GameFramework.Game;
+using GameFramework.PokerGame;
+using GameFramework.PokerGame.CardGroup;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,13 +69,21 @@ namespace BoardGame.Backend.Models.BoardGame
 
         public GameStatusModels GetGameStatus(int roomId)
         {
-            GameFramework.BoardGame game;
+            GameFramework.Game.BoardGame game;
             try
             {
                 game = BoardGameManager.GetGameById(roomId);
                 GameStatus gameStatus = game.GetGameStatus();
 
-                return  gameStatus.Models(BoardGameManager._playerManager);
+                GameStatusModels model = new GameStatusModels();
+                model.CurrentPlayerId =gameStatus.CurrentPlayerId;
+                model.State = gameStatus.State;
+                model.WinPlayers = BoardGameManager._playerManager
+                    .GetPlayers(gameStatus.WinPlayerIds)
+                    .Select(d => d.Models)
+                    .ToArray();
+
+                return model;
             }
             catch(Exception e)
             {
@@ -84,7 +93,7 @@ namespace BoardGame.Backend.Models.BoardGame
 
         public PokerCard[] GetTable(int playerId)
         {
-            GameFramework.GameBoard gameBoard;
+            GameBoard gameBoard;
             try
             {
                 gameBoard = BoardGameManager.GetGameBoardByPlayerId(playerId);

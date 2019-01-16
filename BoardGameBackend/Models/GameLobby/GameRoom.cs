@@ -1,5 +1,5 @@
-﻿using BoardGame.Backend.Models.BoardGame.GameFramework.GamePlayer;
-using BoardGame.Data.ApiParameters;
+﻿using BoardGame.Data.ApiParameters;
+using GameFramework.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Web;
 namespace BoardGame.Backend.Models.GameLobby
 {
     public class GameRoom<GameT, PlayerT>
-        where GameT : BoardGame.GameFramework.BoardGame
+        where GameT : GameFramework.Game.BoardGame
         where PlayerT : GamePlayer
     {
         public int RoomId { get; set; }
@@ -27,7 +27,7 @@ namespace BoardGame.Backend.Models.GameLobby
             {
                 return new GameRoomModels(
                     RoomId,
-                    GamePlayers.Select(d => d.Info.Models).ToArray(),
+                    GamePlayers.Select(d => new PlayerInfo(d.Name,d.Id).Models).ToArray(),
                     MaxPlayerCount,
                     MinPlayerCount);
             }
@@ -94,6 +94,11 @@ namespace BoardGame.Backend.Models.GameLobby
             return true;
         }
 
+
+        /// <summary>
+        /// close room and change host outside
+        /// </summary>
+        /// <param name="player"></param>
         public void LeavePlayer(ref PlayerInfo player)
         {
             int playerId = player.Id;
@@ -103,17 +108,6 @@ namespace BoardGame.Backend.Models.GameLobby
             GamePlayers.Remove(gamePlayer);
 
             player.LeaveRoom();
-
-            if (CurrentPlayerCount == 0)
-            {
-                //close room
-            }
-            else
-            {
-                // change host
-                gamePlayer = GamePlayers.First();
-                gamePlayer.Info.IsHost = true;
-            }
         }
 
         public bool IsFull()
