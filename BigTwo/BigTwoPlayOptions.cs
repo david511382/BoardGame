@@ -49,15 +49,29 @@ namespace BigTwo
             {
                 //check previous type
                 PokerCardGroup lastGroup =(PokerCardGroup)GetTable().GetLastItem();
+                PokerGroupType lastGroupType = lastGroup.GetGroupType();
 
-                //different type
-                if (cardGroupType != lastGroup.GetGroupType())
-                    return false;
-
-                //smaller value
-                PokerCard maxCard = lastGroup.GetMaxValue();
-                if (CompareCard(cardGroupMaxCard, maxCard) != 1)
-                    return false;
+                bool isSameType = cardGroupType == lastGroupType;
+                if (isSameType)
+                {
+                    //smaller value
+                    PokerCard maxCard = lastGroup.GetMaxValue();
+                    if (CompareCard(cardGroupMaxCard, maxCard) != 1)
+                        return false;
+                }
+                else
+                {
+                    //different type
+                    bool isSuperGroupType = SUPER_GROUP_TYPE_ORDERS.Contains(cardGroupType);
+                    if (isSuperGroupType)
+                    {
+                        bool isSmallerType = PokerCardGroup.Compare_Type(cardGroupType, lastGroupType) < 0;
+                        if (isSmallerType)
+                            return false;
+                    }
+                    else
+                        return false;
+                }
             }
 
             //play
