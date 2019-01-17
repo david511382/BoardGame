@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace BoardGame.Backend.GameLogics.BigTwoModels.Tests
 {
     [TestClass()]
-    public class PokerCardGroupTests
+    public class BigTwoCardGroupTests
     {
         [TestMethod()]
         public void GetMinCardGroupInGroupTypeGreaterThenCardTest()

@@ -121,7 +121,17 @@ namespace BigTwo
             {
                 foreach(PokerGroupType t in types)
                 {
-                    result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(t, cards.ToList(), selectedCards, maxCard);
+                    PokerCard maxValueCard= null;
+                    if (t.Equals(type))
+                        maxValueCard = maxCard;
+
+                    result = PokerCardGroup
+                        .GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(
+                            t,
+                            cards.ToList(),
+                            selectedCards,
+                            maxValueCard
+                        );
                     if (result != null)
                         break;
                 }
