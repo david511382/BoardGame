@@ -32,14 +32,14 @@ namespace BoardGame.Backend.Models.GameLobby
             return BoardGameManager.CreateGame(host);
         }
 
-        public GameRoomModels[] GetGameRooms()
+        public GameRoomModel[] GetGameRooms()
         {
-            GameRoomModels[] gameRooms = BoardGameManager.GetGameRooms()
+            GameRoomModel[] gameRooms = BoardGameManager.GetGameRooms()
                 .Select(d => d.Models)
                 .ToArray();
 
             if (gameRooms.Length == 0)
-                return new GameRoomModels[0];
+                return new GameRoomModel[0];
 
             return gameRooms;
         }

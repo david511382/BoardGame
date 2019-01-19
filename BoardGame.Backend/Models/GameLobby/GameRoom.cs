@@ -21,11 +21,11 @@ namespace BoardGame.Backend.Models.GameLobby
 
         private GameT _game;
 
-        public GameRoomModels Models
+        public GameRoomModel Models
         {
             get
             {
-                return new GameRoomModels(
+                return new GameRoomModel(
                     RoomId,
                     GamePlayers.Select(d => new PlayerInfo(d.Name,d.Id).Models).ToArray(),
                     MaxPlayerCount,

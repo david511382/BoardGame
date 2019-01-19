@@ -1,4 +1,4 @@
-﻿using BigTwo;
+﻿using BigTwoLogic;
 using BoardGame.Data.ApiParameters;
 using GameLogic.Game;
 using GameLogic.PokerGame;
@@ -67,7 +67,7 @@ namespace BoardGame.Backend.Models.BoardGame
             return result.ToArray();
         }
 
-        public GameStatusModels GetGameStatus(int roomId)
+        public GameStatusModel GetGameStatus(int roomId)
         {
             GameLogic.Game.BoardGame game;
             try
@@ -75,7 +75,7 @@ namespace BoardGame.Backend.Models.BoardGame
                 game = BoardGameManager.GetGameById(roomId);
                 GameStatus gameStatus = game.GetGameStatus();
 
-                GameStatusModels model = new GameStatusModels();
+                GameStatusModel model = new GameStatusModel();
                 model.CurrentPlayerId =gameStatus.CurrentPlayerId;
                 model.State = gameStatus.State;
                 model.WinPlayers = BoardGameManager._playerManager
