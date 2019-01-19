@@ -185,6 +185,22 @@ namespace BoardGame.GameLogicTests.BigTwoTest
             CheckEqualPokerCards(result, expectResult);
 
 
+            selectCards = new PokerCard[]{
+                new PokerCard(PokerSuit.Heart,3),
+                new PokerCard(PokerSuit.Heart,6)
+            };
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(PokerGroupType.Straight_Flush, handCards.ToList(), selectCards);
+            expectResult = new PokerCard[]
+            {
+                    new PokerCard(PokerSuit.Heart,3),
+                    new PokerCard(PokerSuit.Heart,4),
+                    new PokerCard(PokerSuit.Heart,5),
+                    new PokerCard(PokerSuit.Heart,6),
+                    new PokerCard(PokerSuit.Heart,7)
+            };
+            CheckEqualPokerCards(result, expectResult);
+
+
             handCards = new PokerCard[]
             {
                 new PokerCard(PokerSuit.Heart,1),

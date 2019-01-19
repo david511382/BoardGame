@@ -119,21 +119,29 @@ namespace BigTwoLogic
             PokerCard[] result = null;
             TryAllUntilExcetion(containCard, (selectedCards) =>
             {
-                foreach(PokerGroupType t in types)
+                PokerCard[] bufResult = null;
+                foreach (PokerGroupType t in types)
                 {
                     PokerCard maxValueCard= null;
                     if (t.Equals(type))
                         maxValueCard = maxCard;
 
-                    result = PokerCardGroup
+                    bufResult = PokerCardGroup
                         .GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(
                             t,
                             cards.ToList(),
                             selectedCards,
                             maxValueCard
                         );
-                    if (result != null)
-                        break;
+
+                    if (bufResult != null)
+                    {
+                        result = bufResult;
+
+                        bool isUseSameContainCard = PokerCardGroup.Intersect(bufResult, containCard.ToArray()).Length == containCard.Count;
+                        if (isUseSameContainCard)
+                            break;
+                    }
                 }
 
                 if (result == null)

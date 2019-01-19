@@ -7,6 +7,42 @@ namespace GameLogic.PokerGame.CardGroup
 {
     public partial class PokerCardGroup
     {
+        public static PokerCard[] Intersect(PokerCard[] cards, PokerCard[] intersectCards)
+        {
+            List<PokerCard> cardList = new List<PokerCard>();
+            cardList.AddRange(cards);
+            List<PokerCard> intersectList = new List<PokerCard>();
+            intersectList.AddRange(intersectCards);
+            List<PokerCard> resultList = new List<PokerCard>();
+
+            for (int i = 0; i < cardList.Count; i++)
+            {
+                for (int j = 0; j < intersectList.Count; j++)
+                    if (intersectList[j].isSame(cardList[i]))
+                    {
+                        resultList.Add(cards[i]);
+                        intersectList.RemoveAt(j);
+                        cardList.RemoveAt(i);
+                        i--;
+                        break;
+                    }
+            }
+
+            return resultList.ToArray();
+        }
+
+        public static PokerSuit GetSuitByI(int i)
+        {
+            if (i == 0)
+                return PokerSuit.Club;
+            else if (i == 1)
+                return PokerSuit.Diamond;
+            else if (i == 2)
+                return PokerSuit.Heart;
+            else
+                return PokerSuit.Spade;
+        }
+
         private static PokerCard GetMaxValueOfCardGroup<T>(PokerCard[] cards) where T : ICardGroupModel, new()
         {
             var groupedCards = cards
@@ -126,30 +162,6 @@ namespace GameLogic.PokerGame.CardGroup
             return cardList.ToArray();
         }
 
-        private static PokerCard[] Intersect(PokerCard[] cards, PokerCard[] intersectCards)
-        {
-            List<PokerCard> cardList = new List<PokerCard>();
-            cardList.AddRange(cards);
-            List<PokerCard> intersectList = new List<PokerCard>();
-            intersectList.AddRange(intersectCards);
-            List<PokerCard> resultList = new List<PokerCard>();
-
-            for (int i = 0; i < cardList.Count; i++)
-            {
-                for (int j = 0; j < intersectList.Count; j++)
-                    if (intersectList[j].isSame(cardList[i]))
-                    {
-                        resultList.Add(cards[i]);
-                        intersectList.RemoveAt(j);
-                        cardList.RemoveAt(i);
-                        i--;
-                        break;
-                    }
-            }
-
-            return resultList.ToArray();
-        }
-
         private static int[] GetStructDataSuitsByNumber(int numberIndex, bool[,] data)
         {
             List<int> suitList = new List<int>();
@@ -207,18 +219,6 @@ namespace GameLogic.PokerGame.CardGroup
                 cardData[index, suit] = true;
             }
             return cardData;
-        }
-
-        public static PokerSuit GetSuitByI(int i)
-        {
-            if (i == 0)
-                return PokerSuit.Club;
-            else if (i == 1)
-                return PokerSuit.Diamond;
-            else if (i == 2)
-                return PokerSuit.Heart;
-            else
-                return PokerSuit.Spade;
         }
 
         private static int GetIBySuit(PokerSuit suit)

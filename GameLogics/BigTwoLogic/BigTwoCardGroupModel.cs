@@ -80,8 +80,12 @@ namespace BigTwoLogic
                         );
                     }
 
+                    bufCards = bufCards
+                        .Where(d => d.Number <= number && d.Number >= startNumber)
+                        .ToArray();
+
                     if (suitEqul == SuitEqul.notSame)
-                        bufCards =PokerCardGroup.GetNotSameSuitStraight(bufCards.Where(d => d.Number <= number && d.Number >= startNumber));
+                        bufCards = PokerCardGroup.GetNotSameSuitStraight(bufCards);
 
                     result.AddRange(
                         bufCards
