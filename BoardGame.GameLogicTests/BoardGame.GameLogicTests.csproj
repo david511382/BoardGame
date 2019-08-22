@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GameLogics\BigTwoLogic\BigTwoLogic.csproj" />
-    <ProjectReference Include="..\GameLogics\GameLogic\GameLogic.csproj" />
+    <ProjectReference Include="..\BigTwoLogic\BigTwoLogic.csproj" />
+    <ProjectReference Include="..\GameLogic\GameLogic.csproj" />
   </ItemGroup>
 
 </Project>
