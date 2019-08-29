@@ -21,7 +21,7 @@ namespace HttpHelper
 
         private CookieCollection _cookies;
         private List<KeyValuePair<string, string>> _headers;
-        private IEnumerable<KeyValuePair<string, string>> _querys;
+        private List<KeyValuePair<string, string>> _querys;
         private ByteArrayContent _body;
         private Uri _url;
         private bool _isAllowHttpNotOK;
@@ -29,9 +29,9 @@ namespace HttpHelper
         public HttpRequest()
         {
             _cookies = new CookieCollection();
-            _body = new ByteArrayContent(new byte[0]);
+            _body = null;
             _headers = new List<KeyValuePair<string, string>>();
-            _querys = new KeyValuePair<string, string>[0];
+            _querys = new List<KeyValuePair<string, string>>();
             _url = null;
         }
 
@@ -51,6 +51,8 @@ namespace HttpHelper
                 {
                     setServicePoint(_url);
 
+                    if (_body != null && (await _body.ReadAsByteArrayAsync()).Length == 0)
+                        _body = null;
                     HttpRequestMessage requestMessage = createRequestMessage(_url, method, _body);
                     if (_headers != null)
                         foreach (KeyValuePair<string, string> header in _headers)
@@ -117,7 +119,14 @@ namespace HttpHelper
 
         public IHttpRequest SetQuery(IEnumerable<KeyValuePair<string, string>> keyValues)
         {
-            _querys = keyValues;
+            _querys.Clear();
+            _querys.AddRange(keyValues);
+            return this;
+        }
+
+        public IHttpRequest AddQuery(string key, string value)
+        {
+            _querys.Add(new KeyValuePair<string, string>(key, value));
             return this;
         }
 

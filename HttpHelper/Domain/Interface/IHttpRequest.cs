@@ -12,6 +12,7 @@ namespace HttpHelper.Domain.Interface
         IHttpRequest AddHeader(KeyValuePair<string, string> keyValues);
 
         IHttpRequest SetQuery(IEnumerable<KeyValuePair<string, string>> keyValues);
+        IHttpRequest AddQuery(string key, string value);
 
         IHttpRequest SetForm<T>(T obj);
         IHttpRequest SetForm(IEnumerable<KeyValuePair<string, string>> keyValues);
