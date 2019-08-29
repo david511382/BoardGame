@@ -1,0 +1,17 @@
+FROM node:12.2.0 AS builder
+
+WORKDIR /app
+
+ENV PATH /app/node_modules/.bin:$PATH
+
+COPY ./ClientApp .
+
+RUN npm install && \
+	npm install -g @angular/cli@7.3.9 && \
+    npm run build
+
+FROM nginx:alpine
+
+COPY --from=builder /app/dist/* /usr/share/nginx/html/
+
+expose 80
