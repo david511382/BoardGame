@@ -19,15 +19,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigTwoLogic", "BigTwoLogic\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameWebService", "BoardGameWebService\BoardGameWebService.csproj", "{2B507E2D-3271-464E-8CC5-34B4454864A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoardGameAngular", "BoardGameAngular\BoardGameAngular.csproj", "{F8FCFDE2-7CDC-492C-A005-3E4B9E85B97E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameAngular", "BoardGameAngular\BoardGameAngular.csproj", "{F8FCFDE2-7CDC-492C-A005-3E4B9E85B97E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthLogic", "AuthLogic\AuthLogic.csproj", "{CAF3755C-DF55-4783-8ABA-F0609B41FA99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthLogic", "AuthLogic\AuthLogic.csproj", "{CAF3755C-DF55-4783-8ABA-F0609B41FA99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthWebService", "AuthWebService\AuthWebService.csproj", "{B4F0476D-0BDC-4F18-BE44-A329EAB147DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthWebService", "AuthWebService\AuthWebService.csproj", "{B4F0476D-0BDC-4F18-BE44-A329EAB147DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpHelper", "HttpHelper\HttpHelper.csproj", "{65777DD5-1E2A-406A-94DE-A52C19F9A277}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpHelper", "HttpHelper\HttpHelper.csproj", "{65777DD5-1E2A-406A-94DE-A52C19F9A277}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemberRepository", "MemberRepository\MemberRepository.csproj", "{D296CCBF-E6B5-45AD-ADCB-F49D56C0BF2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemberRepository", "MemberRepository\MemberRepository.csproj", "{D296CCBF-E6B5-45AD-ADCB-F49D56C0BF2C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{E7D8BAB1-3A3E-44AE-AB9D-8D79341383DD}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		系統架構圖.png = 系統架構圖.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
