@@ -2,6 +2,8 @@
 using AuthLogic.Domain.Models;
 using MemberRepository;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AuthLogic
@@ -19,11 +21,12 @@ namespace AuthLogic
         {
             try
             {
+                string password = encodePassword(info.Password);
                 await _db.Add(new MemberRepository.Models.UserInfo
                 {
                     Name = info.Name,
                     Username = info.Username,
-                    Password = info.Password
+                    Password = password
                 });
 
                 return true;
@@ -38,7 +41,8 @@ namespace AuthLogic
         {
             try
             {
-                MemberRepository.Models.UserInfo dbInfo = await _db.QueryByUsernameAndPassword(identity.Username, identity.Password);
+                string password = encodePassword(identity.Password);
+                MemberRepository.Models.UserInfo dbInfo = await _db.QueryByUsernameAndPassword(identity.Username, password);
 
                 UserInfoWithID result = new UserInfoWithID
                 {
@@ -60,20 +64,39 @@ namespace AuthLogic
         {
             try
             {
+                string password = encodePassword(info.Password);
                 await _db.Update(new MemberRepository.Models.UserInfo
                 {
                     ID = id,
                     Name = info.Name,
                     Username = info.Username,
-                    Password = info.Password
+                    Password = password
                 });
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
+        }
+
+        private static string encodePassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(password);
+                byte[] sha256Bytes = sha256.ComputeHash(bytes);
+                return ByteArrayToHex(sha256Bytes);
+            }
+        }
+
+        private static string ByteArrayToHex(byte[] bs)
+        {
+            StringBuilder hex = new StringBuilder(bs.Length * 2);
+            foreach (byte b in bs)
+                hex.AppendFormat("{0:x2}", b);
+            return hex.ToString();
         }
     }
 }
