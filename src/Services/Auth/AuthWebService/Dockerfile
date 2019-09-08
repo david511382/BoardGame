@@ -7,19 +7,21 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
-COPY ["./MemberRepository/MemberRepository.csproj", "./MemberRepository/"]
-COPY ["./AuthLogic/AuthLogic.csproj", "./AuthLogic/"]
-COPY ["./AuthWebService/AuthWebService.csproj", "./AuthWebService/"]
+COPY src/Services/Auth/MemberRepository/MemberRepository.csproj  ./MemberRepository/
+COPY src/Services/Auth/AuthLogic/AuthLogic.csproj ./AuthLogic/
+COPY src/Services/Auth/AuthWebService/AuthWebService.csproj  ./AuthWebService/
 COPY global.json ./AuthWebService/
-COPY ./MemberRepository/. ./MemberRepository/
-COPY ./AuthLogic/. ./AuthLogic/
-COPY ./AuthWebService/. ./AuthWebService/
-WORKDIR "/src/AuthWebService"
-RUN dotnet restore "./AuthWebService.csproj"
+
+RUN dotnet restore ./AuthWebService/AuthWebService.csproj
+
+COPY src/Services/Auth/MemberRepository/. ./MemberRepository/
+COPY src/Services/Auth/AuthLogic/. ./AuthLogic/
+COPY src/Services/Auth/AuthWebService/. ./AuthWebService/
+WORKDIR /src/AuthWebService
+RUN dotnet publish -c Release -o /app
 RUN dotnet build "AuthWebService.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "AuthWebService.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app

@@ -4,7 +4,7 @@ services:
     container_name: board-game-auth-api
     build:
       context: .
-      dockerfile: AuthApiDockerfile
+      dockerfile: src/Services/Auth/AuthWebService/Dockerfile
     depends_on:
       - member.db
     networks:
@@ -13,7 +13,7 @@ services:
 
   angular.ui:
     container_name: board-game-angular-ui
-    build: ./BoardGameAngular
+    build: ./src/WebUI/BoardGameAngular
     ports:
       - "9487:80"
     depends_on:
