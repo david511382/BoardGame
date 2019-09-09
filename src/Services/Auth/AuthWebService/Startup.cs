@@ -1,4 +1,4 @@
-﻿using AuthLogic.Domain.Interfaces;
+﻿using AuthWebService.Sevices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace AuthWebService
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             string memberDbConnStr = Configuration.GetSection("MemberDbConfig").Value;
-            services.AddSingleton<IAuth>(new AuthLogic.AuthLogic(memberDbConnStr));
+            services.AddSingleton<IAuthService>(new AuthService(memberDbConnStr));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

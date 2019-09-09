@@ -1,5 +1,5 @@
-﻿using AuthLogic.Domain.Interfaces;
-using AuthLogic.Domain.Models;
+﻿using AuthWebService.Models;
+using AuthWebService.Sevices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -10,9 +10,9 @@ namespace AuthWebService.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IAuth _service;
+        private IAuthService _service;
 
-        public AuthController(IAuth authService)
+        public AuthController(IAuthService authService)
         {
             _service = authService;
         }

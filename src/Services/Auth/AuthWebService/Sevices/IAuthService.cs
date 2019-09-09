@@ -1,9 +1,9 @@
-﻿using AuthLogic.Domain.Models;
+﻿using AuthWebService.Models;
 using System.Threading.Tasks;
 
-namespace AuthLogic.Domain.Interfaces
+namespace AuthWebService.Sevices
 {
-    public interface IAuth
+    public interface IAuthService
     {
         Task<bool> RegisterPlayer(UserInfo info);
         Task<UserInfoWithID> LoginPlayer(UserIdentity identity);

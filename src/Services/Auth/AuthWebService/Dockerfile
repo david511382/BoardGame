@@ -8,14 +8,12 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 COPY src/Services/Auth/MemberRepository/MemberRepository.csproj  ./MemberRepository/
-COPY src/Services/Auth/AuthLogic/AuthLogic.csproj ./AuthLogic/
 COPY src/Services/Auth/AuthWebService/AuthWebService.csproj  ./AuthWebService/
 COPY global.json ./AuthWebService/
 
 RUN dotnet restore ./AuthWebService/AuthWebService.csproj
 
 COPY src/Services/Auth/MemberRepository/. ./MemberRepository/
-COPY src/Services/Auth/AuthLogic/. ./AuthLogic/
 COPY src/Services/Auth/AuthWebService/. ./AuthWebService/
 WORKDIR /src/AuthWebService
 RUN dotnet publish -c Release -o /app

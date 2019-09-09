@@ -1,18 +1,17 @@
-﻿using AuthLogic.Domain.Interfaces;
-using AuthLogic.Domain.Models;
+﻿using AuthWebService.Models;
 using MemberRepository;
 using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthLogic
+namespace AuthWebService.Sevices
 {
-    public class AuthLogic : IAuth
+    class AuthService : IAuthService
     {
         private UserInfoDAL _db;
 
-        public AuthLogic(string dbConnectStr)
+        public AuthService(string dbConnectStr)
         {
             _db = new UserInfoDAL(dbConnectStr);
         }
@@ -31,7 +30,7 @@ namespace AuthLogic
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
