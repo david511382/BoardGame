@@ -1,3 +1,6 @@
+# Swagger
+package Swashbuckle.AspNetCore
+
 # EF
 ## Migrations
 ### ¥Î Class Library ¨Ï¥Î Migrations
