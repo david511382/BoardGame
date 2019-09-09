@@ -1,27 +1,5 @@
 version: '3'
 services:
-  auth.api:
-    container_name: board-game-auth-api
-    build:
-      context: .
-      dockerfile: src/Services/Auth/AuthWebService/Dockerfile
-    depends_on:
-      - member.db
-    networks:
-         board-game-network:
-            ipv4_address: 172.54.87.54
-
-  angular.ui:
-    container_name: board-game-angular-ui
-    build: ./src/WebUI/BoardGameAngular
-    ports:
-      - "9487:80"
-    depends_on:
-      - auth.api
-    networks:
-         board-game-network:
-            ipv4_address: 172.54.87.94
-      
   member.db:
     container_name: board-game-member-db
     image: mcr.microsoft.com/mssql/server:latest
@@ -35,6 +13,39 @@ services:
     networks:
         board-game-network:
             ipv4_address: 172.54.87.10
+
+  auth.api:
+    container_name: board-game-auth-api
+    build:
+      context: .
+      dockerfile: src/Services/Auth/AuthWebService/Dockerfile
+    depends_on:
+      - member.db
+    networks:
+         board-game-network:
+            ipv4_address: 172.54.87.54
+
+  auth.gw:
+    container_name: board-game-auth-gw
+    build:
+      context: .
+      dockerfile: src/ApiGateways/OcelotApiGateway/Dockerfile
+    depends_on:
+      - auth.api
+    networks:
+         board-game-network:
+            ipv4_address: 172.54.87.88
+
+  angular.ui:
+    container_name: board-game-angular-ui
+    build: ./src/WebUI/BoardGameAngular
+    ports:
+      - "9487:80"
+    depends_on:
+      - auth.gw
+    networks:
+         board-game-network:
+            ipv4_address: 172.54.87.94
 
 volumes:
   member-db-volume:

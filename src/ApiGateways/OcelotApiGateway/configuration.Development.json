@@ -1,0 +1,38 @@
+﻿{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/Auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53694
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Auth/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT" ]
+    }//,
+    //{
+    //  "DownstreamPathTemplate": "/api/{version}/{everything}",
+    //  "DownstreamScheme": "http",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "basket.api",
+    //      "Port": 80
+    //    }
+    //  ],
+    //  "UpstreamPathTemplate": "/api/{version}/b/{everything}",
+    //  "UpstreamHttpMethod": [],
+    //  "AuthenticationOptions": {
+    //    "AuthenticationProviderKey": "IdentityApiKey",
+    //    "AllowedScopes": []
+    //  }
+    //}
+
+  ],
+    "GlobalConfiguration": {
+      "RequestIdKey": "OcRequestId",
+      "AdministrationPath": "/administration"
+    }
+  }
+  
