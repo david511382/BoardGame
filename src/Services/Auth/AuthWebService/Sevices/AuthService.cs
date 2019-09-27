@@ -1,5 +1,5 @@
 ﻿using AuthWebService.Models;
-using CommonUtil.Convert;
+using Convert;
 using MemberRepository;
 using System;
 using System.Security.Cryptography;
@@ -31,7 +31,7 @@ namespace AuthWebService.Sevices
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

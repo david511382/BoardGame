@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 
-namespace CommonUtil.User
+namespace Domain.JWTUser
 {
     public static class UserClaim
     {

@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Util\CommonUtil\CommonUtil.csproj" />
+    <ProjectReference Include="..\..\..\Common\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\..\Common\Util\CommonUtil\Convert.csproj" />
     <ProjectReference Include="..\MemberRepository\MemberRepository.csproj" />
   </ItemGroup>
 

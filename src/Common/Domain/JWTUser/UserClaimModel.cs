@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonUtil.User
+namespace Domain.JWTUser
 {
     public class UserClaimModel
     {

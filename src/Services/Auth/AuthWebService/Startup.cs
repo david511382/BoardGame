@@ -1,5 +1,6 @@
 ﻿using AuthWebService.Models;
 using AuthWebService.Sevices;
+using Domain.ApiResponse;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -35,19 +37,19 @@ namespace AuthWebService
             jwtC.Bind(jwtConfig);
 
             services.Configure<JWTConfigModel>((c) => { jwtC.Bind(c); });
-            
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {
-              options.TokenValidationParameters = new TokenValidationParameters
-              {
-                  ValidateIssuer = true,
-                  ValidateAudience = true,
-                  ValidateLifetime = true,
-                  ValidateIssuerSigningKey = true,
-                  ValidIssuer = jwtConfig.ValidIssuer,
-                  ValidAudience = jwtConfig.ValidAudience,
-                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.IssuerSigningKey)),
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuer = true,
+                      ValidateAudience = true,
+                      ValidateLifetime = true,
+                      ValidateIssuerSigningKey = true,
+                      ValidIssuer = jwtConfig.ValidIssuer,
+                      ValidAudience = jwtConfig.ValidAudience,
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.IssuerSigningKey)),
                       RequireExpirationTime = true,
                   };
                   options.Events = new JwtBearerEvents()
@@ -76,6 +78,8 @@ namespace AuthWebService
 
             services.AddSingleton<IJWTService, JWTService>();
 
+            services.AddScoped<IResponseService, ResponseService>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(
@@ -95,6 +99,21 @@ namespace AuthWebService
                         }
                     }
                 );
+
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
+                    new ApiKeyScheme
+                    {
+                        In = "header",
+                        Description = "在JWT前面加上Bearer與空格",
+                        Name = "Authorization",
+                        Type = "apiKey"
+                    });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+                    {
+                        JwtBearerDefaults.AuthenticationScheme,
+                        new string[]{ }
+                    },
+                });
 
                 string filePath = Path.Combine(@"./bin/Debug/netcoreapp2.2", "Api.xml");
                 c.IncludeXmlComments(filePath);

@@ -1,6 +1,6 @@
 ﻿using AuthWebService.Models;
 using AuthWebService.Sevices;
-using CommonUtil.User;
+using Domain.ApiResponse;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +16,13 @@ namespace AuthWebService.Controllers
     {
         private IJWTService _jwtService { get; }
         private IAuthService _service;
+        private IResponseService _responseService;
 
-        public UserController(IAuthService authService, IJWTService jwtService)
+        public UserController(IAuthService authService, IJWTService jwtService, IResponseService responseService)
         {
             _service = authService;
             _jwtService = jwtService;
+            _responseService = responseService;
         }
 
         /// <summary>
@@ -34,37 +36,34 @@ namespace AuthWebService.Controllers
         [Route("Login")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Login([FromForm] string username, [FromForm] string password)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-                return BadRequest("資料不得為空");
-
-            try
-            {
-                UserInfoWithID userInfo = await _service.LoginPlayer(new UserIdentity
+            return await _responseService.Init<LoginResponse>(this)
+                .ValidateRequest(() =>
                 {
-                    Username = username,
-                    Password = password
+                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                        throw new Exception("帳號或密碼不得為空");
+                })
+                .Do<LoginResponse>(async (result, user) =>
+                {
+                    UserInfoWithID userInfo = await _service.LoginPlayer(new UserIdentity
+                    {
+                        Username = username,
+                        Password = password
+                    });
+                    string token = _jwtService.NewToken(
+                        userInfo.Id,
+                        userInfo.Username,
+                        userInfo.Name,
+                        DateTime.UtcNow.AddDays(1));
+
+                    result.Token = token;
+                    result.Name = userInfo.Name;
+
+                    return result;
                 });
-                string token = _jwtService.NewToken(
-                    userInfo.Id,
-                    userInfo.Username,
-                    userInfo.Name,
-                    DateTime.UtcNow.AddDays(1));
-
-                LoginResponse result = new LoginResponse
-                {
-                    Token = token,
-                    Name = userInfo.Name
-                };
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
         }
 
         /// <summary>
@@ -75,24 +74,24 @@ namespace AuthWebService.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Register")]
-        [Produces("application/text")]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserInfo info)
         {
-            if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
-                return BadRequest("資料不得為空");
+            return await _responseService.Init<BoolResponseModel>(this)
+                .ValidateRequest(() =>
+                {
+                    if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
+                        throw new Exception("帳號或密碼不得為空");
+                })
+                .Do<BoolResponseModel>(async (result, user) =>
+                {
+                    result.IsSuccess = await _service.RegisterPlayer(info);
 
-            try
-            {
-                bool result = await _service.RegisterPlayer(info);
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+                    return result;
+                });
         }
 
         /// <summary>
@@ -103,27 +102,27 @@ namespace AuthWebService.Controllers
         /// <returns></returns>
         [HttpPut]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[Authorize]
-        [Produces("application/text")]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Put([FromBody] UserInfo info)
         {
-            UserClaimModel userInfo = UserClaim.Parse(HttpContext.User);
+            return await _responseService.Init<BoolResponseModel>(this)
+                .ValidateToken((user) => { })
+                .ValidateRequest(() =>
+                {
+                    if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
+                        throw new Exception("帳號或密碼不得為空");
+                })
+                .Do<BoolResponseModel>(async (result, user) =>
+                {
+                    result.IsSuccess = await _service.UpdatePlayerInfo(user.Id, info);
 
-            if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
-                return BadRequest("資料不得為空");
-
-            try
-            {
-                bool result = await _service.UpdatePlayerInfo(userInfo.Id, info);
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
+                    return result;
+                });
         }
     }
 }
