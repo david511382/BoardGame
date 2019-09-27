@@ -13,4 +13,9 @@
     <PackageReference Include="Ocelot" Version="13.5.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\Auth\AuthWebService\AuthWebService.csproj" />
+    <ProjectReference Include="..\..\Util\HttpHelper\HttpHelper.csproj" />
+  </ItemGroup>
+
 </Project>

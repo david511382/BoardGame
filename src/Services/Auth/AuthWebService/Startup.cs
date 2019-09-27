@@ -1,11 +1,19 @@
-﻿using AuthWebService.Sevices;
+﻿using AuthWebService.Models;
+using AuthWebService.Sevices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.IO;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AuthWebService
 {
@@ -21,10 +29,52 @@ namespace AuthWebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // jwt config
+            IConfigurationSection jwtC = Configuration.GetSection("JWTTokens");
+            JWTConfigModel jwtConfig = new JWTConfigModel();
+            jwtC.Bind(jwtConfig);
+
+            services.Configure<JWTConfigModel>((c) => { jwtC.Bind(c); });
+            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options =>
+              {
+              options.TokenValidationParameters = new TokenValidationParameters
+              {
+                  ValidateIssuer = true,
+                  ValidateAudience = true,
+                  ValidateLifetime = true,
+                  ValidateIssuerSigningKey = true,
+                  ValidIssuer = jwtConfig.ValidIssuer,
+                  ValidAudience = jwtConfig.ValidAudience,
+                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.IssuerSigningKey)),
+                      RequireExpirationTime = true,
+                  };
+                  options.Events = new JwtBearerEvents()
+                  {
+                      OnAuthenticationFailed = context =>
+                      {
+                          context.NoResult();
+
+                          context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                          context.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = context.Exception.Message;
+                          //Debug.WriteLine("OnAuthenticationFailed: " + context.Exception.Message);
+                          return Task.CompletedTask;
+                      },
+                      OnTokenValidated = async context =>
+                      {
+                          Console.WriteLine("OnTokenValidated: " +
+                                context.SecurityToken);
+                      }
+                  };
+              });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             string memberDbConnStr = Configuration.GetSection("MemberDbConfig").Value;
             services.AddSingleton<IAuthService>(new AuthService(memberDbConnStr));
+
+            services.AddSingleton<IJWTService, JWTService>();
 
             services.AddSwaggerGen(c =>
             {
@@ -46,7 +96,7 @@ namespace AuthWebService
                     }
                 );
 
-                var filePath = Path.Combine(@"./bin/Debug/netcoreapp2.2", "Api.xml");
+                string filePath = Path.Combine(@"./bin/Debug/netcoreapp2.2", "Api.xml");
                 c.IncludeXmlComments(filePath);
             });
         }
@@ -58,6 +108,10 @@ namespace AuthWebService
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //app.UseIdentityServer();
+
+            app.UseAuthentication();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

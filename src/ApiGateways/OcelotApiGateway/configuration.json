@@ -1,7 +1,7 @@
 ﻿{
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/api/Auth/{everything}",
+      "DownstreamPathTemplate": "/api/User/Login",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,25 +9,37 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/Auth/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT" ]
-    }//,
-    //{
-    //  "DownstreamPathTemplate": "/api/{version}/{everything}",
-    //  "DownstreamScheme": "http",
-    //  "DownstreamHostAndPorts": [
-    //    {
-    //      "Host": "basket.api",
-    //      "Port": 80
-    //    }
-    //  ],
-    //  "UpstreamPathTemplate": "/api/{version}/b/{everything}",
-    //  "UpstreamHttpMethod": [],
-    //  "AuthenticationOptions": {
-    //    "AuthenticationProviderKey": "IdentityApiKey",
-    //    "AllowedScopes": []
-    //  }
-    //}
+      "UpstreamPathTemplate": "/api/User/Login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/User/Register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/User/Register",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/User/{action}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/User/{action}",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    }
 
   ],
     "GlobalConfiguration": {

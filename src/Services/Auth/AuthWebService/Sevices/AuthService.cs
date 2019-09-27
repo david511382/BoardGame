@@ -1,4 +1,5 @@
 ﻿using AuthWebService.Models;
+using CommonUtil.Convert;
 using MemberRepository;
 using System;
 using System.Security.Cryptography;
@@ -30,7 +31,7 @@ namespace AuthWebService.Sevices
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
@@ -86,16 +87,8 @@ namespace AuthWebService.Sevices
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(password);
                 byte[] sha256Bytes = sha256.ComputeHash(bytes);
-                return ByteArrayToHex(sha256Bytes);
+                return sha256Bytes.BytesToHex();
             }
-        }
-
-        private static string ByteArrayToHex(byte[] bs)
-        {
-            StringBuilder hex = new StringBuilder(bs.Length * 2);
-            foreach (byte b in bs)
-                hex.AppendFormat("{0:x2}", b);
-            return hex.ToString();
         }
     }
 }

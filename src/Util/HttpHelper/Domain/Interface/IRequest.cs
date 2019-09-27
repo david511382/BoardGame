@@ -7,9 +7,18 @@ namespace HttpHelper.Domain.Interface
     public interface IRequest
     {
         Task<ResponseModel> Send(HttpMethod method);
+        Task<T> Send<T>(HttpMethod method);
+
         Task<ResponseModel> Get();
+        Task<T> Get<T>();
+
         Task<ResponseModel> Post();
+        Task<T> Post<T>();
+
         Task<ResponseModel> Put();
+        Task<T> Put<T>();
+
         Task<ResponseModel> Delete();
+        Task<T> Delete<T>();
     }
 }

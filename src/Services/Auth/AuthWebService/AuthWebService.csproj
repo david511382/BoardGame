@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Util\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\MemberRepository\MemberRepository.csproj" />
   </ItemGroup>
 

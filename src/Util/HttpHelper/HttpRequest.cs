@@ -72,10 +72,19 @@ namespace HttpHelper
 
             return result;
         }
+        public async Task<T> Send<T>(HttpMethod method)
+        {
+            ResponseModel result = await Send(method);
+            return JsonConvert.DeserializeObject<T>(result.Content);
+        }
 
         public Task<ResponseModel> Delete()
         {
             return Send(HttpMethod.Delete);
+        }
+        public async Task<T> Delete<T>()
+        {
+            return await Send<T>(HttpMethod.Delete);
         }
 
         public Task<ResponseModel> Get()
@@ -83,14 +92,27 @@ namespace HttpHelper
             return Send(HttpMethod.Get);
         }
 
+        public async Task<T> Get<T>()
+        {
+            return await Send<T>(HttpMethod.Get);
+        }
+
         public Task<ResponseModel> Post()
         {
             return Send(HttpMethod.Post);
+        }
+        public async Task<T> Post<T>()
+        {
+            return await Send<T>(HttpMethod.Post);
         }
 
         public Task<ResponseModel> Put()
         {
             return Send(HttpMethod.Put);
+        }
+        public async Task<T> Put<T>()
+        {
+            return await Send<T>(HttpMethod.Put);
         }
 
         public IHttpRequest SetCookies(CookieCollection cookies)
