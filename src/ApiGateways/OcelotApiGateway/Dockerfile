@@ -7,13 +7,23 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
-COPY src/ApiGateways/OcelotApiGateway/OcelotApiGateway.csproj  ./OcelotApiGateway/
-COPY global.json ./AuthWebService/
+COPY src/ApiGateways/OcelotApiGateway/OcelotApiGateway.csproj  ./ApiGateways/OcelotApiGateway/
+COPY src/Services/Auth/AuthWebService/AuthWebService.csproj  ./Services/Auth/AuthWebService/
+COPY src/Services/Auth/MemberRepository/MemberRepository.csproj  ./Services/Auth/MemberRepository/
+COPY src/Common/Domain/Domain.csproj ./Common/Domain/
+COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
+COPY src/Common/Util/HttpHelper/HttpHelper.csproj ./Common/Util/HttpHelper/
+COPY global.json ./ApiGateways/OcelotApiGateway/
 
-RUN dotnet restore ./OcelotApiGateway/OcelotApiGateway.csproj
+RUN dotnet restore ./ApiGateways/OcelotApiGateway/OcelotApiGateway.csproj
 
-COPY src/ApiGateways/OcelotApiGateway/. ./OcelotApiGateway/
-WORKDIR /src/OcelotApiGateway
+COPY src/ApiGateways/OcelotApiGateway/. ./ApiGateways/OcelotApiGateway/
+COPY src/Services/Auth/AuthWebService/. ./Services/Auth/AuthWebService/
+COPY src/Services/Auth/MemberRepository/. ./Services/Auth/MemberRepository/
+COPY src/Common/Domain/. ./Common/Domain/
+COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
+COPY src/Common/Util/HttpHelper/. ./Common/Util/HttpHelper/
+WORKDIR /src/ApiGateways/OcelotApiGateway/
 RUN dotnet publish -c Release -o /app
 RUN dotnet build "OcelotApiGateway.csproj" -c Release -o /app
 
