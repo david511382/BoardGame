@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Web;
 using System.IO;
 
 namespace OcelotApiGateway
@@ -10,6 +12,7 @@ namespace OcelotApiGateway
     {
         public static void Main(string[] args)
         {
+            NLogBuilder.ConfigureNLog("NLog.config");
             CreateWebHostBuilder(args).Build().Run();
         }
 
@@ -26,7 +29,21 @@ namespace OcelotApiGateway
                             .AddJsonFile(path: "configuration.json", optional: false, reloadOnChange: true)
                             .AddJsonFile(path: $"configuration.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
                     })
-                .UseStartup<Startup>();
+                .UseNLog()
+                .UseStartup<Startup>()
+                .ConfigureLogging((hostContext, logging) =>
+                {
+                    IHostingEnvironment env = hostContext.HostingEnvironment;
+                    string configFileName = (env.EnvironmentName.Equals("Release")) ?
+                    $"appsettings.json" :
+                    $"appsettings.{env.EnvironmentName}.json";
+                    IConfigurationRoot configuration = new ConfigurationBuilder()
+                        .SetBasePath(Path.Combine(env.ContentRootPath, "."))
+                        .AddJsonFile(path: configFileName, optional: true, reloadOnChange: true)
+                        .Build();
+                    logging.ClearProviders();
+                    logging.AddConfiguration(configuration.GetSection("Logging"));
+                });
 
             return builder;
         }
