@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{E7D8BAB1-3A3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}"
 	ProjectSection(SolutionItems) = preProject
+		.env = .env
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
@@ -52,7 +53,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Convert", "src\Common\Util\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpHelper", "src\Common\Util\HttpHelper\HttpHelper.csproj", "{2BC6528D-8232-4571-B1B3-171B24155037}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Common\Domain\Domain.csproj", "{997B427D-C0E7-4881-BAD4-9D5F3FEB6490}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Common\Domain\Domain.csproj", "{997B427D-C0E7-4881-BAD4-9D5F3FEB6490}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ELK", "ELK", "{66DDD5F1-300F-4248-B246-9B587AAA0BCF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kibana", "Kibana", "{DEF3E967-F7B4-491E-A10D-6CA9DFA36D08}"
+	ProjectSection(SolutionItems) = preProject
+		ELK\Kibana\Dockerfile = ELK\Kibana\Dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elasticsearch", "Elasticsearch", "{BACB6EAF-6508-4088-9104-4A6968F5C577}"
+	ProjectSection(SolutionItems) = preProject
+		ELK\Elasticsearch\Dockerfile = ELK\Elasticsearch\Dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{A259886A-A32F-45F5-AB5A-CD0BA9BD2C85}"
+	ProjectSection(SolutionItems) = preProject
+		ELK\Elasticsearch\config\elasticsearch.yml = ELK\Elasticsearch\config\elasticsearch.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{32AB56B1-9C00-41BB-91FE-16B0B5383993}"
+	ProjectSection(SolutionItems) = preProject
+		ELK\Kibana\config\kibana.yml = ELK\Kibana\config\kibana.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +155,10 @@ Global
 		{EE7BF5D1-075F-4AC7-A26B-BD3F94839129} = {5641DD69-A039-4D9B-BD45-8A861F7F8E7D}
 		{2BC6528D-8232-4571-B1B3-171B24155037} = {5641DD69-A039-4D9B-BD45-8A861F7F8E7D}
 		{997B427D-C0E7-4881-BAD4-9D5F3FEB6490} = {A2839155-7408-478B-90A1-7FADB88D33B2}
+		{DEF3E967-F7B4-491E-A10D-6CA9DFA36D08} = {66DDD5F1-300F-4248-B246-9B587AAA0BCF}
+		{BACB6EAF-6508-4088-9104-4A6968F5C577} = {66DDD5F1-300F-4248-B246-9B587AAA0BCF}
+		{A259886A-A32F-45F5-AB5A-CD0BA9BD2C85} = {BACB6EAF-6508-4088-9104-4A6968F5C577}
+		{32AB56B1-9C00-41BB-91FE-16B0B5383993} = {DEF3E967-F7B4-491E-A10D-6CA9DFA36D08}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0449C612-F29B-409C-8211-5B0D75F4F3B5}

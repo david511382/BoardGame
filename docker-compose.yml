@@ -1,4 +1,4 @@
-version: '3'
+version: '3.2'
 services:
   member.db:
     container_name: board-game-member-db
@@ -15,45 +15,78 @@ services:
             ipv4_address: 172.54.87.10
 
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
     container_name: es01
+    build:
+      context: ELK/Elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
     environment:
       - node.name=es01
-      - discovery.seed_hosts=es02
+      - discovery.seed_hosts=es02:9300
       - cluster.initial_master_nodes=es01,es02
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - type: bind
+        source: ./ELK/Elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch01
+        target: /usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - esdata01:/usr/share/elasticsearch/data
     ports:
-      - 9200:9200
+      - "9200:9200"
+      - "9300:9300"
     networks:
      board-game-network:
             ipv4_address: 172.54.87.92
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
     container_name: es02
+    build:
+      context: ELK/Elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
     environment:
       - node.name=es02
-      - discovery.seed_hosts=es01
+      - discovery.seed_hosts=es01:9300
       - cluster.initial_master_nodes=es01,es02
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - type: bind
+        source: ./ELK/Elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch02
+        target: /usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - esdata02:/usr/share/elasticsearch/data
     networks:
        board-game-network:
             ipv4_address: 172.54.87.93
+             
+  kibana:
+    build:
+      context: ELK/Kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./ELK/Kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    depends_on:
+      - es01
+    ports:
+      - 5601:5601
+    networks:
+       board-game-network:
+            ipv4_address: 172.54.87.50
 
   auth.api:
     container_name: board-game-auth-api
@@ -66,8 +99,8 @@ services:
          board-game-network:
             ipv4_address: 172.54.87.54
 
-  auth.gw:
-    container_name: board-game-auth-gw
+  boardgame.gw:
+    container_name: board-game-gw
     build:
       context: .
       dockerfile: src/ApiGateways/OcelotApiGateway/Dockerfile
@@ -83,17 +116,15 @@ services:
     ports:
       - "9487:80"
     depends_on:
-      - auth.gw
+      - boardgame.gw
     networks:
          board-game-network:
             ipv4_address: 172.54.87.94
 
 volumes:
   member-db-volume:
-  esdata01:
-    driver: local
-  esdata02:
-    driver: local
+  elasticsearch01:
+  elasticsearch02:
 
 networks:
    board-game-network:
