@@ -23,16 +23,21 @@ namespace OcelotApiGateway
         public void ConfigureServices(IServiceCollection services)
         {
             string identityUrl = Configuration.GetValue<string>("IdentityUrl");
+            services.AddSingleton<Auth>((sp) =>
+            {
+                ILogger<Auth> logger = sp.GetService<ILogger<Auth>>();
+                return new Auth(identityUrl, logger);
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Events = new Auth(identityUrl);
+                    options.EventsType = typeof(Auth);
                 });
 
             services.AddOcelot(Configuration);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();

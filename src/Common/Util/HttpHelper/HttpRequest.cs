@@ -64,6 +64,7 @@ namespace HttpHelper
                     if (!_isAllowHttpNotOK)
                         response.EnsureSuccessStatusCode();
 
+                    result.StatusCode = response.StatusCode;
                     result.Cookies = handler.CookieContainer.GetCookies(_url);
                     result.Content = await response.Content.ReadAsStringAsync();
                     result.Header = response.Headers;

@@ -5,7 +5,7 @@ namespace Domain.JWTUser
 {
     public static class UserClaim
     {
-        public static UserClaimModel Parse(ClaimsPrincipal user)
+        public static UserClaimModel Parse(this ClaimsPrincipal user)
         {
             UserClaimModel result = new UserClaimModel
             {
