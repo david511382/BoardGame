@@ -101,6 +101,7 @@ namespace AuthWebService.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
+        [Route("Update")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Produces("application/json")]
         [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.OK)]
@@ -108,7 +109,7 @@ namespace AuthWebService.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Put([FromBody] UserInfo info)
+        public async Task<IActionResult> Update([FromBody] UserInfo info)
         {
             return await _responseService.Init<BoolResponseModel>(this)
                 .ValidateToken((user) => { })
