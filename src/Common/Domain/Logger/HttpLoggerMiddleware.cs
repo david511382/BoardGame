@@ -1,22 +1,21 @@
-﻿using Domain.Logger;
+﻿using Domain.Logger.Models.Log;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using OcelotApiGateway.Models.Log;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace OcelotApiGateway.Middleware
+namespace Domain.Logger
 {
-    public class HttpRequestLog
+    public class HttpLoggerMiddleware
     {
         private readonly RequestDelegate _next;
         private Stopwatch _stopwatch;
-        public HttpRequestLog(RequestDelegate next)
+        public HttpLoggerMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context, ILogger<HttpRequestLog> logger)
+        public async Task Invoke(HttpContext context, ILogger<HttpLoggerMiddleware> logger)
         {
             _stopwatch = Stopwatch.StartNew();
 

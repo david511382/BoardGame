@@ -1,21 +1,20 @@
 ﻿using AuthWebService.Models;
 using AuthWebService.Sevices;
 using Domain.ApiResponse;
+using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using NLog.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AuthWebService
 {
@@ -38,6 +37,12 @@ namespace AuthWebService
 
             services.Configure<JWTConfigModel>((c) => { jwtC.Bind(c); });
 
+            services.AddSingleton((sp) =>
+            {
+                ILogger<JWTEvent> logger = sp.GetService<ILogger<JWTEvent>>();
+                return new JWTEvent(logger);
+            });
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
               .AddJwtBearer(options =>
               {
@@ -52,23 +57,7 @@ namespace AuthWebService
                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.IssuerSigningKey)),
                       RequireExpirationTime = true,
                   };
-                  options.Events = new JwtBearerEvents()
-                  {
-                      OnAuthenticationFailed = context =>
-                      {
-                          context.NoResult();
-
-                          context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                          context.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = context.Exception.Message;
-                          //Debug.WriteLine("OnAuthenticationFailed: " + context.Exception.Message);
-                          return Task.CompletedTask;
-                      },
-                      OnTokenValidated = async context =>
-                      {
-                          Console.WriteLine("OnTokenValidated: " +
-                                context.SecurityToken);
-                      }
-                  };
+                  options.EventsType = typeof(JWTEvent);
               });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -121,14 +110,16 @@ namespace AuthWebService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddNLog();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseIdentityServer();
+            app.UseMiddleware<HttpLoggerMiddleware>();
 
             app.UseAuthentication();
 

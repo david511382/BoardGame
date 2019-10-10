@@ -1,8 +1,6 @@
 ﻿using AuthWebService.Models;
 using AuthWebService.Sevices;
 using Domain.ApiResponse;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -32,7 +30,6 @@ namespace AuthWebService.Controllers
         /// <param name="password">密碼</param>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
         [Route("Login")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.OK)]
@@ -72,7 +69,6 @@ namespace AuthWebService.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
         [Route("Register")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.OK)]
@@ -102,7 +98,6 @@ namespace AuthWebService.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("Update")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Produces("application/json")]
         [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.BadRequest)]
@@ -112,7 +107,8 @@ namespace AuthWebService.Controllers
         public async Task<IActionResult> Update([FromBody] UserInfo info)
         {
             return await _responseService.Init<BoolResponseModel>(this)
-                .ValidateToken((user) => { })
+                //.ValidateToken((user) => {
+                //    string.IsNullOrEmpty(user.ValidAudience); })
                 .ValidateRequest(() =>
                 {
                     if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))

@@ -1,7 +1,6 @@
-﻿using Domain.Logger;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace OcelotApiGateway.Models.Log
+namespace Domain.Logger.Models.Log
 {
     public class HttpLogModel : StructLoggerEvent
     {

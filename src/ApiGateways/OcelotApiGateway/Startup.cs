@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Domain.Logger;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using OcelotApiGateway.Middleware;
 
 namespace OcelotApiGateway
 {
@@ -47,7 +47,7 @@ namespace OcelotApiGateway
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMiddleware<HttpRequestLog>();
+            app.UseMiddleware<HttpLoggerMiddleware>();
 
             app.UseAuthentication();
 
