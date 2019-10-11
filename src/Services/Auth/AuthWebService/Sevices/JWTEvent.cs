@@ -2,7 +2,6 @@
 using Domain.JWTUser;
 using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,17 +19,16 @@ namespace AuthWebService.Sevices
 
         public override Task AuthenticationFailed(AuthenticationFailedContext context)
         {
-            context.NoResult();
-
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            context.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = context.Exception.Message;
-
+            string failMsg = context.Exception.Message;
             AuthLogModel logData = new AuthLogModel
             {
-                Message = context.Exception.Message,
+                Message = failMsg,
                 IsAuth = false
             };
             _logger.Info(logData);
+
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            context.Fail(failMsg);
 
             return Task.CompletedTask;
         }

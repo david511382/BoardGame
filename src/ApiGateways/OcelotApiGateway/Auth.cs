@@ -2,7 +2,6 @@
 using Domain.JWTUser;
 using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 using OcelotApiGateway.Models.Log;
 using System;
@@ -91,7 +90,6 @@ namespace OcelotApiGateway
 
             _logger.Log(logLevel, logData);
 
-            context.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = exception.Message;
             context.Fail(exception);
         }
     }
