@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { RootRoutes } from './nav-menu/route.const';
 import { LobbyComponent } from './lobby/lobby.component';
+import { UrlConfigService } from './config/config.service';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,7 @@ import { LobbyComponent } from './lobby/lobby.component';
       RootRoutes,
       { useHash: true }),
   ],
-  providers: [],
+  providers: [UrlConfigService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
