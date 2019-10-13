@@ -13,6 +13,8 @@ namespace OcelotApiGateway
 {
     public class Startup
     {
+        private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -22,6 +24,19 @@ namespace OcelotApiGateway
 
         public void ConfigureServices(IServiceCollection services)
         {
+            string allowedHostsStr = Configuration.GetSection("CorsHosts").Value;
+            string[] allowedHosts = allowedHostsStr.Split(',');
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins(allowedHosts)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
             string identityUrl = Configuration.GetValue<string>("IdentityUrl");
             services.AddSingleton<Auth>((sp) =>
             {
@@ -46,6 +61,8 @@ namespace OcelotApiGateway
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseMiddleware<HttpLoggerMiddleware>();
 
