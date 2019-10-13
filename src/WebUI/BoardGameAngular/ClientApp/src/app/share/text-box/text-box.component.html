@@ -1,0 +1,4 @@
+<div [className]="class" [style.width.em]="widthEM">
+  <input [id]="id"  [style.width.em]="widthEM" class="textBoxTextBox" type="text" [(ngModel)]="value" [readonly]="isNotEnter" (focusout)="focusOut()" (focus)="focus()" >
+  <label class="text-box-label" [class.focus]="!IsLabelInText" [attr.for]="id">{{title}}</label>
+</div>
