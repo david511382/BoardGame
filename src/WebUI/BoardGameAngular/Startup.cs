@@ -1,4 +1,7 @@
 using BoardGameAngular.Models.Config;
+using BoardGameAngular.Services.Config;
+using Domain.Api.Interfaces;
+using Domain.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +31,11 @@ namespace BoardGameAngular
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.Configure<BackendConfig>(Configuration.GetSection("BackendConfig"));
+            services.Configure<ConnectionsStrings>(Configuration.GetSection("ConnectionsStrings"));
+
+            services.AddSingleton(typeof(ConfigService));
+
+            services.AddScoped<IResponseService, ResponseService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

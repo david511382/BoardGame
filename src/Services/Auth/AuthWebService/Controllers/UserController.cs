@@ -1,9 +1,11 @@
 ﻿using AuthWebService.Models;
 using AuthWebService.Sevices;
-using Domain.ApiResponse;
+using Domain.Api.Interfaces;
+using Domain.Api.Models.Response;
+using Domain.Api.Models.Response.User;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace AuthWebService.Controllers
@@ -13,8 +15,8 @@ namespace AuthWebService.Controllers
     public class UserController : ControllerBase
     {
         private IJWTService _jwtService { get; }
-        private IAuthService _service;
-        private IResponseService _responseService;
+        private readonly IAuthService _service;
+        private readonly IResponseService _responseService;
 
         public UserController(IAuthService authService, IJWTService jwtService, IResponseService responseService)
         {
@@ -32,9 +34,9 @@ namespace AuthWebService.Controllers
         [HttpPost]
         [Route("Login")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(LoginResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromForm] string username, [FromForm] string password)
         {
             return await _responseService.Init<LoginResponse>(this)
@@ -71,9 +73,9 @@ namespace AuthWebService.Controllers
         [HttpPost]
         [Route("Register")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserInfo info)
         {
             return await _responseService.Init<BoolResponseModel>(this)
@@ -99,11 +101,11 @@ namespace AuthWebService.Controllers
         [HttpPut]
         [Route("Update")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(BoolResponseModel), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType((int)HttpStatusCode.Forbidden)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] UserInfo info)
         {
             return await _responseService.Init<BoolResponseModel>(this)

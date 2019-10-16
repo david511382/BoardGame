@@ -1,9 +1,10 @@
-﻿using Domain.JWTUser;
+﻿using Domain.Api.Models.Response;
+using Domain.JWTUser;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace Domain.ApiResponse
+namespace Domain.Api.Interfaces
 {
     public delegate Task<R> ActionReturn<R, E>(R resp, E exp);
     public delegate Task<R> ActionReturn<R, E, U>(R resp, E exp, U user);

@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { RootRoutes } from './nav-menu/route.const';
 import { LobbyComponent } from './lobby/lobby.component';
-import { UrlConfigService } from './config/config.service';
+import { UserModule } from './user/user.module';
 
 @NgModule({
   declarations: [
@@ -23,8 +23,9 @@ import { UrlConfigService } from './config/config.service';
     RouterModule.forRoot(
       RootRoutes,
       { useHash: true }),
+    UserModule
   ],
-  providers: [UrlConfigService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

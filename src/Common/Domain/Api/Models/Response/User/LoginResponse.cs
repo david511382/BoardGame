@@ -1,6 +1,4 @@
-﻿using Domain.ApiResponse;
-
-namespace AuthWebService.Models
+﻿namespace Domain.Api.Models.Response.User
 {
     public class LoginResponse : ResponseModel
     {

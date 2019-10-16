@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment'
+import { Injectable, Inject } from '@angular/core';
 
 class BaseUrl {
   constructor(protected readonly baseUrl: string) { }
@@ -9,10 +8,9 @@ class BaseUrl {
 export class UrlConfigService extends BaseUrl{
   public readonly userBackendUrl: UserUrl
 
-  constructor() {
-    super(`${environment.backendURL}/api`);
-    
-    this.userBackendUrl = new UserUrl(`${this.baseUrl}/User`, "Login", "Register", "Update");
+  constructor(@Inject('BASE_URL') baseUrl: string) {
+    super(`${baseUrl}/api`);
+    this.userBackendUrl =  new UserUrl(`${this.baseUrl}/User`, "Login", "Register", "Update");
   }
 }
 

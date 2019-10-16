@@ -1,4 +1,4 @@
-﻿namespace Domain.ApiResponse
+﻿namespace Domain.Api.Models.Response
 {
     public class BoolResponseModel : ResponseModel
     {

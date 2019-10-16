@@ -1,11 +1,13 @@
-﻿using Domain.JWTUser;
+﻿using Domain.Api.Interfaces;
+using Domain.Api.Models.Response;
+using Domain.JWTUser;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.ApiResponse
+namespace Domain.Api.Services
 {
     public class ResponseService : IResponseMaker, IResponseService
     {

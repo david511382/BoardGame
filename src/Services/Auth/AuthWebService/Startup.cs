@@ -1,6 +1,7 @@
 ﻿using AuthWebService.Models;
 using AuthWebService.Sevices;
-using Domain.ApiResponse;
+using Domain.Api.Interfaces;
+using Domain.Api.Services;
 using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
