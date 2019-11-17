@@ -112,7 +112,9 @@ services:
 
   angular.ui:
     container_name: board-game-angular-ui
-    build: ./src/WebUI/BoardGameAngular
+    build:
+      context: .
+      dockerfile: src/WebUI/BoardGameAngular/dockerfile
     ports:
       - "9487:80"
     depends_on:

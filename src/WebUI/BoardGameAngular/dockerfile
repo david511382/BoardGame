@@ -1,18 +1,38 @@
-FROM node:12.2.0 AS builder
+#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+#For more information, please see https://aka.ms/containercompat
 
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
+EXPOSE 80
 
-ENV PATH /app/node_modules/.bin:$PATH
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+WORKDIR /src
+COPY src/WebUI/BoardGameAngular/BoardGameAngular.csproj ./WebUI/BoardGameAngular/
+COPY src/Common/Domain/Domain.csproj ./Common/Domain/
+COPY src/Common/Util/HttpHelper/HttpHelper.csproj ./Common/Util/HttpHelper/
+COPY global.json ./WebUI/BoardGameAngular/
 
-COPY ./ClientApp .
+RUN dotnet restore ./WebUI/BoardGameAngular/BoardGameAngular.csproj
 
-RUN npm install && \
-	npm install -g @angular/cli@7.3.9 && \
-	npm run build && \
-    ng build --prod=true
+WORKDIR /src
+COPY src/WebUI/BoardGameAngular/. ./WebUI/BoardGameAngular/
+COPY src/Common/Domain/. ./Common/Domain/
+COPY src/Common/Util/HttpHelper/. ./Common/Util/HttpHelper/
 
-FROM nginx:alpine
+WORKDIR /src/WebUI/BoardGameAngular
+# Setup NodeJs
+RUN apt-get update && \
+    apt-get install -y wget && \
+    apt-get install -y gnupg2 && \
+    wget -qO- https://deb.nodesource.com/setup_10.x | bash - && \
+    apt-get install -y build-essential nodejs
+# End setup
 
-COPY --from=builder /app/dist/* /usr/share/nginx/html/
+WORKDIR /src/WebUI/BoardGameAngular
+FROM build AS publish
+RUN dotnet publish -c Release -o out
 
-expose 80
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /src/WebUI/BoardGameAngular/out .
+ENTRYPOINT ["dotnet", "BoardGameAngular.dll"]

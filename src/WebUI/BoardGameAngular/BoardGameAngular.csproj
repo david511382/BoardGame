@@ -41,7 +41,8 @@
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install npm@latest -g" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm link @angular/cli" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
 
@@ -55,5 +56,5 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-
+  
 </Project>
