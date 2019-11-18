@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Convert;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Domain.Logger.Models.Log
 {
@@ -9,6 +11,7 @@ namespace Domain.Logger.Models.Log
         public string Url { get; set; }
         public int StatusCode { get; set; }
         public int ResponseTime { get; set; }
+        public string Request { get; set; }
 
         public HttpLogModel()
         {
@@ -17,6 +20,7 @@ namespace Domain.Logger.Models.Log
             ClientIP = "";
             Method = "";
             Url = "";
+            Request = "";
         }
 
         public HttpLogModel(HttpContext context, int responseTime)
@@ -26,6 +30,9 @@ namespace Domain.Logger.Models.Log
             StatusCode = context.Response.StatusCode;
             Method = context.Request.Method;
             Url = context.Request.Path;
+            Request = (context.Request.HasFormContentType) ?
+                "Form:" + JsonConvert.SerializeObject(context.Request.Form) :
+                "Body:" + context.Request.Body.StreamToString();
         }
     }
 }

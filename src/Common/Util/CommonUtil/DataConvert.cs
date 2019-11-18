@@ -1,9 +1,11 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 
 namespace Convert
 {
     public static class DataConvert
     {
+        #region byte
         public static string BytesToHex(this byte[] bs)
         {
             StringBuilder hex = new StringBuilder(bs.Length * 2);
@@ -23,5 +25,19 @@ namespace Convert
             }
             return byteOUT;
         }
+        #endregion
+
+        #region stream
+        public static string StreamToString(this Stream stream)
+        {
+            string result = null;
+            if (stream.CanRead)
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    result = reader.ReadToEnd();
+                }
+            return result;
+        }
+        #endregion
     }
 }
