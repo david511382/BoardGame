@@ -2,12 +2,15 @@ using BoardGameAngular.Models.Config;
 using BoardGameAngular.Services.Config;
 using Domain.Api.Interfaces;
 using Domain.Api.Services;
+using Domain.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace BoardGameAngular
 {
@@ -39,8 +42,10 @@ namespace BoardGameAngular
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddNLog();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -49,6 +54,8 @@ namespace BoardGameAngular
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            app.UseMiddleware<HttpLoggerMiddleware>();
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
