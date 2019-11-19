@@ -8,6 +8,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 COPY src/WebUI/BoardGameAngular/BoardGameAngular.csproj ./WebUI/BoardGameAngular/
+COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
 COPY src/Common/Util/HttpHelper/HttpHelper.csproj ./Common/Util/HttpHelper/
 COPY global.json ./WebUI/BoardGameAngular/
@@ -16,6 +17,7 @@ RUN dotnet restore ./WebUI/BoardGameAngular/BoardGameAngular.csproj
 
 WORKDIR /src
 COPY src/WebUI/BoardGameAngular/. ./WebUI/BoardGameAngular/
+COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
 COPY src/Common/Domain/. ./Common/Domain/
 COPY src/Common/Util/HttpHelper/. ./Common/Util/HttpHelper/
 
