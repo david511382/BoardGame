@@ -9,7 +9,7 @@ export class UrlConfigService extends BaseUrl{
   public readonly userBackendUrl: UserUrl
 
   constructor(@Inject('BASE_URL') baseUrl: string) {
-    super(`${baseUrl}/api`);
+    super(`${baseUrl}api`);
     this.userBackendUrl =  new UserUrl(`${this.baseUrl}/User`, "Login", "Register", "Update");
   }
 }
