@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -105,8 +106,9 @@ namespace AuthWebService
                     },
                 });
 
-                string filePath = Path.Combine(@"./bin/Debug/netcoreapp2.2", "Api.xml");
-                c.IncludeXmlComments(filePath);
+                string xmlFile = "Api.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 

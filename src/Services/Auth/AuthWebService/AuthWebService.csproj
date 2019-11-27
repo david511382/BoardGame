@@ -5,8 +5,8 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.2\Api.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\Api.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   
