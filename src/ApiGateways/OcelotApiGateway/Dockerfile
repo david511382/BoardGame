@@ -25,7 +25,6 @@ COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
 COPY src/Common/Util/HttpHelper/. ./Common/Util/HttpHelper/
 WORKDIR /src/ApiGateways/OcelotApiGateway/
 RUN dotnet publish -c Release -o /app
-RUN dotnet build "OcelotApiGateway.csproj" -c Release -o /app
 
 FROM build AS publish
 

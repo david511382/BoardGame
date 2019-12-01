@@ -21,7 +21,6 @@ COPY src/Common/Domain/. ./Common/Domain/
 COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
 WORKDIR /src/Services/Auth/AuthWebService
 RUN dotnet publish -c Release -o /app
-RUN dotnet build "AuthWebService.csproj" -c Release -o /app
 
 FROM build AS publish
 
