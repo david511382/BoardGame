@@ -1,7 +1,9 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
 using Domain.JWTUser;
+using Domain.Logger;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Text;
@@ -16,27 +18,38 @@ namespace Domain.Api.Services
         private ControllerBase _controller;
         private UserClaimModel _user;
 
-        public IResponseMaker Init<Response>(ControllerBase c) where Response : ResponseModel, new()
+        private StructLoggerEvent _logEvent;
+        private ILogger _logger;
+
+        public IResponseMaker Init<Response>(ControllerBase c, ILogger logger = null) where Response : ResponseModel, new()
         {
             _controller = c;
             Result = null;
             _response = new Response();
+            _logEvent = new StructLoggerEvent();
+            _logger = logger;
 
             return this;
         }
 
         public IResponseMaker ValidateToken(Action<UserClaimModel> validateFun)
         {
+            _logEvent.Log("ValidateToken:");
+
             if (Result == null)
             {
                 try
                 {
+                    _logEvent.Log("User", _controller.HttpContext.User);
                     _user = UserClaim.Parse(_controller.HttpContext.User);
 
+                    _logEvent.Log("Parsed User", _user);
                     validateFun(_user);
                 }
                 catch (Exception e)
                 {
+                    _logEvent.Log(e.Message);
+
                     _response.Error(e.Message);
                     Result = _controller.Forbid();
                 }
@@ -47,6 +60,8 @@ namespace Domain.Api.Services
 
         public IResponseMaker ValidateRequest(Action validateFun)
         {
+            _logEvent.Log("Start ValidateRequest:");
+
             if (Result == null)
             {
                 try
@@ -55,6 +70,8 @@ namespace Domain.Api.Services
                 }
                 catch (Exception e)
                 {
+                    _logEvent.Log(e.Message);
+
                     StringBuilder msgs = new StringBuilder();
                     msgs.AppendLine("請求參數不合法!");
                     if (!string.IsNullOrEmpty(e.Message))
@@ -69,8 +86,23 @@ namespace Domain.Api.Services
 
         public async Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel> doFun, ActionReturn<Response, Exception, UserClaimModel> exceptionFun = null) where Response : ResponseModel
         {
+            return await Do(async (response, user, logger) =>
+            {
+                return await doFun(response, user);
+            },
+            exceptionFun);
+        }
+
+        public async Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel, StructLoggerEvent> doFun, ActionReturn<Response, Exception, UserClaimModel> exceptionFun = null) where Response : ResponseModel
+        {
+            _logEvent.Log("Start Do:");
+
             if (Result != null)
+            {
+                _logEvent.Log("Response", Result);
+                sendLog();
                 return Result;
+            }
 
             Response response = null;
 
@@ -80,22 +112,38 @@ namespace Domain.Api.Services
             }
             catch
             {
-                return _controller.StatusCode((int)HttpStatusCode.InternalServerError, "回傳型態不同");
+                int statusCode = (int)HttpStatusCode.InternalServerError;
+
+                _logEvent.Log("回傳型態不同");
+                _logEvent.Log("HttpStatusCode", statusCode.ToString());
+                _logEvent.Log("Response", _response);
+                sendLog();
+                return _controller.StatusCode(statusCode, "回傳型態不同");
             }
 
             try
             {
-                response = await doFun(response, _user);
+                response = await doFun(response, _user, _logEvent);
             }
             catch (Exception e)
             {
+                _logEvent.Log(e.Message);
+
                 if (exceptionFun == null)
                     response.Error(e.Message);
                 else
                     response = await exceptionFun(response, e, _user);
             }
 
+            _logEvent.Log("Response", response);
+            sendLog();
             return _controller.Ok(response);
         }
+
+        private void sendLog()
+        {
+            _logger?.Info(_logEvent);
+        }
+
     }
 }

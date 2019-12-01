@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Domain.Logger
 {
@@ -36,10 +38,39 @@ namespace Domain.Logger
 
     public class StructLoggerEvent
     {
-        public string Message { get; set; }
-
-        public StructLoggerEvent()
+        public string Message
         {
+            get
+            {
+                return _logMsg.ToString();
+            }
+            set
+            {
+                _logMsg.Clear();
+                _logMsg.Append(value);
+            }
+        }
+        private StringBuilder _logMsg;
+
+        public StructLoggerEvent(string message = null)
+        {
+            _logMsg = new StringBuilder();
+            Message = message;
+        }
+
+        public void Log(string msg)
+        {
+            _logMsg.AppendLine(msg);
+        }
+
+        public void Log(string title, string msg)
+        {
+            Log($"{title}:{msg}");
+        }
+
+        public void Log(string title, object obj)
+        {
+            Log(title, JsonConvert.SerializeObject(obj));
         }
 
         public override string ToString()

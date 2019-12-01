@@ -4,6 +4,7 @@ using Domain.Api.Interfaces;
 using Domain.Api.Models.Response.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,11 +16,13 @@ namespace BoardGameAngular.Controllers
     {
         private readonly ConfigService _urlConfig;
         private readonly IResponseService _responseService;
+        private readonly ILogger _logger;
 
-        public UserController(ConfigService config, IResponseService responseService)
+        public UserController(ConfigService config, IResponseService responseService, ILogger<UserController> logger)
         {
             _urlConfig = config;
             _responseService = responseService;
+            _logger = logger;
         }
 
         [HttpPost("[action]")]
@@ -28,14 +31,15 @@ namespace BoardGameAngular.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromForm] string username, [FromForm] string password)
         {
-            return await _responseService.Init<LoginResponse>(this)
+            return await _responseService.Init<LoginResponse>(this, _logger)
                   .ValidateRequest(() =>
                   {
                       if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                           throw new Exception("帳號或密碼不得為空");
                   })
-                  .Do<LoginResponse>(async (result, user) =>
+                  .Do<LoginResponse>(async (result, user, logger) =>
                   {
+                      logger.Log("POST", _urlConfig.UserLogin);
                       result = await HttpHelper.HttpRequest.New()
                           .SetForm(new Dictionary<string, string>
                           {

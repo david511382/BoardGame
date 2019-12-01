@@ -5,6 +5,7 @@ using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -17,12 +18,14 @@ namespace AuthWebService.Controllers
         private IJWTService _jwtService { get; }
         private readonly IAuthService _service;
         private readonly IResponseService _responseService;
+        private readonly ILogger _logger;
 
-        public UserController(IAuthService authService, IJWTService jwtService, IResponseService responseService)
+        public UserController(IAuthService authService, IJWTService jwtService, IResponseService responseService, ILogger<UserController> logger)
         {
             _service = authService;
             _jwtService = jwtService;
             _responseService = responseService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace AuthWebService.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromForm] string username, [FromForm] string password)
         {
-            return await _responseService.Init<LoginResponse>(this)
+            return await _responseService.Init<LoginResponse>(this, _logger)
                 .ValidateRequest(() =>
                 {
                     if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
@@ -78,7 +81,7 @@ namespace AuthWebService.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserInfo info)
         {
-            return await _responseService.Init<BoolResponseModel>(this)
+            return await _responseService.Init<BoolResponseModel>(this, _logger)
                 .ValidateRequest(() =>
                 {
                     if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
@@ -108,7 +111,7 @@ namespace AuthWebService.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] UserInfo info)
         {
-            return await _responseService.Init<BoolResponseModel>(this)
+            return await _responseService.Init<BoolResponseModel>(this, _logger)
                 //.ValidateToken((user) => {
                 //    string.IsNullOrEmpty(user.ValidAudience); })
                 .ValidateRequest(() =>
