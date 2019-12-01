@@ -41,8 +41,8 @@ services:
       - "9200:9200"
       - "9300:9300"
     networks:
-     board-game-network:
-            ipv4_address: 172.54.87.92
+      board-game-network:
+         ipv4_address: 172.54.87.92
   es02:
     container_name: es02
     build:
@@ -67,8 +67,8 @@ services:
         soft: -1
         hard: -1
     networks:
-       board-game-network:
-            ipv4_address: 172.54.87.93
+      board-game-network:
+        ipv4_address: 172.54.87.93
              
   kibana:
     build:
@@ -95,6 +95,7 @@ services:
       dockerfile: src/Services/Auth/AuthWebService/Dockerfile
     depends_on:
       - member.db
+      - es01
     networks:
          board-game-network:
             ipv4_address: 172.54.87.54
@@ -106,6 +107,7 @@ services:
       dockerfile: src/ApiGateways/OcelotApiGateway/Dockerfile
     depends_on:
       - auth.api
+      - es01
     networks:
          board-game-network:
             ipv4_address: 172.54.87.88
@@ -119,6 +121,7 @@ services:
       - "9487:80"
     depends_on:
       - boardgame.gw
+      - es01
     networks:
          board-game-network:
             ipv4_address: 172.54.87.94
