@@ -9,6 +9,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { RootRoutes } from './nav-menu/route.const';
 import { LobbyComponent } from './lobby/lobby.component';
 import { UserModule } from './user/user.module';
+import { AuthService } from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { UserModule } from './user/user.module';
       { useHash: true }),
     UserModule
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

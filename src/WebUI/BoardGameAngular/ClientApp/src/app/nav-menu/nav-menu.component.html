@@ -8,9 +8,11 @@
       </button>
       <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" [ngClass]='{"show": isExpanded}'>
         <ul class="navbar-nav flex-grow">
-          <li *ngFor="let route of Routes" class="nav-item" [routerLinkActive]='["link-active"]'>
-            <a class="nav-link" routerLink={{route.path}}>{{route.name}}</a>
-          </li>
+          <ng-template ngFor let-route [ngForOf]="Routes">
+            <li *ngIf="route.onNav" class="nav-item">
+              <a class="nav-link" routerLink={{route.path}} [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]="{exact:true}">{{route.name}}</a>
+            </li>
+          </ng-template>
         </ul>
       </div>
     </div>

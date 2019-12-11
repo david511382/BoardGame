@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IRoute, RootRoutes } from './route.const';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -10,13 +11,14 @@ export class NavMenuComponent {
   public Routes: IRoute[];
   isExpanded = false;
 
-  constructor() {
+  constructor(private authService : AuthService) {
     this.Routes = [];
+    var routes = this.Routes;
     RootRoutes.forEach((v) => {
-      if (!v.redirectTo && (
-        !v.canActivate
-      ))
-        this.Routes.push(v);
+      if (v.redirectTo === undefined) {
+        routes.push(v);
+        routes[routes.length - 1].onNav = authService.isNavShow(v.name);
+      }
     });
   }
 

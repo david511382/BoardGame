@@ -25,7 +25,6 @@ export class LoginComponent  {
           return;
         }
 
-        this.service.Token = resp.token;
         alert(`${resp.name}登入成功\n${resp.message}`);
       });
   }
