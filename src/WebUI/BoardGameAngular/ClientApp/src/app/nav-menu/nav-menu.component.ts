@@ -11,9 +11,18 @@ export class NavMenuComponent {
   public Routes: IRoute[];
   isExpanded = false;
 
-  constructor(private authService : AuthService) {
+  constructor(private authService: AuthService) {
+    authService.authChanged.subscribe(value => {
+      this.reload();
+    });
+
+    this.reload();
+  }
+
+  reload() {
     this.Routes = [];
     var routes = this.Routes;
+    var authService = this.authService;
     RootRoutes.forEach((v) => {
       if (v.redirectTo === undefined) {
         routes.push(v);

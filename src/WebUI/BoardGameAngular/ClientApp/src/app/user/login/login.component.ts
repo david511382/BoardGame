@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { UserService, LoginRequest } from '../user.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,7 @@ export class LoginComponent  {
   public username: string;
   public password: string;
 
-  constructor(private service: UserService) {
+  constructor(private service: UserService,private location :Location) {
     this.username = "";
     this.password = "";
   }
@@ -25,6 +26,7 @@ export class LoginComponent  {
           return;
         }
 
+        this.location.back();
         alert(`${resp.name}登入成功\n${resp.message}`);
       });
   }

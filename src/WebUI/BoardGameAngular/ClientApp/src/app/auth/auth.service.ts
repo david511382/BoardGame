@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',//singleton 
 })
 export class AuthService implements CanActivate {
+  public authChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private readonly TOKEN_COOKIE_NAME: string = "token";
 
   constructor(private cookieService: CookieService) { }
@@ -38,9 +40,11 @@ export class AuthService implements CanActivate {
 
   private set token(token: string) {
     this.cookieService.set(this.TOKEN_COOKIE_NAME, token)
+    this.authChanged.next(true);
   }
 
   private get token(): string {
     return this.cookieService.get(this.TOKEN_COOKIE_NAME);
+    this.authChanged.next(true);
   }
 }
