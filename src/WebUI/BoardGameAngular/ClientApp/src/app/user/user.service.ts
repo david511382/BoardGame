@@ -11,7 +11,6 @@ export class LoginRequest {
 }
 
 interface LoginResponse extends GeneralResponse {
-  token: string,
   name: string,
 }
 
@@ -42,8 +41,8 @@ export class UserService {
       formData
     ).pipe(
       catchError(HandleErrorFun()),
-      tap(data => this.authService.Login(data.token)
-    ));
+      tap(() => this.authService.Login()
+      ));
   }
 
   public Register() {

@@ -15,6 +15,7 @@ namespace AuthWebService.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private const string TOKEN_COOKIE_NAME = "token";
         private IJWTService _jwtService { get; }
         private readonly IAuthService _service;
         private readonly IResponseService _responseService;
@@ -55,13 +56,18 @@ namespace AuthWebService.Controllers
                         Username = username,
                         Password = password
                     });
+                    var expireTime = DateTime.UtcNow.AddDays(1);
                     string token = _jwtService.NewToken(
                         userInfo.Id,
                         userInfo.Username,
                         userInfo.Name,
-                        DateTime.UtcNow.AddDays(1));
+                        expireTime);
 
-                    result.Token = token;
+                    Response.Cookies.Append(
+                        TOKEN_COOKIE_NAME,
+                        token,
+                        new CookieOptions(){Expires = expireTime}
+                    );
                     result.Name = userInfo.Name;
 
                     return result;

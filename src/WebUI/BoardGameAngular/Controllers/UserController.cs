@@ -5,8 +5,11 @@ using Domain.Api.Models.Response.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BoardGameAngular.Controllers
@@ -40,14 +43,24 @@ namespace BoardGameAngular.Controllers
                   .Do<LoginResponse>(async (result, user, logger) =>
                   {
                       logger.Log("POST", _urlConfig.UserLogin);
-                      result = await HttpHelper.HttpRequest.New()
+                      var response = await HttpHelper.HttpRequest.New()
                           .SetForm(new Dictionary<string, string>
                           {
                                 {"username",username },
                                 {"password",password }
                           })
                           .To(_urlConfig.UserLogin)
-                          .Post<LoginResponse>();
+                          .Send(HttpMethod.Post);
+                      if (response.StatusCode != HttpStatusCode.OK)
+                          throw new Exception(response.Content);
+
+                      foreach(Cookie cookie in response.Cookies)
+                        Response.Cookies.Append(
+                            cookie.Name,
+                            cookie.Value,
+                            new CookieOptions(){Expires = cookie.Expires}
+                        );
+                      result = JsonConvert.DeserializeObject<LoginResponse>(response.Content);
 
                       return result;
                   });

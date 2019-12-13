@@ -1,4 +1,4 @@
-import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
@@ -13,7 +13,7 @@ export class AuthService implements CanActivate {
   constructor(private cookieService: CookieService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (!this.token || this.token==="") {
+    if (!this.token || this.token === "") {
       return false;
     }
     return true;
@@ -30,21 +30,20 @@ export class AuthService implements CanActivate {
     }
   }
 
-  public Login(token: string) {
-    this.token = token;
+  public Login() {
+    this.authChanged.next(true);
   }
 
   public Logout() {
     this.token = "";
+    this.authChanged.next(true);
   }
 
   private set token(token: string) {
     this.cookieService.set(this.TOKEN_COOKIE_NAME, token)
-    this.authChanged.next(true);
   }
 
   private get token(): string {
     return this.cookieService.get(this.TOKEN_COOKIE_NAME);
-    this.authChanged.next(true);
   }
 }
