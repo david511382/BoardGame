@@ -1,34 +1,24 @@
 import { Component } from '@angular/core';
-import { IRoute, RootRoutes } from './route.const';
-import { AuthService } from '../auth/auth.service';
+import { IRoute } from './route.const';
+import { NavMenuService } from './nav-menu.service';
 
 @Component({
   selector: 'app-nav-menu',
   templateUrl: './nav-menu.component.html',
-  styleUrls: ['./nav-menu.component.css']
+  styleUrls: ['./nav-menu.component.css'],
+  providers: [NavMenuService]
 })
 export class NavMenuComponent {
   public Routes: IRoute[];
   isExpanded = false;
 
-  constructor(private authService: AuthService) {
-    authService.authChanged.subscribe(value => {
-      this.reload();
-    });
-
-    this.reload();
+  constructor(private service: NavMenuService) {
+    service.RouteChanged.subscribe((routes)=> this.Routes = routes);
+    this.Routes = service.Routes;
   }
 
-  reload() {
-    this.Routes = [];
-    var routes = this.Routes;
-    var authService = this.authService;
-    RootRoutes.forEach((v) => {
-      if (v.redirectTo === undefined) {
-        routes.push(v);
-        routes[routes.length - 1].onNav = authService.isNavShow(v.name);
-      }
-    });
+  public Click(navName : string) {
+    this.service.ClickNav(navName);
   }
 
   collapse() {

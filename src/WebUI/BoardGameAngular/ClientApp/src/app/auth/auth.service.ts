@@ -33,9 +33,9 @@ export class AuthService implements CanActivate {
   public Login() {
     this.authChanged.next(true);
   }
-
+  
   public Logout() {
-    this.token = "";
+    this.cookieService.delete(this.TOKEN_COOKIE_NAME);
     this.authChanged.next(true);
   }
 

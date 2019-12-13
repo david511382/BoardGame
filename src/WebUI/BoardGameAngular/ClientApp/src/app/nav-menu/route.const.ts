@@ -17,8 +17,8 @@ export const RootRoutes: IRoute[] = [
     name: "登入"
   },
   {
-    path: 'logout',
-    component: LoginComponent,
+    path: '', 
+    component: LobbyComponent,
     canActivate: [AuthService], 
     name: "登出"
   },

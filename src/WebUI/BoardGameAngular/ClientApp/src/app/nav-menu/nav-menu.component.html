@@ -10,7 +10,7 @@
         <ul class="navbar-nav flex-grow">
           <ng-template ngFor let-route [ngForOf]="Routes">
             <li *ngIf="route.onNav" class="nav-item">
-              <a class="nav-link" routerLink={{route.path}} [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]="{exact:true}">{{route.name}}</a>
+              <a class="nav-link" (click)="Click(route.name)" routerLink={{route.path}} [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]="{exact:true}">{{route.name}}</a>
             </li>
           </ng-template>
         </ul>
