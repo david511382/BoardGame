@@ -1,0 +1,58 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: boardgame-gw
+  labels:
+    name: boardgame-gw
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: gw-ocelot
+  labels:
+    app: gw-ocelot
+spec:
+  clusterIP: 10.96.0.88
+  ports:
+    - name: gw
+      protocol: TCP
+      targetPort: 80
+      port: 80
+  selector:
+    app: gw-ocelot
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: gw-ocelot
+  labels:
+    app: gw-ocelot
+  namespace: boardgame-gw
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: gw-ocelot
+  template:
+    metadata:
+      labels:
+        app: gw-ocelot
+    spec:
+      containers:
+        - name: gw-ocelot
+          image: david511382/boardgame_ocelot.gw:latest
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: "CORSHOSTS"
+              value: "http://10.96.0.94:80"
+            - name: "IdentityUrl"
+              value: "http://10.96.0.54:80"
+            - name: "CONNECTIONSSTRINGS_ELASTICSEARCHSERVERADDRESS"
+              value: "http://10.96.0.92:9200"

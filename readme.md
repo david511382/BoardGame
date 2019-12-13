@@ -1,4 +1,49 @@
 # Getting started
+## Kubernetes
+### 安裝
+minikube
+kubectl 命令行工具
+[參考網站](https://kubernetes.io/docs/tasks/tools/install-minikube/ "Title")
+[入門參考網站](https://medium.com/@C.W.Hu/kubernetes-implement-ingress-deployment-tutorial-7431c5f96c3e"Title")
+https://medium.com/better-programming/k8s-tips-using-a-serviceaccount-801c433d0023
+### 配置
+在deployment資料夾以系統管理員身分執行PowerShell
+使用hyperV啟動minikube，指令:
+minikube start --vm-driver=hyperv --cpus 2 --memory 4096
+(—vm-driver=virtualbox)
+
+kubectl apply -f db/
+kubectl apply -f es/
+kubectl apply -f service/
+
+minikube ip
+
+
+[k8s Image building script 參考網站](https://github.com/chrislusf/seaweedfs/wiki/Deployment-to-Kubernetes-and-Minikube "Title")
+
+### 指令
+啟動
+minikube start --vm-driver=hyperv
+
+刪除
+minikube delete
+
+關閉
+minikube stop
+
+切換context
+kubectl config use-context minikube
+
+開啟操作面板
+minikube dashboard
+
+查看集群
+kubectl cluster-info
+
+[參考網站](https://kubernetes.io/docs/setup/learning-environment/minikube/#minikube-features "Title")
+[參考網站](https://k8smeetup.github.io/docs/tutorials/stateless-application/hello-minikube "Title")
+[參考網站](https://peihsinsu.gitbooks.io/docker-note-book/content/the-mini-env-of-k8s---minikube.html "Title")
+
 ## EF 資料庫 Migrations
 board-game-member-db
 1. 在啟動docker-compose後，連上資料庫localhost,1487，以SA帳號登入
@@ -8,6 +53,7 @@ board-game-member-db
 5. 在VS起始專案設為AuthWebService，套件管理器主控台預設專案設為MemberRepository
 6. 在MemberRepository中DesignDbContextFactory指定連線字串Server=localhost,1487;Initial Catalog=BoardGameMember;Persist Security Info=True;User ID=AuthWebService;Password=auth$WebService;TrustServerCertificate=False;
 7. 在套件管理器主控台輸入 Update-Database InitialCreate -Context MemberContext
+
 
 ### 套件
 Microsoft.EntityFrameworkCore

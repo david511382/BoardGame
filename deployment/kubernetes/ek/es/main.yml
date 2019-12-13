@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: boardgame-elk
+  labels:
+    name: boardgame-elasticsearch
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    elastic-app: elasticsearch
+  name: elk-admin
+  namespace: boardgame-elk
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: elk-admin
+  labels:
+    elastic-app: elasticsearch
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: elk-admin
+    namespace: boardgame-elk

@@ -1,0 +1,75 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: es-m1
+  labels:
+    app: es-m1
+spec:
+  clusterIP: 10.96.0.92
+  ports:
+    - port: 9300
+      targetPort: 9300
+      protocol: TCP
+  selector:
+    app: es-m1
+    role: master
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: es-m1
+  namespace: boardgame-elasticsearch
+  labels:
+    app: elasticsearch-master
+    role: master
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: es-m1
+      role: master
+  template:
+    metadata:
+      labels:
+        app: es-m1
+        role: master
+    spec:
+      containers:
+        - name: es-m1
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/bash", "-c", "sysctl -w vm.max_map_count=262144; ulimit -l unlimited;"]
+          ports:
+            - containerPort: 9200
+              protocol: TCP
+            - containerPort: 9300
+              protocol: TCP
+          env:
+            - name: "node.master"
+              value: "true"
+            - name: "node.data"
+              value: "true"
+            - name: "cluster.name"
+              value: "elasticsearch-cluster"
+            - name: "ES_JAVA_OPTS"
+              value: "-Xms1024m -Xmx1024m"
+            - name: "node.name"
+              value: "es-m1"
+            - name: "discovery.seed_hosts"
+              value: "es-m2:9300"
+            - name: "cluster.initial_master_nodes"
+              value: "es-m1,es-m2"
+          securityContext:
+            privileged: true
+      volumes:
+        - name: esdata
+          emptyDir: {}
+      serviceAccountName: elasticsearch-admin
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule

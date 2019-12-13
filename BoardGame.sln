@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{E7D8BAB1-3A3
 		系統架構圖.png = 系統架構圖.png
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}"
 	ProjectSection(SolutionItems) = preProject
 		.env = .env
 		docker-compose.yml = docker-compose.yml
@@ -77,6 +77,39 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{32AB56
 		ELK\Kibana\config\kibana.yml = ELK\Kibana\config\kibana.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", "{180DF69E-BE55-4D3F-8506-5A2BD729B84A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kubernetes", "kubernetes", "{F3491F36-9134-4030-8483-36750EB02FB0}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\kubernetes\.env = deployment\kubernetes\.env
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "db", "db", "{783B9463-51B8-4BFC-AE45-5DDE1ABD4A7F}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\kubernetes\db\member.yml = deployment\kubernetes\db\member.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ek", "ek", "{ACB5B2F4-A018-4E65-93ED-D93F4A916403}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "service", "service", "{1AFADC7D-D175-43A7-BE4D-1D8B7F1BF6F5}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\kubernetes\service\auth.yml = deployment\kubernetes\service\auth.yml
+		deployment\kubernetes\service\gateway.yml = deployment\kubernetes\service\gateway.yml
+		deployment\kubernetes\service\ui.angular.yml = deployment\kubernetes\service\ui.angular.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "es", "es", "{9AAE3160-B28A-4A97-9E74-3AB424A0D036}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\kubernetes\ek\es\main.yml = deployment\kubernetes\ek\es\main.yml
+		deployment\kubernetes\ek\es\master1.yml = deployment\kubernetes\ek\es\master1.yml
+		deployment\kubernetes\ek\es\master2.yml = deployment\kubernetes\ek\es\master2.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pvc", "pvc", "{09343DE8-2A4E-48E2-8D5B-06E4D82840B9}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\kubernetes\pvc\pvc.yml = deployment\kubernetes\pvc\pvc.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +169,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{BE85CF8B-E4F0-4470-934C-62E6DB98DD3F} = {180DF69E-BE55-4D3F-8506-5A2BD729B84A}
 		{C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2} = {B9CC07A2-D1E3-4636-B8E5-C94D7FBB4835}
 		{0F656E10-65A1-45DA-A97A-7B14FF83405E} = {B9CC07A2-D1E3-4636-B8E5-C94D7FBB4835}
 		{0F33C1FD-85B8-4ADA-84BF-EA179CA14D66} = {B9CC07A2-D1E3-4636-B8E5-C94D7FBB4835}
@@ -159,6 +193,12 @@ Global
 		{BACB6EAF-6508-4088-9104-4A6968F5C577} = {66DDD5F1-300F-4248-B246-9B587AAA0BCF}
 		{A259886A-A32F-45F5-AB5A-CD0BA9BD2C85} = {BACB6EAF-6508-4088-9104-4A6968F5C577}
 		{32AB56B1-9C00-41BB-91FE-16B0B5383993} = {DEF3E967-F7B4-491E-A10D-6CA9DFA36D08}
+		{F3491F36-9134-4030-8483-36750EB02FB0} = {180DF69E-BE55-4D3F-8506-5A2BD729B84A}
+		{783B9463-51B8-4BFC-AE45-5DDE1ABD4A7F} = {F3491F36-9134-4030-8483-36750EB02FB0}
+		{ACB5B2F4-A018-4E65-93ED-D93F4A916403} = {F3491F36-9134-4030-8483-36750EB02FB0}
+		{1AFADC7D-D175-43A7-BE4D-1D8B7F1BF6F5} = {F3491F36-9134-4030-8483-36750EB02FB0}
+		{9AAE3160-B28A-4A97-9E74-3AB424A0D036} = {ACB5B2F4-A018-4E65-93ED-D93F4A916403}
+		{09343DE8-2A4E-48E2-8D5B-06E4D82840B9} = {F3491F36-9134-4030-8483-36750EB02FB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0449C612-F29B-409C-8211-5B0D75F4F3B5}
