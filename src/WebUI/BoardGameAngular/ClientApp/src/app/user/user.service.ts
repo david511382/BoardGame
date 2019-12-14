@@ -10,6 +10,10 @@ export class LoginRequest {
   constructor(public Username: string, public Password: string) {}
 }
 
+export class RegisterAndLoginRequest {
+  constructor(public Name: string,public Username: string, public Password: string) { }
+}
+
 interface LoginResponse extends GeneralResponse {
   name: string,
 }
@@ -45,6 +49,26 @@ export class UserService {
       ));
   }
 
-  public Register() {
+  public RegisterAndLogin(request: RegisterAndLoginRequest): Observable<LoginResponse> {
+    if (!request.Name || request.Name === "") {
+      alert("請輸入名稱");
+      return;
+    }
+    if (!request.Username || request.Username === "") {
+      alert("請輸入使用者名稱");
+      return;
+    }
+    if (!request.Password || request.Password === "") {
+      alert("請輸入使用者密碼");
+      return;
+    }
+
+    return this.http.post<LoginResponse>(
+      this.backendUrl.Register,
+      request
+    ).pipe(
+      catchError(HandleErrorFun()),
+      tap(() => this.authService.Login()
+      ));
   }
 }

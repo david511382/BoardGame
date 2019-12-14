@@ -1,6 +1,7 @@
 ﻿using BoardGameAngular.Models.Auth;
 using BoardGameAngular.Services.Config;
 using Domain.Api.Interfaces;
+using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,24 +43,16 @@ namespace BoardGameAngular.Controllers
                   })
                   .Do<LoginResponse>(async (result, user, logger) =>
                   {
-                      logger.Log("POST", _urlConfig.UserLogin);
-                      var response = await HttpHelper.HttpRequest.New()
-                          .SetForm(new Dictionary<string, string>
-                          {
-                                {"username",username },
-                                {"password",password }
-                          })
-                          .To(_urlConfig.UserLogin)
-                          .Send(HttpMethod.Post);
+                      HttpHelper.Domain.Model.ResponseModel response = await login(username, password);
                       if (response.StatusCode != HttpStatusCode.OK)
                           throw new Exception(response.Content);
 
-                      foreach(Cookie cookie in response.Cookies)
-                        Response.Cookies.Append(
-                            cookie.Name,
-                            cookie.Value,
-                            new CookieOptions(){Expires = cookie.Expires}
-                        );
+                      foreach (Cookie cookie in response.Cookies)
+                          Response.Cookies.Append(
+                              cookie.Name,
+                              cookie.Value,
+                              new CookieOptions() { Expires = cookie.Expires }
+                          );
                       result = JsonConvert.DeserializeObject<LoginResponse>(response.Content);
 
                       return result;
@@ -67,20 +60,50 @@ namespace BoardGameAngular.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<UserInfoWithID> Register([FromBody] UserInfo request)
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RegisterAndLogin([FromBody] UserInfo userInfo)
         {
-            try
-            {
-                UserInfoWithID result = await HttpHelper.HttpRequest.New()
-                    .SetJson(request)
-                    .To(_urlConfig.UserRegister)
-                    .Post<UserInfoWithID>();
-                return result;
-            }
-            catch
-            {
-                throw new Exception();
-            }
+            return await _responseService.Init<LoginResponse>(this, _logger)
+                  .ValidateRequest(() =>
+                  {
+                      if (string.IsNullOrWhiteSpace(userInfo.Name) || string.IsNullOrWhiteSpace(userInfo.Username) || string.IsNullOrWhiteSpace(userInfo.Password))
+                          throw new Exception("資料不得為空");
+                  })
+                  .Do<LoginResponse>(async (result, user, logger) =>
+                  {
+                      // register
+                      BoolResponseModel registerResponse = await HttpHelper.HttpRequest.New()
+                        .SetJson(userInfo)
+                        .To(_urlConfig.UserRegister)
+                        .Post<BoolResponseModel>();
+                      if (registerResponse.IsError)
+                      {
+                          result.Error(registerResponse.ErrorMessage);
+                          return result;
+                      }
+                      else if (!registerResponse.IsSuccess)
+                      {
+                          result.Error(registerResponse.Message);
+                          return result;
+                      }
+
+                      // login
+                      HttpHelper.Domain.Model.ResponseModel response = await login(userInfo.Username, userInfo.Password);
+                      if (response.StatusCode != HttpStatusCode.OK)
+                          throw new Exception(response.Content);
+
+                      foreach (Cookie cookie in response.Cookies)
+                          Response.Cookies.Append(
+                              cookie.Name,
+                              cookie.Value,
+                              new CookieOptions() { Expires = cookie.Expires }
+                          );
+                      result = JsonConvert.DeserializeObject<LoginResponse>(response.Content);
+
+                      return result;
+                  });
         }
 
         [HttpPut("[action]")]
@@ -100,6 +123,18 @@ namespace BoardGameAngular.Controllers
             }
 
             return false;
+        }
+
+        private async Task<HttpHelper.Domain.Model.ResponseModel> login(string username, string password)
+        {
+            return await HttpHelper.HttpRequest.New()
+                .SetForm(new Dictionary<string, string>
+                {
+                    { "username",username },
+                    { "password",password }
+                })
+                .To(_urlConfig.UserLogin)
+                .Send(HttpMethod.Post);
         }
     }
 }

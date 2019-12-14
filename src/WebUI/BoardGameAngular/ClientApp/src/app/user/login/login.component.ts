@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService, LoginRequest } from '../user.service';
 import { Location } from '@angular/common';
 
@@ -30,8 +30,4 @@ export class LoginComponent  {
         alert(`${resp.name}登入成功\n${resp.message}`);
       });
   }
-
-  public Register() {
-    this.service.Register();
-  }  
 }

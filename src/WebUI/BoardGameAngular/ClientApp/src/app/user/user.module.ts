@@ -7,13 +7,16 @@ import { UserService } from './user.service';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpModule } from '@angular/http';
 import { UrlConfigService } from '../config/config.service';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
+    RegisterComponent,
   ],
   exports: [
     LoginComponent,
+    RegisterComponent,
   ],
   providers: [
     UrlConfigService,

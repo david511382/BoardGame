@@ -3,10 +3,13 @@ using AuthWebService.Sevices;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.User;
+using Domain.Db;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace AuthWebService.Controllers
@@ -56,7 +59,7 @@ namespace AuthWebService.Controllers
                         Username = username,
                         Password = password
                     });
-                    var expireTime = DateTime.UtcNow.AddDays(1);
+                    DateTime expireTime = DateTime.UtcNow.AddDays(1);
                     string token = _jwtService.NewToken(
                         userInfo.Id,
                         userInfo.Username,
@@ -66,7 +69,7 @@ namespace AuthWebService.Controllers
                     Response.Cookies.Append(
                         TOKEN_COOKIE_NAME,
                         token,
-                        new CookieOptions(){Expires = expireTime}
+                        new CookieOptions() { Expires = expireTime }
                     );
                     result.Name = userInfo.Name;
 
@@ -90,12 +93,39 @@ namespace AuthWebService.Controllers
             return await _responseService.Init<BoolResponseModel>(this, _logger)
                 .ValidateRequest(() =>
                 {
-                    if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
+                    if (string.IsNullOrWhiteSpace(info.Name) || string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
                         throw new Exception("帳號或密碼不得為空");
                 })
-                .Do<BoolResponseModel>(async (result, user) =>
+                .Do<BoolResponseModel>(async (result, user, logger) =>
                 {
-                    result.IsSuccess = await _service.RegisterPlayer(info);
+                    try
+                    {
+                        await _service.RegisterPlayer(info);
+                    }
+                    catch (DbUpdateException e)
+                    {
+                        SqlException sqlE = e.InnerException as SqlException;
+                        logger.Log("Sql Exception", sqlE);
+
+                        string errorMsg;
+                        switch ((DbErrorNumber)sqlE.Number)
+                        {
+                            case DbErrorNumber.DuplicateKey:
+                                errorMsg = "資料已被使用";
+                                break;
+                            default:
+                                errorMsg = "未知的錯誤";
+                                break;
+                        }
+
+                        result.Error(errorMsg);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Log("Exception", e);
+
+                        result.Error("資料庫異常");
+                    }
 
                     return result;
                 });

@@ -17,24 +17,16 @@ namespace AuthWebService.Sevices
             _db = new UserInfoDAL(dbConnectStr);
         }
 
-        public async Task<bool> RegisterPlayer(UserInfo info)
+        public async Task RegisterPlayer(UserInfo info)
         {
-            try
+            string password = encodePassword(info.Password);
+            await _db.Add(new MemberRepository.Models.UserInfo
             {
-                string password = encodePassword(info.Password);
-                await _db.Add(new MemberRepository.Models.UserInfo
-                {
-                    Name = info.Name,
-                    Username = info.Username,
-                    Password = password
-                });
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+                Name = info.Name,
+                Username = info.Username,
+                Password = password,
+                RegisterTime = DateTime.Now
+            });
         }
 
         public async Task<UserInfoWithID> LoginPlayer(UserIdentity identity)

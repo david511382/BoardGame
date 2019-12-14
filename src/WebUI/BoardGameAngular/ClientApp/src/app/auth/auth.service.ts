@@ -22,6 +22,7 @@ export class AuthService implements CanActivate {
   isNavShow(navName : string) :boolean {
     switch (navName) {
       case "登入":
+      case "註冊":
         return !this.canActivate(null, null);
       case "登出":
         return this.canActivate(null, null);
