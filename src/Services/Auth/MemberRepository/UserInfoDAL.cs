@@ -51,6 +51,7 @@ namespace MemberRepository
             currentItem.Name = userInfo.Name;
             currentItem.Username = userInfo.Username;
             currentItem.Password = userInfo.Password;
+            currentItem.RegisterTime = userInfo.RegisterTime;
 
             await _ctx.SaveChangesAsync();
         }

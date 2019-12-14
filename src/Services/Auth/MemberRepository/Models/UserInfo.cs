@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MemberRepository.Models
@@ -19,5 +20,8 @@ namespace MemberRepository.Models
         [Required]
         [MaxLength(64), MinLength(64)]
         public string Password { get; set; }
+
+        [Required]
+        public DateTime RegisterTime { get; set; }
     }
 }
