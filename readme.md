@@ -3,11 +3,11 @@
 board-game-member-db
 1. 在啟動docker-compose後，連上資料庫localhost,1487，以SA帳號登入
 2. 接著新增資料庫BoardGameMember
-3. 新增登入User ID=AuthWebService Password=auth$WebService 預設資料庫BoardGameMember 不強制執行密碼過期
+3. 新增登入User ID=AuthWebService Password=auth$WebService 對應BoardGameMember 預設資料庫BoardGameMember 不強制執行密碼過期
 4. 資料庫BoardGameMember設置AuthWebService權限，參考 需要資料庫權限
 5. 在VS起始專案設為AuthWebService，套件管理器主控台預設專案設為MemberRepository
 6. 在MemberRepository中DesignDbContextFactory指定連線字串Server=localhost,1487;Initial Catalog=BoardGameMember;Persist Security Info=True;User ID=AuthWebService;Password=auth$WebService;TrustServerCertificate=False;
-7. 在套件管理器主控台輸入 Update-Database InitialCreate -Context MemberContext
+7. 在套件管理器主控台輸入 Update-Database -Context MemberContext
 
 ### 套件
 Microsoft.EntityFrameworkCore
