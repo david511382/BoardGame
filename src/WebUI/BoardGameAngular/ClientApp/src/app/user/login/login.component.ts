@@ -1,23 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UserService, LoginRequest } from '../user.service';
 import { Location } from '@angular/common';
+import { UserInfoComponent } from '../info/info.component';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent  {
-  public username: string;
-  public password: string;
+export class LoginComponent {
+  @ViewChild(UserInfoComponent, { static: false }) info: UserInfoComponent;
 
-  constructor(private service: UserService,private location :Location) {
-    this.username = "";
-    this.password = "";
-  }
+  constructor(private service: UserService, private location: Location) {}
   
   public Login() {
-    var request = new LoginRequest(this.username, this.password);
+    var request = new LoginRequest(this.info.username, this.info.password);
     var ob = this.service.Login(request);
     if (ob)
       ob.subscribe((resp) => {

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UserService, RegisterAndLoginRequest } from '../user.service';
 import { Location } from '@angular/common';
+import { UserInfoComponent } from '../info/info.component';
 
 @Component({
   selector: 'app-register',
@@ -8,18 +9,13 @@ import { Location } from '@angular/common';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent  {
-  public name: string;
-  public username: string;
-  public password: string;
+  @ViewChild(UserInfoComponent, { static: false }) info: UserInfoComponent;
 
-  constructor(private service: UserService,private location :Location) {
-    this.name = "";
-    this.username = "";
-    this.password = "";    
+  constructor(private service: UserService,private location :Location) { 
   }
   
   public Register() {
-    var request = new RegisterAndLoginRequest(this.name, this.username, this.password);
+    var request = new RegisterAndLoginRequest(this.info.name, this.info.username, this.info.password);
     var ob = this.service.RegisterAndLogin(request);
     if (ob)
       ob.subscribe((resp) => {

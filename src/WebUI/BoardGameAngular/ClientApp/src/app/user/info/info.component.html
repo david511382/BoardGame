@@ -1,0 +1,22 @@
+<table>
+  <tr *ngIf="IsUsingName">
+    <td>
+      <text-box title="名稱" [(value)]="name"></text-box>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <text-box title="帳號" [(value)]="username"></text-box>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <text-box title="密碼" [(value)]="password"></text-box>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <button class="great" (click)="ClickButton()">{{ButtonText}}</button>
+    </td>
+  </tr>
+</table>
