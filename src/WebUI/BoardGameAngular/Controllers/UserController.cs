@@ -107,22 +107,51 @@ namespace BoardGameAngular.Controllers
         }
 
         [HttpPut("[action]")]
-        public async Task<bool> Update([FromRoute]int id, [FromBody] UserInfo request)
+        public async Task<IActionResult> Update([FromBody] UserInfo request)
         {
-            try
-            {
-                HttpHelper.Domain.Model.ResponseModel response = await HttpHelper.HttpRequest.New()
-                   .SetJson(request)
-                   .To(_urlConfig.UserUpdate)
-                   .Put();
-                if (response.Content.Equals("True"))
-                    return true;
-            }
-            catch
-            {
-            }
+            return await _responseService.Init<BoolResponseModel>(this, _logger)
+                 .ValidateRequest(() =>
+                 {
+                     if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Username))
+                         throw new Exception("參數不得為空");
+                 })
+                 .Do<BoolResponseModel>(async (result, user) =>
+                 {
+                     BoolResponseModel response = await HttpHelper.HttpRequest.New()
+                          .SetJson(request)
+                          .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
+                          .To(_urlConfig.UserUpdate)
+                          .Put<BoolResponseModel>();
 
-            return false;
+                     result.Message = response.Message;
+
+                     if (response.IsError)
+                     {
+                         result.Error(response.ErrorMessage);
+                         return result;
+                     }
+
+                     return result;
+                 });
+        }
+
+        [HttpGet]
+        [Route("")]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get()
+        {
+            return await _responseService.Init<LoginResponse>(this, _logger)
+                .Do<LoginResponse>(async (result, user) =>
+                {
+                    result = await HttpHelper.HttpRequest.New()
+                          .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
+                          .To(_urlConfig.UserInfo)
+                          .Get<LoginResponse>();
+
+                    return result;
+                });
         }
 
         private async Task<HttpHelper.Domain.Model.ResponseModel> login(string username, string password)

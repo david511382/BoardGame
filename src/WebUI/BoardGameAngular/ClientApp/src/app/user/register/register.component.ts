@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { UserService, RegisterAndLoginRequest } from '../user.service';
+import { UserService, UserInfoModel } from '../user.service';
 import { Location } from '@angular/common';
 import { UserInfoComponent } from '../info/info.component';
 
@@ -15,7 +15,7 @@ export class RegisterComponent  {
   }
   
   public Register() {
-    var request = new RegisterAndLoginRequest(this.info.name, this.info.username, this.info.password);
+    var request = new UserInfoModel(this.info.name, this.info.username, this.info.password);
     var ob = this.service.RegisterAndLogin(request);
     if (ob)
       ob.subscribe((resp) => {

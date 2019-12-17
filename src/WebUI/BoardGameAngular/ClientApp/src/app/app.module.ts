@@ -9,7 +9,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { RootRoutes } from './nav-menu/route.const';
 import { LobbyComponent } from './lobby/lobby.component';
 import { UserModule } from './user/user.module';
-import { AuthService } from './auth/auth.service';
+import { GuestService } from './auth/guest.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +26,9 @@ import { AuthService } from './auth/auth.service';
       { useHash: true }),
     UserModule
   ],
-  providers: [AuthService],
+  providers: [
+    GuestService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

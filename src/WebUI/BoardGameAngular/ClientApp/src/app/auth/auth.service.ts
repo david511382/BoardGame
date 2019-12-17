@@ -25,6 +25,7 @@ export class AuthService implements CanActivate {
       case "註冊":
         return !this.canActivate(null, null);
       case "登出":
+      case "用戶資料":
         return this.canActivate(null, null);
       default:
         return true;

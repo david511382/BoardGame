@@ -49,8 +49,7 @@ namespace AuthWebService.Controllers
             return await _responseService.Init<LoginResponse>(this, _logger)
                 .ValidateRequest(() =>
                 {
-                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-                        throw new Exception("帳號或密碼不得為空");
+                    vailidateUserPsw(username, password);
                 })
                 .Do<LoginResponse>(async (result, user) =>
                 {
@@ -72,6 +71,7 @@ namespace AuthWebService.Controllers
                         new CookieOptions() { Expires = expireTime }
                     );
                     result.Name = userInfo.Name;
+                    result.Username = userInfo.Username;
 
                     return result;
                 });
@@ -93,14 +93,16 @@ namespace AuthWebService.Controllers
             return await _responseService.Init<BoolResponseModel>(this, _logger)
                 .ValidateRequest(() =>
                 {
-                    if (string.IsNullOrWhiteSpace(info.Name) || string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
-                        throw new Exception("帳號或密碼不得為空");
+                    vailidateUserPsw(info.Username, info.Password);
+                    if (string.IsNullOrWhiteSpace(info.Name))
+                        throw new Exception("名稱不得為空");
                 })
                 .Do<BoolResponseModel>(async (result, user, logger) =>
                 {
                     try
                     {
                         await _service.RegisterPlayer(info);
+                        result.IsSuccess = true;
                     }
                     catch (DbUpdateException e)
                     {
@@ -148,19 +150,56 @@ namespace AuthWebService.Controllers
         public async Task<IActionResult> Update([FromBody] UserInfo info)
         {
             return await _responseService.Init<BoolResponseModel>(this, _logger)
-                //.ValidateToken((user) => {
-                //    string.IsNullOrEmpty(user.ValidAudience); })
+                .ValidateToken((user) =>
+                {
+                    if (user.Username != info.Username)
+                        throw new Exception("不合法認證");
+                    //string.IsNullOrEmpty(user.ValidAudience);
+                })
                 .ValidateRequest(() =>
                 {
-                    if (string.IsNullOrWhiteSpace(info.Username) || string.IsNullOrWhiteSpace(info.Password))
-                        throw new Exception("帳號或密碼不得為空");
+                    if (string.IsNullOrWhiteSpace(info.Name))
+                        throw new Exception("名稱不得為空");
                 })
                 .Do<BoolResponseModel>(async (result, user) =>
                 {
                     result.IsSuccess = await _service.UpdatePlayerInfo(user.Id, info);
+                    result.Message = (result.IsSuccess) ?
+                        "修改成功" :
+                        "修改失敗";
 
                     return result;
                 });
+        }
+
+        /// <summary>
+        /// 取得會員資料
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get()
+        {
+            return await _responseService.Init<LoginResponse>(this, _logger)
+                .ValidateToken((x) => { })
+                .Do<LoginResponse>(async (result, user) =>
+                {
+                    result.Username = user.Username;
+                    result.Name = user.Name;
+
+                    return result;
+                });
+        }
+
+        private void vailidateUserPsw(string username, string password)
+        {
+            if (string.IsNullOrWhiteSpace(username) ||
+                string.IsNullOrWhiteSpace(password))
+                throw new Exception("帳號或密碼不得為空");
         }
     }
 }

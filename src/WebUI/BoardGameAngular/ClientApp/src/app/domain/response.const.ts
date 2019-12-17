@@ -1,6 +1,10 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { throwError } from "rxjs";
 
+export interface SuccessResponse extends GeneralResponse {
+  isSuccess: string
+}
+
 export interface GeneralResponse {
   message: string,
   errorMessage: string,

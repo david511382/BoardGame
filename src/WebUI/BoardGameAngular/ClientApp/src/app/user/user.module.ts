@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { LoginComponent } from './login/login.component';
 import { ShareModule } from '../share/share.module';
@@ -9,28 +9,40 @@ import { HttpModule } from '@angular/http';
 import { UrlConfigService } from '../config/config.service';
 import { RegisterComponent } from './register/register.component';
 import { UserInfoComponent } from './info/info.component';
+import { UpdateComponent } from './update/update.component';
+import { AuthService } from '../auth/auth.service';
 
 @NgModule({
   declarations: [
     UserInfoComponent,
     LoginComponent,
     RegisterComponent,
+    UpdateComponent,
   ],
   exports: [
     UserInfoComponent,
     LoginComponent,
     RegisterComponent,
+    UpdateComponent,
   ],
   providers: [
     UrlConfigService,
     CookieService,
-    UserService
+    UserService,
+    AuthService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (authService: UserService) => () => authService.LoadInfo(),
+      deps: [UserService, AuthService],
+      multi: true
+    }
   ],
   imports: [
     HttpModule,
     ShareModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
 })
 export class UserModule { }

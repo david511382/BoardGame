@@ -28,4 +28,7 @@ export class UserUrl extends BaseUrl{
   get Update(): string {
     return `${this.baseUrl}/${this.update}`;
   }
+  get Info(): string {
+    return `${this.baseUrl}`;
+  }
 }

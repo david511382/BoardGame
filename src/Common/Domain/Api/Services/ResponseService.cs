@@ -40,7 +40,6 @@ namespace Domain.Api.Services
             {
                 try
                 {
-                    _logEvent.Log("User", _controller.HttpContext.User);
                     _user = UserClaim.Parse(_controller.HttpContext.User);
 
                     _logEvent.Log("Parsed User", _user);

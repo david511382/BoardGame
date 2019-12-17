@@ -3,6 +3,8 @@ import { LobbyComponent } from "../lobby/lobby.component";
 import { LoginComponent } from "../user/login/login.component";
 import { AuthService } from "../auth/auth.service";
 import { RegisterComponent } from "../user/register/register.component";
+import { UpdateComponent } from "../user/update/update.component";
+import { GuestService } from "../auth/guest.service";
 
 export interface IRoute extends Route {
   name?: string
@@ -15,12 +17,20 @@ export const RootRoutes: IRoute[] = [
   {
     path: 'login',
     component: LoginComponent,
+    canActivate: [GuestService],
     name: "登入"
   },
   {
     path: 'register',
     component: RegisterComponent,
+    canActivate: [GuestService],
     name: "註冊"
+  },
+  {
+    path: 'update',
+    component: UpdateComponent,
+    canActivate: [AuthService],
+    name: "用戶資料"
   },
   {
     path: '', 

@@ -1,22 +1,28 @@
-<table>
-  <tr *ngIf="IsUsingName">
-    <td>
-      <text-box title="名稱" [(value)]="name"></text-box>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <text-box title="帳號" [(value)]="username"></text-box>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <text-box title="密碼" [(value)]="password"></text-box>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <button class="great" (click)="ClickButton()">{{ButtonText}}</button>
-    </td>
-  </tr>
-</table>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <form [formGroup]="form" (ngSubmit)="ClickButton()" novalidate>
+    <label *ngIf="IsContainName">
+      名稱:
+      <input formControlName="name" [required]="isNameRequired" placeholder="名稱">
+    </label>
+
+    <label>
+      帳號:
+      <input formControlName="username" [required]="isUsernameRequired" placeholder="帳號">
+    </label>
+
+    <div class="pswContainer">
+      <label class="pswItem">
+        密碼:
+        <input formControlName="password" [type]="passwordType" [required]="isPasswordRequired" placeholder="密碼">
+      </label>
+      <div *ngIf="IsPasswordShowable" class="pswItem" (click)="isShowPassword = !isShowPassword">
+        <i *ngIf="isShowPassword" class="material-icons">remove_red_eye</i>
+        <i *ngIf="!isShowPassword" class="material-icons">lock</i>
+      </div>
+    </div>
+    
+    <p>{{form.status}}</p>
+
+    <button class="great" type="submit" [disabled]="!form.valid">{{ButtonText}}</button>
+  </form>

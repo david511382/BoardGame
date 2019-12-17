@@ -56,7 +56,15 @@ namespace AuthWebService.Sevices
         {
             try
             {
-                string password = encodePassword(info.Password);
+                string password;
+                if (info.Password == null)
+                {
+                    MemberRepository.Models.UserInfo curInfo = await _db.Query(id);
+                    password = curInfo.Password;
+                }
+                else
+                    password = encodePassword(info.Password);
+
                 await _db.Update(new MemberRepository.Models.UserInfo
                 {
                     ID = id,

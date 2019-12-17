@@ -1,92 +1,133 @@
-textarea {
-  width: 60em;
-  height: 7em;
-}
+  textarea {
+    width: 60em;
+    height: 7em;
+  }
 
-button {
-  -webkit-transition-duration: 0.4s; /* Safari */
-  transition-duration: 0.4s;
-  color: white;
-  display: inline-block;
-  padding: 0.5em 0.5em;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 0.5em;
-  box-shadow: 0 0.3em #999;
-  width: 10em;
-  transition: all 0.5s;
-  margin: 0.5em;
-}
+  button{
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    color: white;
+    display: inline-block;
+    padding: 0.5em 0.5em;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 0.5em;
+    box-shadow: 0 0.3em #999;
+    width: 10em;
+    transition: all 0.5s;
+    margin: 0.5em;
+  }
 
-button:active {
-  background-color: #3e8e41;
-  box-shadow: 0 0.2em #666;
-  transform: translateY(4px);
-}
+  button:disabled {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    display: inline-block;
+    background-color: #cccccc;
+    color: #666666;
+    padding: 0.5em 0.5em;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    border: 1px solid #999999;
+    border-radius: 0.5em;
+    box-shadow: 0 0.3em #999;
+    pointer-events: none;
+    width: 10em;
+    transition: all 0.5s;
+    margin: 0.5em;
+  }
 
-button.great {
-  -webkit-transition-duration: 0.4s; /* Safari */
-  transition-duration: 0.4s;
-  color: white;
-  display: inline-block;
-  padding: 15px 25px;
-  font-size: 36px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999;
-  width: 5em;
-  transition: all 0.5s;
-  margin: 5px;
-  margin-left:50px;
-}
+  button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 0.2em #666;
+    transform: translateY(4px);
+  }
 
-button:hover {
-  background-color: #4CAF50; /* Green */
-  color: purple;
-}
+  button.great{
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    color: white;
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 36px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+    width: 5em;
+    transition: all 0.5s;
+    margin: 5px;
+    margin-left: 50px;
+  }
 
-button.great:active {
-  background-color: #3e8e41;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
-}
+  button.great:disabled {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    background-color: #cccccc;
+    color: #666666;
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 36px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    border: 1px solid #999999;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+    pointer-events: none;
+    width: 5em;
+    transition: all 0.5s;
+    margin: 5px;
+    margin-left: 50px;
+  }
 
-table {
-  border-collapse: separate;
-  border-spacing: 0px 20px;
-}
+  button:hover:not([disabled]) {
+    background-color: #4CAF50; /* Green */
+    color: purple;
+  }
 
-td.payName {
-  padding: 0px 150px 0px 0px
-}
+  button.great:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
 
-div.line {
-  display: inline-flex
-}
+  form {
+    display: inline-flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: flex-start;
+    align-content: center;
+  }
 
-td.rowspan {
-  position: relative;
-}
-td.rowspan div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-td.rowspan div check-box {
-  flex-grow: 1;
-}
+  label {
+    flex-grow: 1;
+  }
+
+  .pswContainer {
+    display: inline-flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+  }
+  .pswItem {
+    flex-grow: 1;
+  }
+
+  .material-icons {
+    font-size: 24px; /* Preferred icon size */
+    cursor: pointer;
+  }
