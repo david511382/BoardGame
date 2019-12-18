@@ -77,6 +77,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{32AB56
 		ELK\Kibana\config\kibana.yml = ELK\Kibana\config\kibana.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redis", "Redis", "{369694BC-2749-443A-858C-1FBAE3343258}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "createnode", "createnode", "{508447DF-CBAC-4723-9BD5-7D6D629EEA50}"
+	ProjectSection(SolutionItems) = preProject
+		redis\createnode\dockerfile = redis\createnode\dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node", "node", "{6BDA9E7D-3794-4BF0-AF98-9DA0563FCB64}"
+	ProjectSection(SolutionItems) = preProject
+		redis\node\dockerfile = redis\node\dockerfile
+		redis\node\rediscluster.conf = redis\node\rediscluster.conf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sentinel", "sentinel", "{92E419BE-941A-41E2-9D21-82CA2047006B}"
+	ProjectSection(SolutionItems) = preProject
+		redis\sentinel\dockerfile = redis\sentinel\dockerfile
+		redis\sentinel\sentinel.conf = redis\sentinel\sentinel.conf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +178,10 @@ Global
 		{BACB6EAF-6508-4088-9104-4A6968F5C577} = {66DDD5F1-300F-4248-B246-9B587AAA0BCF}
 		{A259886A-A32F-45F5-AB5A-CD0BA9BD2C85} = {BACB6EAF-6508-4088-9104-4A6968F5C577}
 		{32AB56B1-9C00-41BB-91FE-16B0B5383993} = {DEF3E967-F7B4-491E-A10D-6CA9DFA36D08}
+		{369694BC-2749-443A-858C-1FBAE3343258} = {BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}
+		{508447DF-CBAC-4723-9BD5-7D6D629EEA50} = {369694BC-2749-443A-858C-1FBAE3343258}
+		{6BDA9E7D-3794-4BF0-AF98-9DA0563FCB64} = {369694BC-2749-443A-858C-1FBAE3343258}
+		{92E419BE-941A-41E2-9D21-82CA2047006B} = {369694BC-2749-443A-858C-1FBAE3343258}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0449C612-F29B-409C-8211-5B0D75F4F3B5}
