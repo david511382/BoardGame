@@ -61,14 +61,14 @@ export class UserInfoComponent{
   }
   @Input() IsPasswordShowable: boolean;
 
-  private form = this.formBuilder.group({
+  form = this.formBuilder.group({
     name: [''],
     username: [''],
     password: ['']
   })
 
   private isShowPassword: boolean;
-  private get passwordType(): string {
+  get passwordType(): string {
     if (this.isShowPassword)
       return "text";
     return "password";
