@@ -55,6 +55,19 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       }
+    },
+    // lobby
+    {
+      "DownstreamPathTemplate": "/api/Game",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 51136
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Game",
+      "UpstreamHttpMethod": [ "GET" ]
     }
   ],
     "GlobalConfiguration": {
