@@ -11,7 +11,6 @@ COPY src/Services/Auth/MemberRepository/MemberRepository.csproj  ./Services/Auth
 COPY src/Services/Auth/AuthWebService/AuthWebService.csproj  ./Services/Auth/AuthWebService/
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
 COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
-COPY global.json ./Services/Auth/AuthWebService/
 
 RUN dotnet restore  ./Services/Auth/AuthWebService/AuthWebService.csproj
 

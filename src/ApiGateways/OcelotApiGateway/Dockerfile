@@ -13,7 +13,6 @@ COPY src/Services/Auth/MemberRepository/MemberRepository.csproj  ./Services/Auth
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
 COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
 COPY src/Common/Util/HttpHelper/HttpHelper.csproj ./Common/Util/HttpHelper/
-COPY global.json ./ApiGateways/OcelotApiGateway/
 
 RUN dotnet restore ./ApiGateways/OcelotApiGateway/OcelotApiGateway.csproj
 
