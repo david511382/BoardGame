@@ -56,7 +56,7 @@ namespace LobbyWebService
                         }
                     }
                 );
-                
+
                 string xmlFile = "Api.xml";
                 string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
@@ -64,7 +64,10 @@ namespace LobbyWebService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IRedisService redisService,
+            IGameService gameService)
         {
             loggerFactory.AddNLog();
 
@@ -87,6 +90,9 @@ namespace LobbyWebService
             });
 
             app.UseMvc();
+
+            RedisLoader redisLoader = new RedisLoader(redisService, gameService);
+            redisLoader.Load();
         }
     }
 }

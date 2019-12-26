@@ -27,5 +27,13 @@ namespace LobbyWebService.Sevices
                  return result;
              }).ToArray();
         }
+
+        public async Task AddGames(GameInfo[] games)
+        {
+            HashEntry[] datas = games.Select((g) => new HashEntry(g.ID, JsonConvert.SerializeObject(g)))
+                 .ToArray();
+
+            await _db.HashSetAsync(Key.Game, datas);
+        }
     }
 }
