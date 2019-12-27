@@ -22,7 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\..\Common\Util\CommonUtil\Convert.csproj" />
-    <ProjectReference Include="..\MemberRepository\MemberRepository.csproj" />
+    <ProjectReference Include="..\..\..\Repositories\Member\MemberRepository.csproj" />
   </ItemGroup>
 
   <ItemGroup>
