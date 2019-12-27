@@ -4,6 +4,7 @@ using LobbyWebService.Sevices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RedisRepository.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

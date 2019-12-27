@@ -1,12 +1,11 @@
 ﻿using GameRespository.Models;
-using LobbyWebService.Models;
 using Newtonsoft.Json;
-using RedisRepository;
+using RedisRepository.Models;
 using StackExchange.Redis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LobbyWebService.Sevices
+namespace RedisRepository.Services
 {
     public class RedisService : IRedisService
     {
@@ -20,7 +19,7 @@ namespace LobbyWebService.Sevices
 
         public async Task<GameInfo> Game(int ID)
         {
-            var entry = await _db.HashGetAsync(Key.Game,ID.ToString());
+            RedisValue entry = await _db.HashGetAsync(Key.Game, ID.ToString());
             return JsonConvert.DeserializeObject<GameInfo>(entry);
         }
 
@@ -45,7 +44,7 @@ namespace LobbyWebService.Sevices
 
         public async Task CreateRoom(int hostID, GameInfo game)
         {
-            var room = new RedisRoomModel();
+            RedisRoomModel room = new RedisRoomModel();
             room.Game = game;
             room.HostID = hostID;
 

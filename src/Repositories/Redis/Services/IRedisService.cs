@@ -1,10 +1,11 @@
 ﻿using GameRespository.Models;
 using System.Threading.Tasks;
 
-namespace LobbyWebService.Sevices
+namespace RedisRepository.Services
 {
-    public interface IRedisService : IGameService
+    public interface IRedisService
     {
+        Task<GameInfo[]> List();
         Task<GameInfo> Game(int ID);
         Task AddGames(GameInfo[] games);
 
