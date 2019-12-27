@@ -3,6 +3,7 @@ using Domain.JWTUser;
 using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OcelotApiGateway.Models.Log;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace OcelotApiGateway
 {
     public class Auth : JwtBearerEvents
@@ -46,8 +46,8 @@ namespace OcelotApiGateway
                         throw new Exception($"訪問auth伺服器返回{resp.StatusCode.ToString()}");
 
                     byte[] respBytes = resp.Content
-                           .Replace(@"""", "")
-                           .HexToBytes();
+       .Replace(@"""", "")
+       .HexToBytes();
 
                     using (MemoryStream memStream = new MemoryStream(respBytes))
                     {
@@ -57,7 +57,11 @@ namespace OcelotApiGateway
                         }
                     }
 
-                    logData.User = context.Principal.Parse();
+                    UserClaimModel user = context.Principal.Parse();
+                    string userJson = JsonConvert.SerializeObject(user);
+                    context.Request.Headers[TOKEN_HEADER] = userJson;
+
+                    logData.User = user;
                     logData.IsAuth = true;
                     _logger.Info(logData);
 

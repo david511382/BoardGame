@@ -4,16 +4,19 @@ using Domain.JWTUser;
 using Domain.Logger;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Domain.Api.Services
 {
     public class ResponseService : IResponseMaker, IResponseService
     {
         public IActionResult Result { get; private set; }
+
+        private const string TOKEN_HEADER = "Authorization";
+
         private ResponseModel _response;
         private ControllerBase _controller;
         private UserClaimModel _user;
@@ -40,7 +43,8 @@ namespace Domain.Api.Services
             {
                 try
                 {
-                    _user = UserClaim.Parse(_controller.HttpContext.User);
+                    string userJson = _controller.Request.Headers[TOKEN_HEADER].ToString();
+                    _user = JsonConvert.DeserializeObject<UserClaimModel>(userJson);
 
                     _logEvent.Log("Parsed User", _user);
                     validateFun(_user);
