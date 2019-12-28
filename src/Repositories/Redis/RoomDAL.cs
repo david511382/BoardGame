@@ -16,13 +16,15 @@ namespace RedisRepository
             _redis = ConnectionMultiplexer.Connect(connectStr);
         }
 
-        public async Task CreateRoom(int hostID, GameInfo game)
+        public async Task<RedisRoomModel> Room(int hostID)
         {
-            RedisRoomModel room = new RedisRoomModel();
-            room.Game = game;
-            room.HostID = hostID;
+            RedisValue roomValue = await _db.HashGetAsync(Key.Room, hostID.ToString());
+            return JsonConvert.DeserializeObject<RedisRoomModel>(roomValue);
+        }
 
-            HashEntry[] entry = new HashEntry[] { new HashEntry(hostID, JsonConvert.SerializeObject(room)) };
+        public async Task SetRoom(RedisRoomModel room)
+        {
+            HashEntry[] entry = new HashEntry[] { new HashEntry(room.HostID, JsonConvert.SerializeObject(room)) };
             await _db.HashSetAsync(Key.Room, entry);
         }
     }
