@@ -1,9 +1,9 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Response.Lobby;
+using LobbyWebService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RedisRepository.Services;
 using System;
 using System.Threading.Tasks;
 

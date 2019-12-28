@@ -1,7 +1,7 @@
 ﻿using GameRespository.Models;
 using System.Threading.Tasks;
 
-namespace RedisRepository.Services
+namespace LobbyWebService.Services
 {
     public interface IRedisService
     {

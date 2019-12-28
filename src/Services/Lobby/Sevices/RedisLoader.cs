@@ -1,5 +1,5 @@
 ﻿using GameRespository.Models;
-using RedisRepository.Services;
+using LobbyWebService.Services;
 using System.Threading.Tasks;
 
 namespace LobbyWebService.Sevices

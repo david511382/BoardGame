@@ -1,6 +1,4 @@
-﻿using StackExchange.Redis;
-
-namespace RedisRepository
+﻿namespace RedisRepository
 {
     internal sealed class Key
     {
