@@ -102,6 +102,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisRepository", "src\Repo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemberRepository", "src\Repositories\Member\MemberRepository.csproj", "{23EBE1A2-7AA8-4FF4-81A7-FDA7E1A2358D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionHelper", "src\Common\Util\TransactionHelper\TransactionHelper.csproj", "{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -168,6 +170,10 @@ Global
 		{23EBE1A2-7AA8-4FF4-81A7-FDA7E1A2358D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23EBE1A2-7AA8-4FF4-81A7-FDA7E1A2358D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23EBE1A2-7AA8-4FF4-81A7-FDA7E1A2358D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,6 +209,7 @@ Global
 		{C292D016-3535-4C27-A3CC-29033C5A1AC1} = {9D5B19D4-07B0-40A9-8734-344AF871E7D4}
 		{F19A001D-987C-4A67-93AE-776CB049EBA6} = {9D5B19D4-07B0-40A9-8734-344AF871E7D4}
 		{23EBE1A2-7AA8-4FF4-81A7-FDA7E1A2358D} = {9D5B19D4-07B0-40A9-8734-344AF871E7D4}
+		{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6} = {5641DD69-A039-4D9B-BD45-8A861F7F8E7D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0449C612-F29B-409C-8211-5B0D75F4F3B5}
