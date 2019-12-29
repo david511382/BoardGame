@@ -6,16 +6,8 @@ using System.Threading.Tasks;
 
 namespace RedisRepository
 {
-    public class GameDAL
+    public partial class RedisDAL
     {
-        private ConnectionMultiplexer _redis;
-        private IDatabase _db => _redis.GetDatabase();
-
-        public GameDAL(string connectStr)
-        {
-            _redis = ConnectionMultiplexer.Connect(connectStr);
-        }
-
         public async Task<GameInfo> Game(int ID)
         {
             RedisValue entry = await _db.HashGetAsync(Key.Game, ID.ToString());
@@ -33,12 +25,13 @@ namespace RedisRepository
              }).ToArray();
         }
 
-        public async Task AddGames(GameInfo[] games)
+        public Task AddGames(GameInfo[] games, ITransaction tran = null)
         {
+            IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
             HashEntry[] datas = games.Select((g) => new HashEntry(g.ID, JsonConvert.SerializeObject(g)))
                  .ToArray();
 
-            await _db.HashSetAsync(Key.Game, datas);
+            return db.HashSetAsync(Key.Game, datas);
         }
     }
 }

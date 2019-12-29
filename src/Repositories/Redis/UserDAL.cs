@@ -5,26 +5,18 @@ using System.Threading.Tasks;
 
 namespace RedisRepository
 {
-    public class UserDAL
+    public partial class RedisDAL
     {
-        private ConnectionMultiplexer _redis;
-        private IDatabase _db => _redis.GetDatabase();
-
-        public UserDAL(string connectStr)
-        {
-            _redis = ConnectionMultiplexer.Connect(connectStr);
-        }
-
         public async Task<UserModel> User(int userID)
         {
             RedisValue roomValue = await _db.HashGetAsync(Key.User, userID.ToString());
             return JsonConvert.DeserializeObject<UserModel>(roomValue);
         }
 
-        public async Task SetUser(UserModel user)
+        public Task SetUser(UserModel user, ITransaction tran = null)
         {
-            HashEntry[] entry = new HashEntry[] { new HashEntry(user.UserID, JsonConvert.SerializeObject(user)) };
-            await _db.HashSetAsync(Key.User, entry);
+            IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
+            return db.HashSetAsync(Key.User, user.UserID, JsonConvert.SerializeObject(user));
         }
     }
 }

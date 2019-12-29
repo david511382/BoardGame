@@ -3,7 +3,7 @@
     internal sealed class Key
     {
         public static readonly string Game = "Game";
-        public static readonly string Room = "Room";
-        public static readonly string User= "User";
+        public static readonly string Room = "{Lobby}Room";
+        public static readonly string User = "{Lobby}User";
     }
 }

@@ -1,36 +1,28 @@
-﻿using GameRespository.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RedisRepository.Models;
 using StackExchange.Redis;
 using System.Threading.Tasks;
 
 namespace RedisRepository
 {
-    public class RoomDAL
+    public partial class RedisDAL
     {
-        private ConnectionMultiplexer _redis;
-        private IDatabase _db => _redis.GetDatabase();
-
-        public RoomDAL(string connectStr)
-        {
-            _redis = ConnectionMultiplexer.Connect(connectStr);
-        }
-
         public async Task<RedisRoomModel> Room(int hostID)
         {
             RedisValue roomValue = await _db.HashGetAsync(Key.Room, hostID.ToString());
             return JsonConvert.DeserializeObject<RedisRoomModel>(roomValue);
         }
 
-        public async Task SetRoom(RedisRoomModel room)
+        public Task SetRoom(RedisRoomModel room, ITransaction tran = null)
         {
-            HashEntry[] entry = new HashEntry[] { new HashEntry(room.HostID, JsonConvert.SerializeObject(room)) };
-            await _db.HashSetAsync(Key.Room, entry);
+            IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
+            return db.HashSetAsync(Key.Room, room.HostID, JsonConvert.SerializeObject(room));
         }
 
-        public async Task DeleteRoom(int roomID)
+        public Task DeleteRoom(int roomID, ITransaction tran = null)
         {
-            await _db.HashDeleteAsync(Key.Room, roomID.ToString());
+            IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
+            return db.HashDeleteAsync(Key.Room, roomID.ToString());
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using GameRespository.Models;
 using RedisRepository;
 using RedisRepository.Models;
+using StackExchange.Redis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,78 +11,59 @@ namespace LobbyWebService.Services
 {
     public class RedisService : IRedisService
     {
-        private GameDAL _gameDAL;
-        private RoomDAL _roomDAL;
-        private UserDAL _userDAL;
+        private RedisDAL _dal;
 
         public RedisService(string connectStr)
         {
-            _gameDAL = new GameDAL(connectStr);
-            _roomDAL = new RoomDAL(connectStr);
-            _userDAL = new UserDAL(connectStr);
+            _dal = new RedisDAL(connectStr);
         }
 
         public async Task<GameInfo> Game(int ID)
         {
-            return await _gameDAL.Game(ID);
+            return await _dal.Game(ID);
         }
 
         public async Task<GameInfo[]> List()
         {
-            return await _gameDAL.List();
+            return await _dal.List();
         }
 
         public async Task AddGames(GameInfo[] games)
         {
-            await _gameDAL.AddGames(games);
+            await _dal.AddGames(games);
         }
 
         public async Task CreateRoom(int hostID, GameInfo game)
         {
+            ITransaction tran = _dal.Begin();
+
             RedisRoomModel room = new RedisRoomModel();
             room.Game = game;
             room.HostID = hostID;
             room.PlayerIDs = new int[] { hostID };
-            Task createRoomTask = _roomDAL.SetRoom(room);
+            _ = _dal.SetRoom(room, tran);
 
-            UserModel oriUser = new UserModel
-            {
-                UserID = hostID,
-                RoomID = null
-            };
-            try
-            {
-                oriUser = await _userDAL.User(hostID);
-            }
-            catch { }
             UserModel user = new UserModel
             {
-                UserID = oriUser.UserID,
+                UserID = hostID,
                 RoomID = hostID
             };
-            Task addUserTask = _userDAL.SetUser(user);
+            _ = _dal.SetUser(user, tran);
 
-            await addUserTask;
-            try
-            {
-                await createRoomTask;
-            }
-            catch
-            {
-                await _userDAL.SetUser(oriUser);
-                throw;
-            }
+            if (!await tran.ExecuteAsync())
+                throw new Exception("ExecuteAsync Fail");
         }
 
         public async Task<RedisRoomModel> Room(int hostID)
         {
-            return await _roomDAL.Room(hostID);
+            return await _dal.Room(hostID);
         }
 
         public async Task AddRoomPlayer(int hostID, int playerID)
         {
-            RedisRoomModel oriRoom = await Room(hostID);
+            ITransaction tran = _dal.Begin();
 
+            RedisRoomModel oriRoom = await Room(hostID);
             List<int> playerIDs = oriRoom.PlayerIDs.ToList();
             playerIDs.Add(playerID);
             RedisRoomModel newRoom = new RedisRoomModel
@@ -89,80 +72,62 @@ namespace LobbyWebService.Services
                 HostID = oriRoom.HostID,
                 PlayerIDs = playerIDs.ToArray()
             };
+            _ = _dal.SetRoom(newRoom, tran);
 
-            Task setRoomTask = _roomDAL.SetRoom(newRoom);
-
-            //UserModel oriUser = await _userDAL.User(hostID);
             UserModel user = new UserModel
             {
                 UserID = playerID,
                 RoomID = hostID
             };
-            Task addUserTask = _userDAL.SetUser(user);
+            _ = _dal.SetUser(user, tran);
 
-            await setRoomTask;
-            try
-            {
-                await addUserTask;
-            }
-            catch
-            {
-                await _roomDAL.SetRoom(oriRoom);
-                throw;
-            }
+            if (!await tran.ExecuteAsync())
+                throw new Exception("ExecuteAsync Fail");
         }
 
         public async Task RemoveRoomPlayer(int hostID, int playerID)
         {
+            ITransaction tran = _dal.Begin();
+
             List<int> removeList = new List<int>();
             RedisRoomModel oriRoom = await Room(hostID);
-
             bool isHost = hostID == playerID;
             if (isHost)
                 removeList = oriRoom.PlayerIDs.ToList();
             else
                 removeList.Add(playerID);
 
-            IEnumerable<Task<Task>> updateUserTasks = removeList.Select((id) => User(id))
+            _ = removeList.Select((id) => User(id))
                 .Select(async (t) =>
                 {
                     UserModel u = await t;
                     u.RoomID = null;
-                    return _userDAL.SetUser(u);
-                });
-            foreach (Task<Task> t in updateUserTasks)
-            {
-                await t;
-            }
+                    return _dal.SetUser(u, tran);
+                }).ToArray();
 
-            try
+            if (isHost)
+                _ = _dal.DeleteRoom(hostID, tran);
+            else
             {
-                if (isHost)
-                    await _roomDAL.DeleteRoom(hostID);
-                else
+                List<int> newPlayerIDs = oriRoom.PlayerIDs.ToList();
+                newPlayerIDs.Remove(playerID);
+                RedisRoomModel newRoom = new RedisRoomModel
                 {
-                    List<int> newPlayerIDs = oriRoom.PlayerIDs.ToList();
-                    newPlayerIDs.Remove(playerID);
-                    RedisRoomModel newRoom = new RedisRoomModel
-                    {
-                        Game = oriRoom.Game,
-                        HostID = oriRoom.HostID,
-                        PlayerIDs = newPlayerIDs.ToArray()
-                    };
+                    Game = oriRoom.Game,
+                    HostID = oriRoom.HostID,
+                    PlayerIDs = newPlayerIDs.ToArray()
+                };
 
-                    await _roomDAL.SetRoom(newRoom);
-                }
+                _ = _dal.SetRoom(newRoom, tran);
             }
-            catch
-            {
-                await _roomDAL.SetRoom(oriRoom);
-                throw;
-            }
+
+            if (!await tran.ExecuteAsync())
+                throw new Exception("ExecuteAsync Fail");
         }
 
         public async Task<UserModel> User(int userID)
         {
-            return await _userDAL.User(userID);
+            return await _dal.User(userID);
         }
     }
 }
