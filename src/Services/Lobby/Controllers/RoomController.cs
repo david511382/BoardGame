@@ -164,5 +164,52 @@ namespace LobbyWebService.Controllers
                     return result;
                 });
         }
+
+        /// <summary>
+        /// 離開房間
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> LeaveRoom()
+        {
+            return await _responseService.Init<BoolResponseModel>(this, _logger)
+                .ValidateToken((user) => { })
+                .Do<BoolResponseModel>(async (result, user, logger) =>
+                {
+                    RedisRepository.Models.UserModel userInfo;
+                    try
+                    {
+                        userInfo = await _redisService.User(user.Id);
+                        if (userInfo.RoomID == null)
+                            throw new Exception();
+                    }
+                    catch
+                    {
+                        result.Fail("不在任何房間");
+                        return result;
+                    }
+
+                    int roomID = userInfo.RoomID.Value;
+                    try
+                    {
+                        await _redisService.RemoveRoomPlayer(roomID, user.Id);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Log("Exception", e);
+
+                        result.Error("離開房間出錯");
+                        return result;
+                    }
+
+                    result.Success("離開房間完成");
+                    return result;
+                });
+        }
     }
 }

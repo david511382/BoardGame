@@ -58,7 +58,7 @@ namespace LobbyWebService.Services
                 UserID = oriUser.UserID,
                 RoomID = hostID
             };
-            Task addUserTask = _userDAL.AddUser(user);
+            Task addUserTask = _userDAL.SetUser(user);
 
             await addUserTask;
             try
@@ -67,7 +67,7 @@ namespace LobbyWebService.Services
             }
             catch
             {
-                await _userDAL.AddUser(oriUser);
+                await _userDAL.SetUser(oriUser);
                 throw;
             }
         }
@@ -98,12 +98,60 @@ namespace LobbyWebService.Services
                 UserID = playerID,
                 RoomID = hostID
             };
-            Task addUserTask = _userDAL.AddUser(user);
+            Task addUserTask = _userDAL.SetUser(user);
 
             await setRoomTask;
             try
             {
                 await addUserTask;
+            }
+            catch
+            {
+                await _roomDAL.SetRoom(oriRoom);
+                throw;
+            }
+        }
+
+        public async Task RemoveRoomPlayer(int hostID, int playerID)
+        {
+            List<int> removeList = new List<int>();
+            RedisRoomModel oriRoom = await Room(hostID);
+
+            bool isHost = hostID == playerID;
+            if (isHost)
+                removeList = oriRoom.PlayerIDs.ToList();
+            else
+                removeList.Add(playerID);
+
+            IEnumerable<Task<Task>> updateUserTasks = removeList.Select((id) => User(id))
+                .Select(async (t) =>
+                {
+                    UserModel u = await t;
+                    u.RoomID = null;
+                    return _userDAL.SetUser(u);
+                });
+            foreach (Task<Task> t in updateUserTasks)
+            {
+                await t;
+            }
+
+            try
+            {
+                if (isHost)
+                    await _roomDAL.DeleteRoom(hostID);
+                else
+                {
+                    List<int> newPlayerIDs = oriRoom.PlayerIDs.ToList();
+                    newPlayerIDs.Remove(playerID);
+                    RedisRoomModel newRoom = new RedisRoomModel
+                    {
+                        Game = oriRoom.Game,
+                        HostID = oriRoom.HostID,
+                        PlayerIDs = newPlayerIDs.ToArray()
+                    };
+
+                    await _roomDAL.SetRoom(newRoom);
+                }
             }
             catch
             {

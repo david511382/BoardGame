@@ -27,5 +27,10 @@ namespace RedisRepository
             HashEntry[] entry = new HashEntry[] { new HashEntry(room.HostID, JsonConvert.SerializeObject(room)) };
             await _db.HashSetAsync(Key.Room, entry);
         }
+
+        public async Task DeleteRoom(int roomID)
+        {
+            await _db.HashDeleteAsync(Key.Room, roomID.ToString());
+        }
     }
 }

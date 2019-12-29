@@ -21,7 +21,7 @@ namespace RedisRepository
             return JsonConvert.DeserializeObject<UserModel>(roomValue);
         }
 
-        public async Task AddUser(UserModel user)
+        public async Task SetUser(UserModel user)
         {
             HashEntry[] entry = new HashEntry[] { new HashEntry(user.UserID, JsonConvert.SerializeObject(user)) };
             await _db.HashSetAsync(Key.User, entry);

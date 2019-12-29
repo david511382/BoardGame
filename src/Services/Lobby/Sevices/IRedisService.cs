@@ -13,6 +13,7 @@ namespace LobbyWebService.Services
         Task CreateRoom(int hostID, GameInfo game);
         Task<RedisRoomModel> Room(int hostID);
         Task AddRoomPlayer(int hostID, int playerID);
+        Task RemoveRoomPlayer(int hostID, int playerID);
 
         Task<UserModel> User(int userID);
     }
