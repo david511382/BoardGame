@@ -18,5 +18,15 @@ namespace RedisRepository
             IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
             return db.HashSetAsync(Key.User, user.UserID, JsonConvert.SerializeObject(user));
         }
+
+        public async Task<bool> LockUser(int userID)
+        {
+            return await getLock($"{Key.User}{userID}");
+        }
+
+        public async Task ReleaseUser(int userID)
+        {
+            await releaseLock($"{Key.User}{userID}");
+        }
     }
 }

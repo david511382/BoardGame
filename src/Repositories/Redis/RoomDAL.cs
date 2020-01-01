@@ -24,5 +24,15 @@ namespace RedisRepository
             IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
             return db.HashDeleteAsync(Key.Room, roomID.ToString());
         }
+
+        public async Task<bool> LockRoom(int roomID)
+        {
+            return await getLock($"{Key.Room}{roomID}");
+        }
+
+        public async Task ReleaseRoom(int roomID)
+        {
+            await releaseLock($"{Key.Room}{roomID}");
+        }
     }
 }

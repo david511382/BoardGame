@@ -46,39 +46,9 @@ namespace LobbyWebService.Controllers
                 })
                 .Do<BoolResponseModel>(async (result, user, logger) =>
                 {
-                    int hostID = user.Id;
-
-                    Task<RedisRepository.Models.UserModel> getUserTask = _redisService.User(hostID);
-                    Task<GameRespository.Models.GameInfo> getGameTask = _redisService.Game(gameID);
-
-                    RedisRepository.Models.UserModel userInfo;
                     try
                     {
-                        userInfo = await getUserTask;
-                        if (userInfo.RoomID != null)
-                        {
-                            result.Fail("已加入其他房間");
-                            return result;
-                        }
-                    }
-                    catch { }
-
-                    GameRespository.Models.GameInfo game;
-                    try
-                    {
-                        game = await getGameTask;
-                    }
-                    catch (Exception e)
-                    {
-                        logger.Log("Exception", e);
-
-                        result.Fail("無指定的遊戲");
-                        return result;
-                    }
-
-                    try
-                    {
-                        await _redisService.CreateRoom(hostID, game);
+                        await _redisService.CreateRoom(user.Id, gameID);
                     }
                     catch (Exception e)
                     {
@@ -115,39 +85,6 @@ namespace LobbyWebService.Controllers
                 })
                 .Do<BoolResponseModel>(async (result, user, logger) =>
                 {
-                    Task<RedisRepository.Models.UserModel> getUserTask = _redisService.User(user.Id);
-                    Task<RedisRepository.Models.RedisRoomModel> getRoomTask = _redisService.Room(hostID);
-
-                    RedisRepository.Models.UserModel userInfo;
-                    try
-                    {
-                        userInfo = await getUserTask;
-                        if (userInfo.RoomID != null)
-                        {
-                            result.Fail("已加入其他房間");
-                            return result;
-                        }
-                    }
-                    catch { }
-
-                    RedisRepository.Models.RedisRoomModel room;
-                    try
-                    {
-                        room = await getRoomTask;
-                        if (room.IsFull())
-                        {
-                            result.Fail("房間已滿");
-                            return result;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        logger.Log("Exception", e);
-
-                        result.Fail("查無指定房間");
-                        return result;
-                    }
-
                     try
                     {
                         await _redisService.AddRoomPlayer(hostID, user.Id);
@@ -181,23 +118,9 @@ namespace LobbyWebService.Controllers
                 .ValidateToken((user) => { })
                 .Do<BoolResponseModel>(async (result, user, logger) =>
                 {
-                    RedisRepository.Models.UserModel userInfo;
                     try
                     {
-                        userInfo = await _redisService.User(user.Id);
-                        if (userInfo.RoomID == null)
-                            throw new Exception();
-                    }
-                    catch
-                    {
-                        result.Fail("不在任何房間");
-                        return result;
-                    }
-
-                    int roomID = userInfo.RoomID.Value;
-                    try
-                    {
-                        await _redisService.RemoveRoomPlayer(roomID, user.Id);
+                        await _redisService.RemoveRoomPlayer(user.Id);
                     }
                     catch (Exception e)
                     {
