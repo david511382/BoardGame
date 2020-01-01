@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Game\GameRespository.csproj" />
+    <ProjectReference Include="..\..\Common\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

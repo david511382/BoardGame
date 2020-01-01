@@ -1,5 +1,6 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
+using Domain.Api.Models.Response.Lobby;
 using LobbyWebService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,34 @@ namespace LobbyWebService.Controllers
             _redisService = redisService;
             _responseService = responseService;
             _logger = logger;
+        }
+
+        /// <summary>
+        /// 列出房間
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(RoomListResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RoomListResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ListRoom()
+        {
+            return await _responseService.Init<RoomListResponse>(this, _logger)
+                .Do<RoomListResponse>(async (result, user, logger) =>
+                {
+                    try
+                    {
+                        result.Rooms = await _redisService.ListRooms();
+                    }
+                    catch (Exception e)
+                    {
+                        result.Error(e.Message);
+                    }
+
+                    return result;
+                });
         }
 
         /// <summary>

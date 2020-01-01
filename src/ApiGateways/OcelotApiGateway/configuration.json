@@ -79,6 +79,18 @@
         }
       ],
       "UpstreamPathTemplate": "/api/Room",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Room",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "api.lobby",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Room",
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",

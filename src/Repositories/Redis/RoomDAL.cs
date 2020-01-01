@@ -1,19 +1,31 @@
-﻿using Newtonsoft.Json;
-using RedisRepository.Models;
+﻿using Domain.Api.Models.Base.Lobby;
+using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RedisRepository
 {
     public partial class RedisDAL
     {
-        public async Task<RedisRoomModel> Room(int hostID)
+        public async Task<RoomModel[]> ListRooms()
         {
-            RedisValue roomValue = await _db.HashGetAsync(Key.Room, hostID.ToString());
-            return JsonConvert.DeserializeObject<RedisRoomModel>(roomValue);
+            HashEntry[] entrys = await _db.HashGetAllAsync(Key.Room);
+            return entrys.Select((e) =>
+            {
+                RoomModel result = JsonConvert.DeserializeObject<RoomModel>(e.Value);
+
+                return result;
+            }).ToArray();
         }
 
-        public Task SetRoom(RedisRoomModel room, ITransaction tran = null)
+        public async Task<RoomModel> Room(int hostID)
+        {
+            RedisValue roomValue = await _db.HashGetAsync(Key.Room, hostID.ToString());
+            return JsonConvert.DeserializeObject<RoomModel>(roomValue);
+        }
+
+        public Task SetRoom(RoomModel room, ITransaction tran = null)
         {
             IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
             return db.HashSetAsync(Key.Room, room.HostID, JsonConvert.SerializeObject(room));

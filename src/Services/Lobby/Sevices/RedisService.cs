@@ -1,4 +1,4 @@
-﻿using GameRespository.Models;
+﻿using Domain.Api.Models.Base.Lobby;
 using RedisRepository;
 using RedisRepository.Models;
 using StackExchange.Redis;
@@ -35,17 +35,17 @@ namespace LobbyWebService.Services
             _dal = new RedisDAL(connectStr);
         }
 
-        public async Task<GameInfo> Game(int ID)
+        public async Task<GameModel> Game(int ID)
         {
             return await _dal.Game(ID);
         }
 
-        public async Task<GameInfo[]> List()
+        public async Task<GameModel[]> ListGames()
         {
-            return await _dal.List();
+            return await _dal.ListGames();
         }
 
-        public async Task AddGames(GameInfo[] games)
+        public async Task AddGames(GameModel[] games)
         {
             await _dal.AddGames(games);
         }
@@ -60,7 +60,7 @@ namespace LobbyWebService.Services
                     throw new Exception("LockUser Fail");
 
                 Task<UserModel> getUserTask = User(hostID);
-                Task<GameInfo> getGameTask = Game(gameID);
+                Task<GameModel> getGameTask = Game(gameID);
 
                 UserModel userInfo = null;
                 try
@@ -71,7 +71,7 @@ namespace LobbyWebService.Services
                 if (userInfo?.RoomID != null)
                     throw new Exception("已加入其他房間");
 
-                GameInfo game;
+                GameModel game;
                 try
                 {
                     game = await getGameTask;
@@ -83,7 +83,7 @@ namespace LobbyWebService.Services
 
                 ITransaction tran = _dal.Begin();
 
-                RedisRoomModel room = new RedisRoomModel();
+                RoomModel room = new RoomModel();
                 room.Game = game;
                 room.HostID = hostID;
                 room.PlayerIDs = new int[] { hostID };
@@ -106,7 +106,12 @@ namespace LobbyWebService.Services
             }
         }
 
-        public async Task<RedisRoomModel> Room(int hostID)
+        public async Task<RoomModel[]> ListRooms()
+        {
+            return await _dal.ListRooms();
+        }
+
+        public async Task<RoomModel> Room(int hostID)
         {
             return await _dal.Room(hostID);
         }
@@ -121,7 +126,7 @@ namespace LobbyWebService.Services
                     throw new Exception("LockUser Fail");
 
                 Task<UserModel> getUserTask = User(playerID);
-                Task<RedisRoomModel> getRoomTask = Room(hostID);
+                Task<RoomModel> getRoomTask = Room(hostID);
 
                 UserModel userInfo = null;
                 try
@@ -132,7 +137,7 @@ namespace LobbyWebService.Services
                 if (userInfo?.RoomID != null)
                     throw new Exception("已加入其他房間");
 
-                RedisRoomModel oriRoom;
+                RoomModel oriRoom;
                 try
                 {
                     oriRoom = await getRoomTask;
@@ -148,7 +153,7 @@ namespace LobbyWebService.Services
 
                 List<int> playerIDs = oriRoom.PlayerIDs.ToList();
                 playerIDs.Add(playerID);
-                RedisRoomModel newRoom = new RedisRoomModel
+                RoomModel newRoom = new RoomModel
                 {
                     Game = oriRoom.Game,
                     HostID = oriRoom.HostID,
@@ -200,7 +205,7 @@ namespace LobbyWebService.Services
                 ITransaction tran = _dal.Begin();
 
                 List<int> removeList = new List<int>();
-                RedisRoomModel oriRoom = await Room(roomID);
+                RoomModel oriRoom = await Room(roomID);
                 bool isHost = roomID == playerID;
                 if (isHost)
                     removeList = oriRoom.PlayerIDs.ToList();
@@ -221,7 +226,7 @@ namespace LobbyWebService.Services
                 {
                     List<int> newPlayerIDs = oriRoom.PlayerIDs.ToList();
                     newPlayerIDs.Remove(playerID);
-                    RedisRoomModel newRoom = new RedisRoomModel
+                    RoomModel newRoom = new RoomModel
                     {
                         Game = oriRoom.Game,
                         HostID = oriRoom.HostID,

@@ -2,8 +2,8 @@
 
 namespace Domain.Api.Models.Response.Lobby
 {
-    public class GameListResponse : ResponseModel
+    public class RoomListResponse : ResponseModel
     {
-        public GameModel[] Games { get; set; }
+        public RoomModel[] Rooms { get; set; }
     }
 }

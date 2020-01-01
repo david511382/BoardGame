@@ -1,5 +1,6 @@
-﻿using GameRespository.Models;
+﻿using Domain.Api.Models.Base.Lobby;
 using LobbyWebService.Services;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LobbyWebService.Sevices
@@ -19,11 +20,20 @@ namespace LobbyWebService.Sevices
         {
             return Task.Run(async () =>
             {
-                GameInfo[] games = await _redisService.List();
+                GameModel[] games = await _redisService.ListGames();
                 if (games.Length != 0)
                     return;
 
-                games = await _gameService.List();
+                games = (await _gameService.List())
+                    .Select((g) => new GameModel
+                    {
+                        ID = g.ID,
+                        Description = g.Description,
+                        MaxPlayerCount = g.MaxPlayerCount,
+                        MinPlayerCount = g.MinPlayerCount,
+                        Name = g.Name
+                    })
+                    .ToArray();
                 await _redisService.AddGames(games);
             });
         }

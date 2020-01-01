@@ -1,11 +1,9 @@
-﻿using GameRespository.Models;
-
-namespace RedisRepository.Models
+﻿namespace Domain.Api.Models.Base.Lobby
 {
-    public class RedisRoomModel
+    public class RoomModel
     {
         public int HostID { get; set; }
-        public GameInfo Game { get; set; }
+        public GameModel Game { get; set; }
         public int[] PlayerIDs { get; set; }
 
         public bool IsFull()

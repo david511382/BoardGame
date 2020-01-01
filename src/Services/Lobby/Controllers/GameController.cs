@@ -1,4 +1,5 @@
 ﻿using Domain.Api.Interfaces;
+using Domain.Api.Models.Base.Lobby;
 using Domain.Api.Models.Response.Lobby;
 using LobbyWebService.Services;
 using LobbyWebService.Sevices;
@@ -45,9 +46,9 @@ namespace LobbyWebService.Controllers
                 {
                     try
                     {
-                        GameRespository.Models.GameInfo[] list = await _redisService.List();
+                        GameModel[] list = await _redisService.ListGames();
 
-                        result.Games = list.Select((g) => new Domain.Api.Models.Base.Lobby.Game
+                        result.Games = list.Select((g) => new GameModel
                         {
                             ID = g.ID,
                             Name = g.Name,

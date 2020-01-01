@@ -1,4 +1,4 @@
-﻿using GameRespository.Models;
+﻿using Domain.Api.Models.Base.Lobby;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Linq;
@@ -8,24 +8,24 @@ namespace RedisRepository
 {
     public partial class RedisDAL
     {
-        public async Task<GameInfo> Game(int ID)
+        public async Task<GameModel> Game(int ID)
         {
             RedisValue entry = await _db.HashGetAsync(Key.Game, ID.ToString());
-            return JsonConvert.DeserializeObject<GameInfo>(entry);
+            return JsonConvert.DeserializeObject<GameModel>(entry);
         }
 
-        public async Task<GameInfo[]> List()
+        public async Task<GameModel[]> ListGames()
         {
             HashEntry[] entrys = await _db.HashGetAllAsync(Key.Game);
             return entrys.Select((e) =>
              {
-                 GameInfo result = JsonConvert.DeserializeObject<GameInfo>(e.Value);
+                 GameModel result = JsonConvert.DeserializeObject<GameModel>(e.Value);
 
                  return result;
              }).ToArray();
         }
 
-        public Task AddGames(GameInfo[] games, ITransaction tran = null)
+        public Task AddGames(GameModel[] games, ITransaction tran = null)
         {
             IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
             HashEntry[] datas = games.Select((g) => new HashEntry(g.ID, JsonConvert.SerializeObject(g)))
