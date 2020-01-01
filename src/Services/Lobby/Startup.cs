@@ -3,6 +3,7 @@ using Domain.Api.Services;
 using Domain.Logger;
 using LobbyWebService.Services;
 using LobbyWebService.Sevices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace LobbyWebService
@@ -57,6 +59,21 @@ namespace LobbyWebService
                         }
                     }
                 );
+
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
+                    new ApiKeyScheme
+                    {
+                        In = "header",
+                        Description = "在JWT前面加上User Json",
+                        Name = "Authorization",
+                        Type = "apiKey"
+                    });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+                    {
+                        JwtBearerDefaults.AuthenticationScheme,
+                        new string[]{ }
+                    },
+                });
 
                 string xmlFile = "Api.xml";
                 string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

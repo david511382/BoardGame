@@ -95,7 +95,7 @@ namespace AuthWebService
                     new ApiKeyScheme
                     {
                         In = "header",
-                        Description = "在JWT前面加上Bearer與空格",
+                        Description = "在JWT前面加上User Json",
                         Name = "Authorization",
                         Type = "apiKey"
                     });
