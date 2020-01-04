@@ -216,7 +216,7 @@ namespace LobbyWebService.Services
                 else
                     removeList.Add(playerID);
 
-                _ = removeList.Select((id) => User(id))
+                var setUser = removeList.Select((id) => User(id))
                     .Select(async (t) =>
                     {
                         UserModel u = await t;
