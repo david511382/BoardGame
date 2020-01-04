@@ -1,0 +1,32 @@
+.room {
+  display: flex;
+  flex-flow: column;
+  border-color: black;
+  border-width: 5px;
+  border-style: solid;
+  border-collapse: separate;
+  border-spacing: 0px 20px;
+  cursor: pointer;
+  padding: 5px;
+  margin: 5px;
+}
+
+.room:hover {
+  border-color: green;
+}
+
+label {
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  margin: 0 auto;
+  cursor: inherit;
+}
+
+.title {
+  font-size: 16px;
+}
+
+.info {
+  font-size: 12px;
+}

@@ -10,6 +10,7 @@ import { RootRoutes } from './nav-menu/route.const';
 import { LobbyComponent } from './lobby/lobby.component';
 import { UserModule } from './user/user.module';
 import { GuestService } from './auth/guest.service';
+import { RoomModule } from './lobby/room/room.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { GuestService } from './auth/guest.service';
     RouterModule.forRoot(
       RootRoutes,
       { useHash: true }),
-    UserModule
+    UserModule,
+    RoomModule,
   ],
   providers: [
     GuestService

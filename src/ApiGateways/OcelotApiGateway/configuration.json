@@ -58,7 +58,7 @@
     },
     // lobby
     {
-      "DownstreamPathTemplate": "/api/Game",
+      "DownstreamPathTemplate": "/api/Game/List",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

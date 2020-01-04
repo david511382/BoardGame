@@ -1,1 +1,13 @@
-<h1>Hello, world!</h1>
+<ng-template #ListRoom let-game="game">
+  <app-lobby-room-list  (RedirectToRoomEvent)="GoRoom($event)" (RedirectToCreateRoomEvent)="GoCreateRoom()"></app-lobby-room-list>
+</ng-template>
+
+<ng-template #CreateRoom let-game="game">
+  <app-lobby-room-create (RedirectToRoomEvent)="GoRoom($event)" (RedirectToListRoomEvent)="GoListRoom()"></app-lobby-room-create>
+</ng-template>
+
+<ng-template #Room let-game="game">
+  <app-lobby-room-room [data]="game" (RedirectToListRoomEvent)="GoListRoom()"></app-lobby-room-room>
+</ng-template>
+
+<ng-container [ngTemplateOutlet]="displayPage" [ngTemplateOutletContext]="contextData"></ng-container>

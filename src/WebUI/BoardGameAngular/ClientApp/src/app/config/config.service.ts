@@ -7,10 +7,14 @@ class BaseUrl {
 @Injectable()
 export class UrlConfigService extends BaseUrl{
   public readonly userBackendUrl: UserUrl
+  public readonly roomBackendUrl: RoomUrl
+  public readonly gameBackendUrl: GameUrl
 
   constructor(@Inject('BASE_URL') baseUrl: string) {
     super(`${baseUrl}api`);
     this.userBackendUrl = new UserUrl(`${this.baseUrl}/User`, "Login", "RegisterAndLogin", "Update");
+    this.roomBackendUrl = new RoomUrl(`${this.baseUrl}/Room`);
+    this.gameBackendUrl = new RoomUrl(`${this.baseUrl}/Game`);
   }
 }
 
@@ -29,6 +33,35 @@ export class UserUrl extends BaseUrl{
     return `${this.baseUrl}/${this.update}`;
   }
   get Info(): string {
+    return `${this.baseUrl}`;
+  }
+}
+
+export class RoomUrl extends BaseUrl {
+  constructor(baseUrl: string) {
+    super(baseUrl);
+  }
+
+  get List(): string {
+    return `${this.baseUrl}`;
+  }
+  get Create(): string {
+    return `${this.baseUrl}`;
+  }
+  get Join(): string {
+    return `${this.baseUrl}`;
+  }
+  get Leave(): string {
+    return `${this.baseUrl}`;
+  }
+}
+
+export class GameUrl extends BaseUrl {
+  constructor(baseUrl: string) {
+    super(baseUrl);
+  }
+
+  get List(): string {
     return `${this.baseUrl}`;
   }
 }
