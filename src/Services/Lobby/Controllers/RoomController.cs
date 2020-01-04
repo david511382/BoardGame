@@ -61,23 +61,23 @@ namespace LobbyWebService.Controllers
         [HttpPost]
         [Route("")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateRoom([FromForm] int gameID)
         {
-            return await _responseService.Init<BoolResponseModel>(this, _logger)
+            return await _responseService.Init<RoomResponse>(this, _logger)
                 .ValidateToken((user) => { })
                 .ValidateRequest(() =>
                 {
                     if (gameID <= 0)
                         throw new Exception("不合法的遊戲編號");
                 })
-                .Do<BoolResponseModel>(async (result, user, logger) =>
+                .Do<RoomResponse>(async (result, user, logger) =>
                 {
                     try
                     {
-                        await _redisService.CreateRoom(user.Id, gameID);
+                        result.Room = await _redisService.CreateRoom(user.Id, gameID);
                     }
                     catch (Exception e)
                     {
@@ -100,23 +100,23 @@ namespace LobbyWebService.Controllers
         [HttpPatch]
         [Route("")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> JoinRoom([FromForm] int hostID)
         {
-            return await _responseService.Init<BoolResponseModel>(this, _logger)
+            return await _responseService.Init<RoomResponse>(this, _logger)
                 .ValidateToken((user) => { })
                 .ValidateRequest(() =>
                 {
                     if (hostID <= 0)
                         throw new Exception("不合法的房間編號");
                 })
-                .Do<BoolResponseModel>(async (result, user, logger) =>
+                .Do<RoomResponse>(async (result, user, logger) =>
                 {
                     try
                     {
-                        await _redisService.AddRoomPlayer(hostID, user.Id);
+                        result.Room = await _redisService.AddRoomPlayer(hostID, user.Id);
                     }
                     catch (Exception e)
                     {

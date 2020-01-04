@@ -50,7 +50,7 @@ namespace LobbyWebService.Services
             await _dal.AddGames(games);
         }
 
-        public async Task CreateRoom(int hostID, int gameID)
+        public async Task<RoomModel> CreateRoom(int hostID, int gameID)
         {
             try
             {
@@ -98,6 +98,8 @@ namespace LobbyWebService.Services
 
                 if (!await tran.ExecuteAsync())
                     throw new Exception("ExecuteAsync Fail");
+
+                return room;
             }
             finally
             {
@@ -116,7 +118,7 @@ namespace LobbyWebService.Services
             return await _dal.Room(hostID);
         }
 
-        public async Task AddRoomPlayer(int hostID, int playerID)
+        public async Task<RoomModel> AddRoomPlayer(int hostID, int playerID)
         {
             try
             {
@@ -170,6 +172,8 @@ namespace LobbyWebService.Services
 
                 if (!await tran.ExecuteAsync())
                     throw new Exception("ExecuteAsync Fail");
+
+                return newRoom;
             }
             finally
             {
