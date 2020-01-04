@@ -116,6 +116,15 @@ namespace HttpHelper
             return await Send<T>(HttpMethod.Put);
         }
 
+        public Task<ResponseModel> Patch()
+        {
+            return Send(new HttpMethod("PATCH"));
+        }
+        public async Task<T> Patch<T>()
+        {
+            return await Send<T>(new HttpMethod("PATCH"));
+        }
+
         public IHttpRequest SetCookies(CookieCollection cookies)
         {
             _cookies = cookies;

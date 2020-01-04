@@ -18,6 +18,9 @@ namespace HttpHelper.Domain.Interface
         Task<ResponseModel> Put();
         Task<T> Put<T>();
 
+        Task<ResponseModel> Patch();
+        Task<T> Patch<T>();
+
         Task<ResponseModel> Delete();
         Task<T> Delete<T>();
     }
