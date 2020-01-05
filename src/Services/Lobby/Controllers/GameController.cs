@@ -46,7 +46,7 @@ namespace LobbyWebService.Controllers
                 {
                     try
                     {
-                        GameModel[] list = await _redisService.ListGames();
+                        RedisRepository.Models.GameModel[] list = await _redisService.ListGames();
 
                         result.Games = list.Select((g) => new GameModel
                         {

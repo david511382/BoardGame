@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { SetItemComponent } from '../../../../share/set/set-item.component';
+import { UserModel } from '../../room.service';
 
 @Component({
   selector: 'app-lobby-room-room-player',
@@ -10,7 +11,7 @@ export class RoomPlayerComponent implements SetItemComponent{
   @Output() ClickEvent = new EventEmitter();
   @Output() DoubleClickEvent = new EventEmitter();
 
-  public player: number;
+  public name: string;
   public team: number;
 
   public get color(): string {
@@ -26,13 +27,10 @@ export class RoomPlayerComponent implements SetItemComponent{
     }
   }
 
-  constructor() {
-    this.player = 0;
-    this.team = 0;
-  }
+  constructor() {}
 
-  public Init(player: number) {
-    this.player = player;
+  public Init(info: UserModel) {
+    this.name = info.name;
     this.team = 1;
   }
 }

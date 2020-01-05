@@ -21,7 +21,7 @@ export class GameRoomComponent implements SetItemComponent{
     return this.roomData.game.name;
   }
   public get currentPlayersCount(): number {
-    return this.roomData.playerIDs.length;
+    return this.roomData.players.length;
   }
   public get roomColor(): string {
     return this.isFull ?

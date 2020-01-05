@@ -1,5 +1,4 @@
-﻿using Domain.Api.Models.Base.Lobby;
-using RedisRepository;
+﻿using RedisRepository;
 using RedisRepository.Models;
 using StackExchange.Redis;
 using System;
@@ -50,8 +49,9 @@ namespace LobbyWebService.Services
             await _dal.AddGames(games);
         }
 
-        public async Task<RoomModel> CreateRoom(int hostID, int gameID)
+        public async Task<RoomModel> CreateRoom(UserInfoModel userInfo, int gameID)
         {
+            int hostID = userInfo.ID;
             try
             {
                 if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(hostID), WAIT_LOCK_MS))
@@ -62,14 +62,25 @@ namespace LobbyWebService.Services
                 Task<UserModel> getUserTask = User(hostID);
                 Task<GameModel> getGameTask = Game(gameID);
 
-                UserModel userInfo = null;
+                UserModel currentUser = null;
                 try
                 {
-                    userInfo = await getUserTask;
+                    currentUser = await getUserTask;
                 }
                 catch { }
-                if (userInfo?.RoomID != null)
-                    throw new Exception("已加入其他房間");
+                if (currentUser != null)
+                {
+                    if (currentUser.RoomID != null)
+                        throw new Exception("已加入其他房間");
+                }
+                else
+                {
+                    currentUser = new UserModel
+                    {
+                        UserInfo = userInfo,
+                        RoomID = null
+                    };
+                }
 
                 GameModel game;
                 try
@@ -86,12 +97,12 @@ namespace LobbyWebService.Services
                 RoomModel room = new RoomModel();
                 room.Game = game;
                 room.HostID = hostID;
-                room.PlayerIDs = new int[] { hostID };
+                room.Players = new UserInfoModel[] { currentUser.UserInfo };
                 _ = _dal.SetRoom(room, tran);
 
                 UserModel user = new UserModel
                 {
-                    UserID = hostID,
+                    UserInfo = currentUser.UserInfo,
                     RoomID = hostID
                 };
                 _ = _dal.SetUser(user, tran);
@@ -118,8 +129,9 @@ namespace LobbyWebService.Services
             return await _dal.Room(hostID);
         }
 
-        public async Task<RoomModel> AddRoomPlayer(int hostID, int playerID)
+        public async Task<RoomModel> AddRoomPlayer(int hostID, UserInfoModel userInfo)
         {
+            int playerID = userInfo.ID;
             try
             {
                 if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(hostID), WAIT_LOCK_MS))
@@ -130,14 +142,25 @@ namespace LobbyWebService.Services
                 Task<UserModel> getUserTask = User(playerID);
                 Task<RoomModel> getRoomTask = Room(hostID);
 
-                UserModel userInfo = null;
+                UserModel currentUser = null;
                 try
                 {
-                    userInfo = await getUserTask;
+                    currentUser = await getUserTask;
                 }
                 catch { }
-                if (userInfo?.RoomID != null)
-                    throw new Exception("已加入其他房間");
+                if (currentUser != null)
+                {
+                    if (currentUser.RoomID != null)
+                        throw new Exception("已加入其他房間");
+                }
+                else
+                {
+                    currentUser = new UserModel
+                    {
+                        UserInfo = userInfo,
+                        RoomID = null
+                    };
+                }
 
                 RoomModel oriRoom;
                 try
@@ -153,19 +176,19 @@ namespace LobbyWebService.Services
 
                 ITransaction tran = _dal.Begin();
 
-                List<int> playerIDs = oriRoom.PlayerIDs.ToList();
-                playerIDs.Add(playerID);
+                List<UserInfoModel> players = oriRoom.Players.ToList();
+                players.Add(currentUser.UserInfo);
                 RoomModel newRoom = new RoomModel
                 {
                     Game = oriRoom.Game,
                     HostID = oriRoom.HostID,
-                    PlayerIDs = playerIDs.ToArray()
+                    Players = players.ToArray()
                 };
                 _ = _dal.SetRoom(newRoom, tran);
 
                 UserModel user = new UserModel
                 {
-                    UserID = playerID,
+                    UserInfo = currentUser.UserInfo,
                     RoomID = hostID
                 };
                 _ = _dal.SetUser(user, tran);
@@ -208,33 +231,39 @@ namespace LobbyWebService.Services
 
                 ITransaction tran = _dal.Begin();
 
-                List<int> removeList = new List<int>();
+                List<UserInfoModel> removeList = new List<UserInfoModel>();
                 RoomModel oriRoom = await Room(roomID);
                 bool isHost = roomID == playerID;
                 if (isHost)
-                    removeList = oriRoom.PlayerIDs.ToList();
+                    removeList = oriRoom.Players.ToList();
                 else
-                    removeList.Add(playerID);
+                    removeList.Add(userInfo.UserInfo);
 
-                var setUser = removeList.Select((id) => User(id))
-                    .Select(async (t) =>
-                    {
-                        UserModel u = await t;
-                        u.RoomID = null;
-                        return _dal.SetUser(u, tran);
-                    }).ToArray();
+                Task<UserModel>[] getUsers = removeList.Select((info) => User(info.ID))
+                     .Select(async (t) =>
+                     {
+                         UserModel u = await t;
+                         u.RoomID = null;
+                         return u;
+                     }).ToArray();
+                foreach (Task<UserModel> getUser in getUsers)
+                {
+                    UserModel u = await getUser;
+                    _ = _dal.SetUser(u, tran);
+                }
 
                 if (isHost)
                     _ = _dal.DeleteRoom(roomID, tran);
                 else
                 {
-                    List<int> newPlayerIDs = oriRoom.PlayerIDs.ToList();
-                    newPlayerIDs.Remove(playerID);
+                    UserInfoModel[] newPlayers = oriRoom.Players
+                        .Where((p) => p.ID != userInfo.UserInfo.ID)
+                        .ToArray();
                     RoomModel newRoom = new RoomModel
                     {
                         Game = oriRoom.Game,
                         HostID = oriRoom.HostID,
-                        PlayerIDs = newPlayerIDs.ToArray()
+                        Players = newPlayers
                     };
 
                     _ = _dal.SetRoom(newRoom, tran);

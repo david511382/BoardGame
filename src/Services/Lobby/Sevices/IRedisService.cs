@@ -1,5 +1,4 @@
-﻿using Domain.Api.Models.Base.Lobby;
-using RedisRepository.Models;
+﻿using RedisRepository.Models;
 using System.Threading.Tasks;
 
 namespace LobbyWebService.Services
@@ -11,9 +10,9 @@ namespace LobbyWebService.Services
         Task AddGames(GameModel[] games);
 
         Task<RoomModel[]> ListRooms();
-        Task<RoomModel> CreateRoom(int hostID, int gameID);
+        Task<RoomModel> CreateRoom(UserInfoModel info, int gameID);
         Task<RoomModel> Room(int hostID);
-        Task<RoomModel> AddRoomPlayer(int hostID, int playerID);
+        Task<RoomModel> AddRoomPlayer(int hostID, UserInfoModel info);
         Task RemoveRoomPlayer(int playerID);
 
         Task<UserModel> User(int userID);

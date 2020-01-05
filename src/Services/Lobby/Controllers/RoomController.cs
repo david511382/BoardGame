@@ -1,11 +1,14 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Lobby;
+using Domain.JWTUser;
 using LobbyWebService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RedisRepository.Models;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LobbyWebService.Controllers
@@ -42,7 +45,9 @@ namespace LobbyWebService.Controllers
                 {
                     try
                     {
-                        result.Rooms = await _redisService.ListRooms();
+                        var rooms = await _redisService.ListRooms();
+
+                        result.Rooms = rooms.Select((room) => ToRoom(room)).ToArray();
                     }
                     catch (Exception e)
                     {
@@ -77,7 +82,10 @@ namespace LobbyWebService.Controllers
                 {
                     try
                     {
-                        result.Room = await _redisService.CreateRoom(user.Id, gameID);
+                        UserInfoModel userInfo = GetUserInfo(user);
+                        RoomModel room = await _redisService.CreateRoom(userInfo, gameID);
+
+                        result.Room = ToRoom(room);
                     }
                     catch (Exception e)
                     {
@@ -116,7 +124,10 @@ namespace LobbyWebService.Controllers
                 {
                     try
                     {
-                        result.Room = await _redisService.AddRoomPlayer(hostID, user.Id);
+                        UserInfoModel userInfo = GetUserInfo(user);
+                        RoomModel room = await _redisService.AddRoomPlayer(hostID, userInfo);
+
+                        result.Room = ToRoom(room);
                     }
                     catch (Exception e)
                     {
@@ -162,6 +173,38 @@ namespace LobbyWebService.Controllers
                     result.Success("離開房間完成");
                     return result;
                 });
+        }
+
+        private UserInfoModel GetUserInfo(UserClaimModel user)
+        {
+            return new UserInfoModel
+            {
+                ID = user.Id,
+                Name = user.Name,
+                Username = user.Username
+            };
+        }
+
+        private Domain.Api.Models.Base.Lobby.RoomModel ToRoom(RoomModel room)
+        {
+            return new Domain.Api.Models.Base.Lobby.RoomModel
+            {
+                Game = new Domain.Api.Models.Base.Lobby.GameModel
+                {
+                    Description = room.Game.Description,
+                    ID = room.Game.ID,
+                    MaxPlayerCount = room.Game.MaxPlayerCount,
+                    MinPlayerCount = room.Game.MinPlayerCount,
+                    Name = room.Game.Name,
+                },
+                HostID = room.HostID,
+                Players = room.Players.Select((p) => new Domain.Api.Models.Base.User.UserModel
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    Username = p.Username
+                }).ToArray()
+            };
         }
     }
 }

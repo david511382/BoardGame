@@ -2,7 +2,7 @@
 {
     public class UserModel
     {
-        public int UserID { get; set; }
+        public UserInfoModel UserInfo { get; set; }
         public int? RoomID { get; set; }
 
         public UserModel()

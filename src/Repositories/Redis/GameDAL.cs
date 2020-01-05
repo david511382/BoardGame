@@ -1,5 +1,5 @@
-﻿using Domain.Api.Models.Base.Lobby;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using RedisRepository.Models;
 using StackExchange.Redis;
 using System.Linq;
 using System.Threading.Tasks;

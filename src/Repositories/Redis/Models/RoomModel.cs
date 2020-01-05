@@ -1,12 +1,10 @@
-﻿using Domain.Api.Models.Base.User;
-
-namespace Domain.Api.Models.Base.Lobby
+﻿namespace RedisRepository.Models
 {
     public class RoomModel
     {
         public int HostID { get; set; }
         public GameModel Game { get; set; }
-        public UserModel[] Players { get; set; }
+        public UserInfoModel[] Players { get; set; }
 
         public bool IsFull()
         {

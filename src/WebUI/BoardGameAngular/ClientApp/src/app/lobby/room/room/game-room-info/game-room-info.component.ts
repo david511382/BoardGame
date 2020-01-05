@@ -16,18 +16,18 @@ export class GameRoomInfoComponent{
     if (!this.isContainData)
       return "無";
 
-    if (this.roomData.playerIDs === null)
+    if (this.roomData.players === null)
       return null;
 
-    var result = this.roomData.playerIDs.join(', ');
+    var result = this.roomData.players.map((v)=>v.name).join(', ');
     return result;
   }
   public get currentPlayersCount() {
     if (!this.isContainData ||
-      this.roomData.playerIDs === null)
+      this.roomData.players === null)
       return null;
 
-    return this.roomData.playerIDs.length;
+    return this.roomData.players.length;
   }
   public get isContainData() {
     return this.roomData !== null;

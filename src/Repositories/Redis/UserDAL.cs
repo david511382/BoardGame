@@ -16,7 +16,7 @@ namespace RedisRepository
         public Task SetUser(UserModel user, ITransaction tran = null)
         {
             IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
-            return db.HashSetAsync(Key.User, user.UserID, JsonConvert.SerializeObject(user));
+            return db.HashSetAsync(Key.User, user.UserInfo.ID, JsonConvert.SerializeObject(user));
         }
 
         public async Task<bool> LockUser(int userID)

@@ -46,8 +46,8 @@ export class RoomRoomComponent implements OnInit{
   private initTeam() {
     setTimeout(() => {
       var teamSet = this.teamSet;
-      this.data.playerIDs.forEach((id) => {
-        teamSet.Add(RoomPlayerComponent, id);
+      this.data.players.forEach((p) => {
+        teamSet.Add(RoomPlayerComponent, p);
       })
     }, 0);
   }

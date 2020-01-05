@@ -1,5 +1,5 @@
-﻿using Domain.Api.Models.Base.Lobby;
-using LobbyWebService.Services;
+﻿using LobbyWebService.Services;
+using RedisRepository.Models;
 using System.Linq;
 using System.Threading.Tasks;
 

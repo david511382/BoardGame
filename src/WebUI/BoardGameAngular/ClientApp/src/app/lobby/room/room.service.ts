@@ -6,8 +6,12 @@ import { GeneralResponse, HandleErrorFun, SuccessResponse } from '../../domain/r
 import { UrlConfigService, RoomUrl } from '../../config/config.service';
 import { GameModel } from './game.service';
 
+export class UserModel {
+  constructor(public id: number, public name: string, public username: string) { }
+}
+
 export class RoomModel {
-  constructor(public hostID: number, public game: GameModel, public playerIDs: number[]) { }
+  constructor(public hostID: number, public game: GameModel, public players: UserModel[]) { }
 }
 
 interface ListResponse extends GeneralResponse {
