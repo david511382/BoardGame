@@ -26,6 +26,10 @@ interface RoomResponse extends SuccessResponse {
   providedIn: 'root',//singleton 
 })
 export class RoomService {
+  public readonly RoomPath: string = "gameroom";
+  public readonly ListPath: string = "";
+  public readonly CreatePath: string = "createroom";
+
   private readonly backendUrl: RoomUrl
   
   constructor(private http: HttpClient, config: UrlConfigService) {

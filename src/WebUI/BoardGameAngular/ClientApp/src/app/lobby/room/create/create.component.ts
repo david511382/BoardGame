@@ -1,10 +1,11 @@
-import { Component, ViewChild, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { SetComponent } from '../../../share/set/set.component';
-import { AuthService } from '../../../auth/auth.service';
 import { GameInfoComponent } from './gam-info/game-info.component';
 import { GameModel, GameService } from '../game.service';
 import { GameComponent } from './game/game.component';
-import { RoomService, RoomModel } from '../room.service';
+import { RoomService } from '../room.service';
+import { GameRoomService } from '../room/room.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-lobby-room-create',
@@ -14,9 +15,9 @@ import { RoomService, RoomModel } from '../room.service';
 export class RoomCreateComponent implements OnInit{
   @ViewChild(SetComponent, { static: true }) gameSet: SetComponent;
   @ViewChild(GameInfoComponent, { static: true }) gameInfo: GameInfoComponent;
-
-  @Output() RedirectToRoomEvent = new EventEmitter <RoomModel>();
-  @Output() RedirectToListRoomEvent = new EventEmitter();
+  
+  public readonly RoomPath: string = this.roomService.RoomPath;
+  public readonly LobbyPath: string = this.roomService.ListPath;
 
   public get IsSelectedRoom(): boolean{
     return this.selectedGame === null;
@@ -24,8 +25,11 @@ export class RoomCreateComponent implements OnInit{
 
   private selectedGame: GameModel;
 
-  constructor(private service: GameService, private roomService: RoomService, private authService: AuthService) {
-    this.selectedGame= null;
+  constructor(private service: GameService,
+    private roomService: RoomService,
+    private roomDataService: GameRoomService,
+    private router: Router) {
+    this.selectedGame = null;
   }
 
   public CreateRoom() {
@@ -37,15 +41,17 @@ export class RoomCreateComponent implements OnInit{
           return;
         }
 
-        if (resp.isSuccess)
-          this.RedirectToRoomEvent.emit(resp.room);
+        if (resp.isSuccess) {
+          this.roomDataService.roomData = resp.room;
+          this.router.navigate([this.RoomPath]);
+        }
         else
           alert(resp.message);
       });
   }
 
   public Cancel() {
-    this.RedirectToListRoomEvent.emit();
+    this.router.navigate([this.LobbyPath]);
   }
 
   ngOnInit(): void {

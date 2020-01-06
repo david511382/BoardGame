@@ -5,6 +5,8 @@ import { AuthService } from "../auth/auth.service";
 import { RegisterComponent } from "../user/register/register.component";
 import { UpdateComponent } from "../user/update/update.component";
 import { GuestService } from "../auth/guest.service";
+import { RoomRoomComponent } from "../lobby/room/room/room.component";
+import { RoomCreateComponent } from "../lobby/room/create/create.component";
 
 export interface IRoute extends Route {
   name?: string
@@ -37,6 +39,18 @@ export const RootRoutes: IRoute[] = [
     component: LobbyComponent,
     canActivate: [AuthService], 
     name: "登出"
+  },
+  {
+    path: 'createroom',
+    component: RoomCreateComponent,
+    canActivate: [AuthService],
+    name: "navHide"
+  },
+  {
+    path: 'gameroom',
+    component: RoomRoomComponent,
+    canActivate: [AuthService],
+    name: "navHide"
   },
   { path: '**', redirectTo: '' },
 ];

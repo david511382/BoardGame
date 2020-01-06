@@ -1,9 +1,11 @@
-import { Component, ViewChild, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { SetComponent } from '../../../share/set/set.component';
 import { RoomService, RoomModel } from '../room.service';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { GameRoomInfoComponent } from '../room/game-room-info/game-room-info.component';
 import { AuthService } from '../../../auth/auth.service';
+import { GameRoomService } from '../room/room.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-lobby-room-list',
@@ -14,12 +16,15 @@ export class RoomListComponent implements OnInit{
   @ViewChild(SetComponent, { static: true }) roomSet: SetComponent;
   @ViewChild(GameRoomInfoComponent, { static: true }) roomInfo: GameRoomInfoComponent;
 
-  @Output() RedirectToCreateRoomEvent = new EventEmitter();
-  @Output() RedirectToRoomEvent = new EventEmitter<RoomModel>();
-
+  public readonly RoomPath: string = this.service.RoomPath;
+  public readonly CreateRoomPath: string = this.service.CreatePath;
+  
   private isClickRoom: boolean;
   
-  constructor(private service: RoomService, private authService: AuthService) {
+  constructor(private service: RoomService,
+    private authService: AuthService,
+    private roomDataService: GameRoomService,
+    private router: Router) {
     this.isClickRoom = false;
   }
 
@@ -29,7 +34,7 @@ export class RoomListComponent implements OnInit{
       return;
     }
 
-    this.RedirectToCreateRoomEvent.emit();
+    this.router.navigate([this.CreateRoomPath]);
   }
 
   ngOnInit(): void {
@@ -82,8 +87,10 @@ export class RoomListComponent implements OnInit{
           return;
         }
 
-        if (resp.isSuccess)
-          this.RedirectToRoomEvent.emit(resp.room);
+        if (resp.isSuccess) {
+          this.roomDataService.roomData = resp.room;
+          this.router.navigate([this.RoomPath]);
+        }
         else
           alert(resp.message);
       });

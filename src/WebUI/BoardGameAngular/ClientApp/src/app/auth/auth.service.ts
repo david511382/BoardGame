@@ -27,6 +27,8 @@ export class AuthService implements CanActivate {
       case "登出":
       case "用戶資料":
         return this.canActivate(null, null);
+      case "navHide":
+        return false;
       default:
         return true;
     }
