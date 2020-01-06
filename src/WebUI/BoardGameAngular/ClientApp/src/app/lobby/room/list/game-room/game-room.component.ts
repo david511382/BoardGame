@@ -15,7 +15,7 @@ export class GameRoomComponent implements SetItemComponent{
   public maxPlayersCount: number;
 
   public get host(): string {
-    return this.roomData.hostID.toString();
+    return this.roomData.players.find((p)=>p.id == this.roomData.hostID).name;
   }
   public get game(): string {
     return this.roomData.game.name;

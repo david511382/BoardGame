@@ -9,7 +9,7 @@ import { RoomModel } from '../../room.service';
 export class GameRoomInfoComponent{
   public get host() {
     return (this.isContainData) ?
-      this.roomData.hostID:
+      this.roomData.players.find((p) => p.id == this.roomData.hostID).name:
       null;
   }
   public get players() {
