@@ -1,9 +1,8 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { SetComponent } from '../../../share/set/set.component';
-import { RoomService } from '../room.service';
+import { RoomService, RoomModel } from '../room.service';
 import { GameRoomInfoComponent } from './game-room-info/game-room-info.component';
 import { RoomPlayerComponent } from './player/player.component';
-import { GameRoomService } from './room.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -22,12 +21,23 @@ export class RoomRoomComponent implements OnInit{
   }
 
   constructor(private service: RoomService,
-    private dataService: GameRoomService,
     private router: Router) {}
-  
+
   ngOnInit(): void {
-    this.initRoomInfo();
-    this.initTeam();
+    setTimeout(() => {
+      let roomData = this.service.GetRoomData;
+      if (roomData === null) {
+        this.router.navigate([this.LobbyPath]);
+        return;
+      }
+
+      this.roomInfo.Show(roomData);
+
+      var teamSet = this.teamSet;
+      roomData.players.forEach((p) => {
+        teamSet.Add(RoomPlayerComponent, p);
+      })
+    }, 0);
   }
 
   public LeaveRoom() {
@@ -60,18 +70,5 @@ export class RoomRoomComponent implements OnInit{
         else
           alert(resp.message);
       });
-  }
-
-  private initRoomInfo() {
-    setTimeout(() => this.roomInfo.Show(this.dataService.roomData),0);
-  }
-
-  private initTeam() {
-    setTimeout(() => {
-      var teamSet = this.teamSet;
-      this.dataService.roomData.players.forEach((p) => {
-        teamSet.Add(RoomPlayerComponent, p);
-      })
-    }, 0);
   }
 }

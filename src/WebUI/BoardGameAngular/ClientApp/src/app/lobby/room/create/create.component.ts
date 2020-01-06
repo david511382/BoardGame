@@ -4,7 +4,6 @@ import { GameInfoComponent } from './gam-info/game-info.component';
 import { GameModel, GameService } from '../game.service';
 import { GameComponent } from './game/game.component';
 import { RoomService } from '../room.service';
-import { GameRoomService } from '../room/room.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -27,7 +26,6 @@ export class RoomCreateComponent implements OnInit{
 
   constructor(private service: GameService,
     private roomService: RoomService,
-    private roomDataService: GameRoomService,
     private router: Router) {
     this.selectedGame = null;
   }
@@ -42,7 +40,6 @@ export class RoomCreateComponent implements OnInit{
         }
 
         if (resp.isSuccess) {
-          this.roomDataService.roomData = resp.room;
           this.router.navigate([this.RoomPath]);
         }
         else

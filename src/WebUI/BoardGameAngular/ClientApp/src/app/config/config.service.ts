@@ -12,25 +12,28 @@ export class UrlConfigService extends BaseUrl{
 
   constructor(@Inject('BASE_URL') baseUrl: string) {
     super(`${baseUrl}api`);
-    this.userBackendUrl = new UserUrl(`${this.baseUrl}/User`, "Login", "RegisterAndLogin", "Update");
+    this.userBackendUrl = new UserUrl(`${this.baseUrl}/User`);
     this.roomBackendUrl = new RoomUrl(`${this.baseUrl}/Room`);
     this.gameBackendUrl = new RoomUrl(`${this.baseUrl}/Game`);
   }
 }
 
 export class UserUrl extends BaseUrl{
-  constructor(baseUrl: string, private login: string, private register: string, private update: string) {
+  constructor(baseUrl: string) {
     super(baseUrl);
   }
-
+  
+  get UserStatus(): string {
+    return `${this.baseUrl}/Status`;
+  }
   get Login(): string {
-    return `${this.baseUrl}/${this.login}`;
+    return `${this.baseUrl}/Login`;
   }
   get Register(): string {
-    return `${this.baseUrl}/${this.register}`;
+    return `${this.baseUrl}/RegisterAndLogin`;
   }
   get Update(): string {
-    return `${this.baseUrl}/${this.update}`;
+    return `${this.baseUrl}/update`;
   }
   get Info(): string {
     return `${this.baseUrl}`;

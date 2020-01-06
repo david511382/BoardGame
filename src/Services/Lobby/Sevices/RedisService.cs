@@ -272,9 +272,7 @@ namespace LobbyWebService.Services
 
                 if (!await _dal.SetGameStatus(new GameStatusModel
                 {
-                    GameID = oriRoom.Game.ID,
-                    HostID = hostID,
-                    PlayerIDs = oriRoom.Players.Select((p) => p.ID).ToArray()
+                    Room = oriRoom
                 }))
                     throw new Exception("SetGameStatus Fail");
 
@@ -296,6 +294,11 @@ namespace LobbyWebService.Services
                     foreach (UserInfoModel player in oriRoom.Players)
                         await _dal.ReleaseUser(player.ID);
             }
+        }
+
+        public async Task<GameStatusModel> GameStatus(int hostID)
+        {
+            return await _dal.GameStatus(hostID);
         }
 
         private async Task removeRoomPlayer(int roomID, UserModel userInfo, int? GameRoomID = null)

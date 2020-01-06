@@ -40,7 +40,7 @@ export class AuthService implements CanActivate {
   
   public Logout() {
     this.cookieService.delete(this.TOKEN_COOKIE_NAME);
-    this.authChanged.next(true);
+    this.authChanged.next(false);
   }
 
   private set token(token: string) {

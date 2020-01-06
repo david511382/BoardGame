@@ -16,7 +16,7 @@ namespace RedisRepository
         public Task<bool> SetGameStatus(GameStatusModel gameStatus, ITransaction tran = null)
         {
             IDatabaseAsync db = (IDatabaseAsync)tran ?? _db;
-            return db.HashSetAsync(Key.GameStatus, -gameStatus.HostID, JsonConvert.SerializeObject(gameStatus));
+            return db.HashSetAsync(Key.GameStatus, -gameStatus.Room.HostID, JsonConvert.SerializeObject(gameStatus));
         }
 
         public Task DeleteGameStatus(int hostID, ITransaction tran = null)

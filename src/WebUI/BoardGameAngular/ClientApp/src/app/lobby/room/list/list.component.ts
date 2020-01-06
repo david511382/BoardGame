@@ -4,7 +4,6 @@ import { RoomService, RoomModel } from '../room.service';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { GameRoomInfoComponent } from '../room/game-room-info/game-room-info.component';
 import { AuthService } from '../../../auth/auth.service';
-import { GameRoomService } from '../room/room.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -23,9 +22,15 @@ export class RoomListComponent implements OnInit{
   
   constructor(private service: RoomService,
     private authService: AuthService,
-    private roomDataService: GameRoomService,
     private router: Router) {
     this.isClickRoom = false;
+
+    if (this.service.GetRoomData !== null)
+      this.router.navigate([this.RoomPath]);
+    service.RoomDataChanged.subscribe((roomData) => {
+      if (roomData !== null)
+        this.router.navigate([this.RoomPath]);
+    });
   }
 
   public CreateRoom() {
@@ -88,7 +93,6 @@ export class RoomListComponent implements OnInit{
         }
 
         if (resp.isSuccess) {
-          this.roomDataService.roomData = resp.room;
           this.router.navigate([this.RoomPath]);
         }
         else

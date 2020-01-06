@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { CookieService } from 'ngx-cookie-service';
 import { HttpModule } from '@angular/http';
 import { RoomListComponent } from './list/list.component';
 import { ShareModule } from '../../share/share.module';
@@ -15,7 +14,7 @@ import { GameService } from './game.service';
 import { RoomCreateComponent } from './create/create.component';
 import { RoomPlayerComponent } from './room/player/player.component';
 import { RoomRoomComponent } from './room/room.component';
-import { GameRoomService } from './room/room.service';
+import { AuthService } from '../../auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -35,10 +34,9 @@ import { GameRoomService } from './room/room.service';
   ],
   providers: [
     UrlConfigService,
-    CookieService,
+    AuthService,
     RoomService,
     GameService,
-    GameRoomService
   ],
   imports: [
     HttpModule,

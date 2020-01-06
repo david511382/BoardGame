@@ -11,6 +11,7 @@ namespace BoardGameAngular.Services.Config
         public string UserInfo => _userBase;
         private string _userBase => _baseUrl + "/User";
 
+        public string UserStatus => _roomBase + "/User";
         public string RoomStart => _roomBase + "/Start";
         public string LeaveRoom => _roomBase;
         public string JoinRoom => _roomBase;
