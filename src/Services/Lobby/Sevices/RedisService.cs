@@ -70,7 +70,7 @@ namespace LobbyWebService.Services
                 catch { }
                 if (currentUser != null)
                 {
-                    if (currentUser.RoomID != null)
+                    if (currentUser.GameRoomID != null)
                         throw new Exception("已加入其他房間");
                 }
                 else
@@ -78,7 +78,7 @@ namespace LobbyWebService.Services
                     currentUser = new UserModel
                     {
                         UserInfo = userInfo,
-                        RoomID = null
+                        GameRoomID = null
                     };
                 }
 
@@ -103,7 +103,7 @@ namespace LobbyWebService.Services
                 UserModel user = new UserModel
                 {
                     UserInfo = currentUser.UserInfo,
-                    RoomID = hostID
+                    GameRoomID = hostID
                 };
                 _ = _dal.SetUser(user, tran);
 
@@ -150,7 +150,7 @@ namespace LobbyWebService.Services
                 catch { }
                 if (currentUser != null)
                 {
-                    if (currentUser.RoomID != null)
+                    if (currentUser.GameRoomID != null)
                         throw new Exception("已加入其他房間");
                 }
                 else
@@ -158,7 +158,7 @@ namespace LobbyWebService.Services
                     currentUser = new UserModel
                     {
                         UserInfo = userInfo,
-                        RoomID = null
+                        GameRoomID = null
                     };
                 }
 
@@ -189,7 +189,7 @@ namespace LobbyWebService.Services
                 UserModel user = new UserModel
                 {
                     UserInfo = currentUser.UserInfo,
-                    RoomID = hostID
+                    GameRoomID = hostID
                 };
                 _ = _dal.SetUser(user, tran);
 
@@ -217,7 +217,7 @@ namespace LobbyWebService.Services
                 try
                 {
                     userInfo = await User(playerID);
-                    if (userInfo.RoomID == null)
+                    if (userInfo.GameRoomID == null)
                         throw new Exception();
                 }
                 catch
@@ -225,52 +225,11 @@ namespace LobbyWebService.Services
                     throw new Exception("不在任何房間");
                 }
 
-                roomID = userInfo.RoomID.Value;
+                roomID = userInfo.GameRoomID.Value;
                 if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(roomID), WAIT_LOCK_MS))
                     throw new Exception("LockRoom Fail");
 
-                ITransaction tran = _dal.Begin();
-
-                List<UserInfoModel> removeList = new List<UserInfoModel>();
-                RoomModel oriRoom = await Room(roomID);
-                bool isHost = roomID == playerID;
-                if (isHost)
-                    removeList = oriRoom.Players.ToList();
-                else
-                    removeList.Add(userInfo.UserInfo);
-
-                Task<UserModel>[] getUsers = removeList.Select((info) => User(info.ID))
-                     .Select(async (t) =>
-                     {
-                         UserModel u = await t;
-                         u.RoomID = null;
-                         return u;
-                     }).ToArray();
-                foreach (Task<UserModel> getUser in getUsers)
-                {
-                    UserModel u = await getUser;
-                    _ = _dal.SetUser(u, tran);
-                }
-
-                if (isHost)
-                    _ = _dal.DeleteRoom(roomID, tran);
-                else
-                {
-                    UserInfoModel[] newPlayers = oriRoom.Players
-                        .Where((p) => p.ID != userInfo.UserInfo.ID)
-                        .ToArray();
-                    RoomModel newRoom = new RoomModel
-                    {
-                        Game = oriRoom.Game,
-                        HostID = oriRoom.HostID,
-                        Players = newPlayers
-                    };
-
-                    _ = _dal.SetRoom(newRoom, tran);
-                }
-
-                if (!await tran.ExecuteAsync())
-                    throw new Exception("ExecuteAsync Fail");
+                await removeRoomPlayer(roomID, userInfo);
             }
             finally
             {
@@ -282,6 +241,107 @@ namespace LobbyWebService.Services
         public async Task<UserModel> User(int userID)
         {
             return await _dal.User(userID);
+        }
+
+        public async Task StartRoom(int hostID)
+        {
+            int roomID = hostID;
+            RoomModel oriRoom = null;
+            try
+            {
+                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(roomID), WAIT_LOCK_MS))
+                    throw new Exception("LockRoom Fail");
+
+                oriRoom = await Room(roomID);
+
+                UserModel userInfo = null;
+                try
+                {
+                    userInfo = await User(hostID);
+                    if (userInfo.GameRoomID == null)
+                        throw new Exception();
+                }
+                catch
+                {
+                    throw new Exception("不在任何房間");
+                }
+
+                foreach (UserInfoModel player in oriRoom.Players)
+                    if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockUser(player.ID), WAIT_LOCK_MS))
+                        throw new Exception("LockUser Fail");
+
+                if (!await _dal.SetGameStatus(new GameStatusModel
+                {
+                    GameID = oriRoom.Game.ID,
+                    HostID = hostID,
+                    PlayerIDs = oriRoom.Players.Select((p) => p.ID).ToArray()
+                }))
+                    throw new Exception("SetGameStatus Fail");
+
+                try
+                {
+                    await removeRoomPlayer(roomID, userInfo, -hostID);
+                }
+                catch
+                {
+                    await _dal.DeleteGameStatus(hostID);
+                    throw;
+                }
+            }
+            finally
+            {
+                await _dal.ReleaseRoom(roomID);
+
+                if (oriRoom != null)
+                    foreach (UserInfoModel player in oriRoom.Players)
+                        await _dal.ReleaseUser(player.ID);
+            }
+        }
+
+        private async Task removeRoomPlayer(int roomID, UserModel userInfo, int? GameRoomID = null)
+        {
+            ITransaction tran = _dal.Begin();
+
+            List<UserInfoModel> removeList = new List<UserInfoModel>();
+            RoomModel oriRoom = await Room(roomID);
+            bool isHost = roomID == userInfo.UserInfo.ID;
+            if (isHost)
+                removeList = oriRoom.Players.ToList();
+            else
+                removeList.Add(userInfo.UserInfo);
+
+            Task<UserModel>[] getUsers = removeList.Select((info) => User(info.ID))
+                    .Select(async (t) =>
+                    {
+                        UserModel u = await t;
+                        u.GameRoomID = GameRoomID;
+                        return u;
+                    }).ToArray();
+            foreach (Task<UserModel> getUser in getUsers)
+            {
+                UserModel u = await getUser;
+                _ = _dal.SetUser(u, tran);
+            }
+
+            if (isHost)
+                _ = _dal.DeleteRoom(roomID, tran);
+            else
+            {
+                UserInfoModel[] newPlayers = oriRoom.Players
+                    .Where((p) => p.ID != userInfo.UserInfo.ID)
+                    .ToArray();
+                RoomModel newRoom = new RoomModel
+                {
+                    Game = oriRoom.Game,
+                    HostID = oriRoom.HostID,
+                    Players = newPlayers
+                };
+
+                _ = _dal.SetRoom(newRoom, tran);
+            }
+
+            if (!await tran.ExecuteAsync())
+                throw new Exception("ExecuteAsync Fail");
         }
     }
 }

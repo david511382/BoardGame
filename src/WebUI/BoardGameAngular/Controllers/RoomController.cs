@@ -107,5 +107,25 @@ namespace BoardGameAngular.Controllers
                     return result;
                 });
         }
+
+        [HttpDelete]
+        [Route("Start")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Start()
+        {
+            return await _responseService.Init<RoomResponse>(this, _logger)
+                .Do<RoomResponse>(async (result, user, logger) =>
+                {
+                    result = await HttpHelper.HttpRequest.New()
+                        .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
+                        .To(_urlConfig.RoomStart)
+                        .Delete<RoomResponse>();
+
+                    return result;
+                });
+        }
     }
 }

@@ -65,5 +65,10 @@ export class RoomService {
     return this.http.delete<SuccessResponse>(this.backendUrl.Join)
       .pipe(catchError(HandleErrorFun()));
   }
+
+  public Start(): Observable<SuccessResponse> {
+    return this.http.delete<SuccessResponse>(this.backendUrl.Start)
+      .pipe(catchError(HandleErrorFun()));
+  }
 }
 

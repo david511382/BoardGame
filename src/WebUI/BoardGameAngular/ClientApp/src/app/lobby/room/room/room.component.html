@@ -1,5 +1,5 @@
 <app-lobby-room-list-game-room-info></app-lobby-room-list-game-room-info>
 <set></set>
-<!--<button (click)="CreateRoom()">開始遊戲</button>-->
+<button *ngIf="isHost" (click)="StartRoom()">開始遊戲</button>
 <!--<button (click)="CreateRoom()">準備</button>-->
 <button (click)="LeaveRoom()">離開房間</button>

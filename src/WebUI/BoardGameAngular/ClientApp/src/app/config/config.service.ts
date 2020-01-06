@@ -42,6 +42,9 @@ export class RoomUrl extends BaseUrl {
     super(baseUrl);
   }
 
+  get Start(): string {
+    return `${this.baseUrl}/Start`;
+  }
   get List(): string {
     return `${this.baseUrl}`;
   }

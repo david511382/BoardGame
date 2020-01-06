@@ -3,11 +3,11 @@
     public class UserModel
     {
         public UserInfoModel UserInfo { get; set; }
-        public int? RoomID { get; set; }
+        public int? GameRoomID { get; set; }
 
         public UserModel()
         {
-            RoomID = null;
+            GameRoomID = null;
         }
     }
 }

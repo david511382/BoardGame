@@ -175,6 +175,35 @@ namespace LobbyWebService.Controllers
                 });
         }
 
+        [HttpDelete]
+        [Route("Start")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> StartGame()
+        {
+            return await _responseService.Init<BoolResponseModel>(this, _logger)
+                .ValidateToken((user) => { })
+                .Do<BoolResponseModel>(async (result, user, logger) =>
+                {
+                    try
+                    {
+                        await _redisService.StartRoom(user.Id);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Log("Exception", e);
+
+                        result.Error("無法開始遊戲");
+                        return result;
+                    }
+
+                    result.Success("開始遊戲");
+                    return result;
+                });
+        }
+
         private UserInfoModel GetUserInfo(UserClaimModel user)
         {
             return new UserInfoModel

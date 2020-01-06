@@ -16,7 +16,11 @@ export class RoomRoomComponent implements OnInit{
   @ViewChild(GameRoomInfoComponent, { static: true }) roomInfo: GameRoomInfoComponent;
 
   public readonly LobbyPath: string = this.service.ListPath;
-  
+
+  public get isHost() {
+    return true;
+  }
+
   constructor(private service: RoomService,
     private dataService: GameRoomService,
     private router: Router) {}
@@ -37,6 +41,22 @@ export class RoomRoomComponent implements OnInit{
 
         if (resp.isSuccess)
           this.router.navigate([this.LobbyPath]);
+        else
+          alert(resp.message);
+      });
+  }
+
+  public StartRoom() {
+    var ob = this.service.Start();
+    if (ob)
+      ob.subscribe((resp) => {
+        if (resp.isError) {
+          alert(resp.errorMessage)
+          return;
+        }
+
+        if (resp.isSuccess)
+          alert(resp.message);//start
         else
           alert(resp.message);
       });
