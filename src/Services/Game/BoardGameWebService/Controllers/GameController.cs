@@ -1,17 +1,9 @@
-﻿using BoardGameWebService.Models.BoardGame;
-using BoardGame.Data.ApiParameters;
-using Microsoft.AspNetCore.Cors;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using BoardGameWebService.Models;
-using System.Net.Http.Formatting;
-using System.Web.Http;
+﻿using BoardGameWebService.Domain;
+using BoardGameWebService.Models.BoardGame;
+using GameLogic.Models;
 using GameLogic.PokerGame;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BoardGameWebService.Controllers
 {

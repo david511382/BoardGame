@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using BoardGame.Data.Enums;
+using GameLogic.Domain;
 using GameLogic.Player;
 
 namespace GameLogic.Game

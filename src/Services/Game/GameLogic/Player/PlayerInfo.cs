@@ -1,8 +1,4 @@
-﻿using BoardGame.Data.ApiParameters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using GameLogic.Models;
 
 namespace GameLogic.Player
 {
@@ -17,8 +13,8 @@ namespace GameLogic.Player
 
         public PlayerInfo(string name, int id)
         {
-            this.Name = name;
-            this.Id = id;
+            Name = name;
+            Id = id;
             RoomId = -1;
         }
 

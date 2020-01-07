@@ -1,22 +1,16 @@
-﻿using BoardGameWebService.Models.GameLobby;
-using BoardGame.Data.ApiParameters;
+﻿using BoardGameWebService.Domain;
+using BoardGameWebService.Models.GameLobby;
+using GameLogic.Models;
 using GameLogic.Player;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Formatting;
-using System.Web.Http;
 using Microsoft.AspNetCore.Cors;
-using System.Collections.Specialized;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace BoardGameWebService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     [EnableCors()]
     public class GameLobbyController : ControllerBase
     {
@@ -94,7 +88,7 @@ namespace BoardGameWebService.Controllers
             {
                 apiParameter = ApiParameter.Create(parameter);
                 user = apiParameter.GetParameter<PlayerInfoModel>(ApiParameterEnum.Player_Info);
-                gameId= apiParameter.GetParameter<int>(ApiParameterEnum.Game_Id);
+                gameId = apiParameter.GetParameter<int>(ApiParameterEnum.Game_Id);
             }
             catch
             {

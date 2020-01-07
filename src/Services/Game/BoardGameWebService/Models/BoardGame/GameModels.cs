@@ -1,12 +1,10 @@
 ﻿using BigTwoLogic;
-using BoardGame.Data.ApiParameters;
 using GameLogic.Game;
 using GameLogic.PokerGame;
 using GameLogic.PokerGame.CardGroup;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace BoardGameWebService.Models.BoardGame
 {
@@ -76,7 +74,7 @@ namespace BoardGameWebService.Models.BoardGame
                 GameStatus gameStatus = game.GetGameStatus();
 
                 GameStatusModel model = new GameStatusModel();
-                model.CurrentPlayerId =gameStatus.CurrentPlayerId;
+                model.CurrentPlayerId = gameStatus.CurrentPlayerId;
                 model.State = gameStatus.State;
                 model.WinPlayers = BoardGameManager._playerManager
                     .GetPlayers(gameStatus.WinPlayerIds)
@@ -85,7 +83,7 @@ namespace BoardGameWebService.Models.BoardGame
 
                 return model;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
@@ -98,7 +96,7 @@ namespace BoardGameWebService.Models.BoardGame
             {
                 gameBoard = BoardGameManager.GetGameBoardByPlayerId(playerId);
 
-                return ((PokerCardGroup) gameBoard.GetLastItem()).GetCards();
+                return ((PokerCardGroup)gameBoard.GetLastItem()).GetCards();
             }
             catch
             {

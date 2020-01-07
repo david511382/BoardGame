@@ -1,5 +1,4 @@
 ﻿using BoardGameWebService.Models.BoardGame;
-using BoardGame.Data.ApiParameters;
 using GameLogic.Player;
 using System;
 using System.Collections.Generic;

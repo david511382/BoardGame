@@ -1,8 +1,4 @@
-﻿using BoardGame.Data.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using GameLogic.Domain;
 
 namespace GameLogic.Game
 {
@@ -11,10 +7,10 @@ namespace GameLogic.Game
         public GameState State { get; set; }
         public int[] WinPlayerIds { get; set; }
         public int CurrentPlayerId { get; set; }
-       
+
         public GameStatus(GameState state)
         {
-            this.State = state;
+            State = state;
             WinPlayerIds = null;
             CurrentPlayerId = -1;
         }
