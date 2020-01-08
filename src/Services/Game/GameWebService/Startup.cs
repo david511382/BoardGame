@@ -1,4 +1,7 @@
-﻿using Domain.Logger;
+﻿using Domain.Api.Interfaces;
+using Domain.Api.Services;
+using Domain.Logger;
+using GameWebService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,6 +30,18 @@ namespace GameWebService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSingleton<IGameService, GameService>();
+
+            string redisConnStr = Configuration.GetConnectionString("Redis");
+            services.AddSingleton<IRedisService>((sp) =>
+            {
+                ILogger<RedisService> logger = sp.GetService<ILogger<RedisService>>();
+                IGameService gameService = sp.GetService<IGameService>();
+                return new RedisService(redisConnStr, gameService, logger);
+            });
+
+            services.AddScoped<IResponseService, ResponseService>();
 
             services.AddSwaggerGen(c =>
             {
@@ -70,7 +85,10 @@ namespace GameWebService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IRedisService redisService)
         {
             loggerFactory.AddNLog();
 
@@ -93,6 +111,9 @@ namespace GameWebService
             });
 
             app.UseMvc();
+
+            RedisNotifyService redisNotifyService = new RedisNotifyService(redisService);
+            redisNotifyService.Run();
         }
     }
 }

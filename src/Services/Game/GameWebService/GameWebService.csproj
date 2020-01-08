@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\..\Repositories\Redis\RedisRepository.csproj" />
     <ProjectReference Include="..\BigTwoLogic\BigTwoLogic.csproj" />
     <ProjectReference Include="..\GameLogic\GameLogic.csproj" />
   </ItemGroup>

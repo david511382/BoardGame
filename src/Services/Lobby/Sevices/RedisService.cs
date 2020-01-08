@@ -285,6 +285,8 @@ namespace LobbyWebService.Services
                     await _dal.DeleteGameStatus(hostID);
                     throw;
                 }
+
+                await _dal.Publish("InitGame", hostID.ToString());
             }
             finally
             {
