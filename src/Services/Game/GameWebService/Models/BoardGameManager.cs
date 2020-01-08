@@ -1,5 +1,5 @@
 ﻿using BigTwoLogic;
-using BoardGameWebService.Models.GameLobby;
+using GameWebService.Models.GameLobby;
 using BoardGameBackend.Models;
 using GameLogic.Game;
 using GameLogic.Player;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGameWebService.Models
+namespace GameWebService.Models
 {
     public static class BoardGameManager
     {

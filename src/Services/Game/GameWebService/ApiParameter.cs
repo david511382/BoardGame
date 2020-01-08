@@ -1,9 +1,9 @@
-﻿using BoardGameWebService.Domain;
+﻿using GameWebService.Domain;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace BoardGameWebService
+namespace GameWebService
 {
     public class ApiParameter
     {

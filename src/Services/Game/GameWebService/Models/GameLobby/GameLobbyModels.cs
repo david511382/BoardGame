@@ -1,11 +1,11 @@
-﻿using BoardGameWebService.Models.BoardGame;
+﻿using GameWebService.Models.BoardGame;
 using GameLogic.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGameWebService.Models.GameLobby
+namespace GameWebService.Models.GameLobby
 {
     public class GameLobbyModels
     {

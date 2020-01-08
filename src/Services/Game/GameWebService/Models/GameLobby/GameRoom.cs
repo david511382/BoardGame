@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BoardGameWebService.Models.GameLobby
+namespace GameWebService.Models.GameLobby
 {
     public class GameRoom<GameT, PlayerT>
         where GameT : GameLogic.Game.BoardGame

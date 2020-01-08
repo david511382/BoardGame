@@ -1,11 +1,11 @@
-﻿using BoardGameWebService.Domain;
-using BoardGameWebService.Models.BoardGame;
+﻿using GameWebService.Domain;
+using GameWebService.Models.BoardGame;
 using GameLogic.Models;
 using GameLogic.PokerGame;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BoardGameWebService.Controllers
+namespace GameWebService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

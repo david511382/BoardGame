@@ -1,7 +1,7 @@
 ﻿using GameLogic.Models;
 using Newtonsoft.Json;
 
-namespace BoardGameWebService.Models.GameLobby
+namespace GameWebService.Models.GameLobby
 {
     public class GameRoomModel
     {

@@ -1,4 +1,4 @@
-﻿namespace BoardGameWebService.Domain
+﻿namespace GameWebService.Domain
 {
     public enum ApiParameterEnum
     {

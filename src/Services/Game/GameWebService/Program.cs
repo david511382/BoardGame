@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Web;
 using System.IO;
 
-namespace BoardGameWebService
+namespace GameWebService
 {
     public class Program
     {

@@ -2,7 +2,7 @@
 using GameLogic.Models;
 using Newtonsoft.Json;
 
-namespace BoardGameWebService.Models.BoardGame
+namespace GameWebService.Models.BoardGame
 {
     public class GameStatusModel
     {
