@@ -14,7 +14,12 @@ namespace LobbyWebService.Services
         private const int TRY_LOCK_TIMES = 3;
         private const int WAIT_LOCK_MS = 50;
 
-        private RedisDAL _dal;
+        private UserKey _user => _dal.User;
+        private RoomKey _room => _dal.Room;
+        private GameKey _game => _dal.Game;
+        private GameStatusKey _gameStatus => _dal.GameStatus;
+
+        private RedisContext _dal;
 
         private static async Task<bool> Retry(int times, Func<Task<bool>> tryThing, int delayMs = 0)
         {
@@ -31,22 +36,22 @@ namespace LobbyWebService.Services
 
         public RedisService(string connectStr)
         {
-            _dal = new RedisDAL(connectStr);
+            _dal = new RedisContext(connectStr);
         }
 
-        public async Task<GameModel> Game(int ID)
+        public async Task<GameModel> Game(int id)
         {
-            return await _dal.Game(ID);
+            return await _game.Get(id);
         }
 
         public async Task<GameModel[]> ListGames()
         {
-            return await _dal.ListGames();
+            return await _game.ListGames();
         }
 
         public async Task AddGames(GameModel[] games)
         {
-            await _dal.AddGames(games);
+            await _game.AddGames(games);
         }
 
         public async Task<RoomModel> CreateRoom(UserInfoModel userInfo, int gameID)
@@ -54,9 +59,9 @@ namespace LobbyWebService.Services
             int hostID = userInfo.ID;
             try
             {
-                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(hostID), WAIT_LOCK_MS))
+                if (!await Retry(TRY_LOCK_TIMES, () => _room.Lock(hostID), WAIT_LOCK_MS))
                     throw new Exception("LockRoom Fail");
-                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockUser(hostID), WAIT_LOCK_MS))
+                if (!await Retry(TRY_LOCK_TIMES, () => _user.Lock(hostID), WAIT_LOCK_MS))
                     throw new Exception("LockUser Fail");
 
                 Task<UserModel> getUserTask = User(hostID);
@@ -98,14 +103,14 @@ namespace LobbyWebService.Services
                 room.Game = game;
                 room.HostID = hostID;
                 room.Players = new UserInfoModel[] { currentUser.UserInfo };
-                _ = _dal.SetRoom(room, tran);
+                _ = _room.Set(room, tran);
 
                 UserModel user = new UserModel
                 {
                     UserInfo = currentUser.UserInfo,
                     GameRoomID = hostID
                 };
-                _ = _dal.SetUser(user, tran);
+                _ = _user.Set(user, tran);
 
                 if (!await tran.ExecuteAsync())
                     throw new Exception("ExecuteAsync Fail");
@@ -114,19 +119,19 @@ namespace LobbyWebService.Services
             }
             finally
             {
-                await _dal.ReleaseRoom(hostID);
-                await _dal.ReleaseUser(hostID);
+                await _room.Release(hostID);
+                await _user.Release(hostID);
             }
         }
 
         public async Task<RoomModel[]> ListRooms()
         {
-            return await _dal.ListRooms();
+            return await _room.ListRooms();
         }
 
         public async Task<RoomModel> Room(int hostID)
         {
-            return await _dal.Room(hostID);
+            return await _room.Get(hostID);
         }
 
         public async Task<RoomModel> AddRoomPlayer(int hostID, UserInfoModel userInfo)
@@ -134,9 +139,9 @@ namespace LobbyWebService.Services
             int playerID = userInfo.ID;
             try
             {
-                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(hostID), WAIT_LOCK_MS))
+                if (!await Retry(TRY_LOCK_TIMES, () => _room.Lock(hostID), WAIT_LOCK_MS))
                     throw new Exception("LockRoom Fail");
-                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockUser(playerID), WAIT_LOCK_MS))
+                if (!await Retry(TRY_LOCK_TIMES, () => _user.Lock(playerID), WAIT_LOCK_MS))
                     throw new Exception("LockUser Fail");
 
                 Task<UserModel> getUserTask = User(playerID);
@@ -184,14 +189,14 @@ namespace LobbyWebService.Services
                     HostID = oriRoom.HostID,
                     Players = players.ToArray()
                 };
-                _ = _dal.SetRoom(newRoom, tran);
+                _ = _room.Set(newRoom, tran);
 
                 UserModel user = new UserModel
                 {
                     UserInfo = currentUser.UserInfo,
                     GameRoomID = hostID
                 };
-                _ = _dal.SetUser(user, tran);
+                _ = _user.Set(user, tran);
 
                 if (!await tran.ExecuteAsync())
                     throw new Exception("ExecuteAsync Fail");
@@ -200,8 +205,8 @@ namespace LobbyWebService.Services
             }
             finally
             {
-                await _dal.ReleaseRoom(hostID);
-                await _dal.ReleaseUser(playerID);
+                await _room.Release(hostID);
+                await _user.Release(playerID);
             }
         }
 
@@ -210,7 +215,7 @@ namespace LobbyWebService.Services
             int roomID = 0;
             try
             {
-                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockUser(playerID), WAIT_LOCK_MS))
+                if (!await Retry(TRY_LOCK_TIMES, () => _user.Lock(playerID), WAIT_LOCK_MS))
                     throw new Exception("LockUser Fail");
 
                 UserModel userInfo = null;
@@ -226,21 +231,21 @@ namespace LobbyWebService.Services
                 }
 
                 roomID = userInfo.GameRoomID.Value;
-                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(roomID), WAIT_LOCK_MS))
+                if (!await Retry(TRY_LOCK_TIMES, () => _room.Lock(roomID), WAIT_LOCK_MS))
                     throw new Exception("LockRoom Fail");
 
                 await removeRoomPlayer(roomID, userInfo);
             }
             finally
             {
-                await _dal.ReleaseRoom(roomID);
-                await _dal.ReleaseUser(playerID);
+                await _room.Release(roomID);
+                await _user.Release(playerID);
             }
         }
 
         public async Task<UserModel> User(int userID)
         {
-            return await _dal.User(userID);
+            return await _user.Get(userID);
         }
 
         public async Task StartRoom(int hostID)
@@ -249,7 +254,7 @@ namespace LobbyWebService.Services
             RoomModel oriRoom = null;
             try
             {
-                if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockRoom(roomID), WAIT_LOCK_MS))
+                if (!await Retry(TRY_LOCK_TIMES, () => _room.Lock(roomID), WAIT_LOCK_MS))
                     throw new Exception("LockRoom Fail");
 
                 oriRoom = await Room(roomID);
@@ -267,10 +272,10 @@ namespace LobbyWebService.Services
                 }
 
                 foreach (UserInfoModel player in oriRoom.Players)
-                    if (!await Retry(TRY_LOCK_TIMES, () => _dal.LockUser(player.ID), WAIT_LOCK_MS))
+                    if (!await Retry(TRY_LOCK_TIMES, () => _user.Lock(player.ID), WAIT_LOCK_MS))
                         throw new Exception("LockUser Fail");
 
-                if (!await _dal.SetGameStatus(new GameStatusModel
+                if (!await _gameStatus.Set(new GameStatusModel
                 {
                     Room = oriRoom
                 }))
@@ -282,25 +287,25 @@ namespace LobbyWebService.Services
                 }
                 catch
                 {
-                    await _dal.DeleteGameStatus(hostID);
+                    await _gameStatus.Delete(hostID);
                     throw;
                 }
 
-                await _dal.Publish("InitGame", hostID.ToString());
+                await _dal.Publish(Channel.InitGame, hostID.ToString());
             }
             finally
             {
-                await _dal.ReleaseRoom(roomID);
+                await _room.Release(roomID);
 
                 if (oriRoom != null)
                     foreach (UserInfoModel player in oriRoom.Players)
-                        await _dal.ReleaseUser(player.ID);
+                        await _user.Release(player.ID);
             }
         }
 
         public async Task<GameStatusModel> GameStatus(int hostID)
         {
-            return await _dal.GameStatus(hostID);
+            return await _gameStatus.Get(hostID);
         }
 
         private async Task removeRoomPlayer(int roomID, UserModel userInfo, int? GameRoomID = null)
@@ -325,11 +330,11 @@ namespace LobbyWebService.Services
             foreach (Task<UserModel> getUser in getUsers)
             {
                 UserModel u = await getUser;
-                _ = _dal.SetUser(u, tran);
+                _ = _user.Set(u, tran);
             }
 
             if (isHost)
-                _ = _dal.DeleteRoom(roomID, tran);
+                _ = _room.Delete(roomID, tran);
             else
             {
                 UserInfoModel[] newPlayers = oriRoom.Players
@@ -342,7 +347,7 @@ namespace LobbyWebService.Services
                     Players = newPlayers
                 };
 
-                _ = _dal.SetRoom(newRoom, tran);
+                _ = _room.Set(newRoom, tran);
             }
 
             if (!await tran.ExecuteAsync())
