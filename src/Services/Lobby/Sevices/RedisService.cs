@@ -284,14 +284,14 @@ namespace LobbyWebService.Services
                 try
                 {
                     await removeRoomPlayer(roomID, userInfo, -hostID);
+                    if (!await _dal.Publish(Channel.InitGame,hostID, hostID.ToString()))
+                        throw new Exception("Publish Fail");
                 }
                 catch
                 {
                     await _gameStatus.Delete(hostID);
                     throw;
                 }
-
-                await _dal.Publish(Channel.InitGame, hostID.ToString());
             }
             finally
             {
@@ -311,7 +311,7 @@ namespace LobbyWebService.Services
         private async Task removeRoomPlayer(int roomID, UserModel userInfo, int? GameRoomID = null)
         {
             ITransaction tran = _dal.Begin();
-
+            
             List<UserInfoModel> removeList = new List<UserInfoModel>();
             RoomModel oriRoom = await Room(roomID);
             bool isHost = roomID == userInfo.UserInfo.ID;

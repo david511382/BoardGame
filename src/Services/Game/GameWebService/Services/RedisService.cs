@@ -19,6 +19,7 @@ namespace GameWebService.Services
         private UserKey _user => _dal.User;
         private RoomKey _room => _dal.Room;
         private GameKey _game => _dal.Game;
+        private ChannelStatusManager _channel => _dal.ChannelManager;
         private GameStatusKey _gameStatus => _dal.GameStatus;
         private RedisContext _dal;
 
@@ -42,23 +43,6 @@ namespace GameWebService.Services
             _dal = new RedisContext(connectStr);
         }
 
-        public async Task UpdateGameStatus(GameStatusModel gameStatus)
-        {
-            int hostID = gameStatus.Room.HostID;
-            try
-            {
-                if (!await Retry(TRY_LOCK_TIMES, () => _gameStatus.Lock(hostID), WAIT_LOCK_MS))
-                    throw new Exception("LockGameStatus Fail");
-
-                if (!await _gameStatus.Set(gameStatus))
-                    throw new Exception("SetGameStatus Fail");
-            }
-            finally
-            {
-                await _gameStatus.Release(hostID);
-            }
-        }
-
         public async Task<GameStatusModel> GameStatus(int hostID)
         {
             return await _gameStatus.Get(hostID);
@@ -66,7 +50,9 @@ namespace GameWebService.Services
 
         public async Task SubscribeInitGame()
         {
-            await _dal.Subscribe(Channel.InitGame, async (channel, msg) =>
+            const Channel CHANNEL = Channel.InitGame;
+
+            await _dal.Subscribe(CHANNEL, async (channel, msg) =>
            {
                int hostID;
                try
@@ -84,10 +70,13 @@ namespace GameWebService.Services
                    bool otherApiHandling = false;
                    if (!await Retry(TRY_LOCK_TIMES, async () =>
                    {
-                       if (await _gameStatus.Lock(hostID))
+                       bool isLockSuccess = await _gameStatus.Lock(hostID);
+                       bool isWaitingForHandle = await _channel.IsWaitingForHandle(CHANNEL, hostID);
+
+                       if (isWaitingForHandle && isLockSuccess)
                            return true;
 
-                       if (await _gameStatus.GetGameStatusNotifyHandler(hostID))
+                       if (!isWaitingForHandle)
                        {
                            otherApiHandling = true;
                            return true;
@@ -98,9 +87,7 @@ namespace GameWebService.Services
                        throw new Exception("LockGameStatus Fail");
                    if (otherApiHandling)
                        return;
-
-                   if (!await Retry(TRY_LOCK_TIMES, () => _gameStatus.SetGameStatusNotifyHandler(hostID), 0))
-                       throw new Exception("SetGameStatusNotifyHandler Fail");
+                   await _channel.Handle(CHANNEL, hostID);
 
                    try
                    {
@@ -108,13 +95,16 @@ namespace GameWebService.Services
 
                        GameStatusModel newGameStatus = _gameService.InitGame(currentGameStatus);
 
-                       if (!await _gameStatus.Set(newGameStatus))
-                           throw new Exception("Update Fail");
+                       await _gameStatus.Set(newGameStatus);
                    }
                    catch
                    {
                        await _gameStatus.Delete(hostID);
                        throw;
+                   }
+                   finally
+                   {
+                       await _channel.Done(CHANNEL, hostID);
                    }
                }
                catch (Exception e)
@@ -123,7 +113,6 @@ namespace GameWebService.Services
                }
                finally
                {
-                   await _gameStatus.DeleteGameStatusNotifyHandler(hostID.ToString(), hostID);
                    await _gameStatus.Release(hostID);
                }
            });
