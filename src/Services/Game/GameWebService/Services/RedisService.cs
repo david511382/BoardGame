@@ -102,12 +102,20 @@ namespace GameWebService.Services
                    if (!await Retry(TRY_LOCK_TIMES, () => _gameStatus.SetGameStatusNotifyHandler(hostID), 0))
                        throw new Exception("SetGameStatusNotifyHandler Fail");
 
-                   GameStatusModel currentGameStatus = await GameStatus(hostID);
+                   try
+                   {
+                       GameStatusModel currentGameStatus = await GameStatus(hostID);
 
-                   GameStatusModel newGameStatus = _gameService.InitGame(currentGameStatus);
+                       GameStatusModel newGameStatus = _gameService.InitGame(currentGameStatus);
 
-                   if (!await _gameStatus.Set(newGameStatus))
-                       throw new Exception("Update Fail");
+                       if (!await _gameStatus.Set(newGameStatus))
+                           throw new Exception("Update Fail");
+                   }
+                   catch
+                   {
+                       await _gameStatus.Delete(hostID);
+                       throw;
+                   }
                }
                catch (Exception e)
                {

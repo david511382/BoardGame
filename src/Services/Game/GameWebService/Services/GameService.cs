@@ -1,6 +1,7 @@
 ﻿using BigTwoLogic;
-using Newtonsoft.Json;
+using GameLogic.Game;
 using RedisRepository.Models;
+using System;
 using System.Linq;
 
 namespace GameWebService.Services
@@ -9,13 +10,21 @@ namespace GameWebService.Services
     {
         public GameStatusModel InitGame(GameStatusModel gameStatus)
         {
-            BigTwo bigTwo = new BigTwo();
+            BoardGame game;
+            switch (gameStatus.Room.Game.ID)
+            {
+                case 2:
+                    game = new BigTwo();
+                    break;
+                default:
+                    throw new Exception("undefind game");
+            }
 
             foreach (int pId in gameStatus.Room.Players.Select((p) => p.ID).ToArray())
-                bigTwo.Join(pId);
-            bigTwo.StartGame();
+                game.Join(pId);
+            game.StartGame();
 
-            gameStatus.DataJson = JsonConvert.SerializeObject(bigTwo);
+            gameStatus.DataJson = game.ExportData();
 
             return gameStatus;
         }

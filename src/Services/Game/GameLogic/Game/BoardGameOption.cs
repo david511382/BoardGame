@@ -1,4 +1,5 @@
 ﻿using GameLogic.Domain;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,11 @@ namespace GameLogic.Game
 {
     public abstract partial class BoardGame
     {
+        public string ExportData()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+
         public void StartGame()
         {
             if (!IsGameOver())
