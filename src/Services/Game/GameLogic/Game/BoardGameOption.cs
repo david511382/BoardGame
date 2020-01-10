@@ -1,18 +1,14 @@
 ﻿using GameLogic.Domain;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace GameLogic.Game
 {
     public abstract partial class BoardGame
     {
-        public string ExportData()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public abstract void Load(string json);
+
+        public abstract string ExportData();
 
         public void StartGame()
         {
@@ -56,7 +52,7 @@ namespace GameLogic.Game
             if (IsGameOver())
                 throw new Exception("no game");
 
-            this._gameStaus.State = GameState.Game_Over;
+            _gameStaus.State = GameState.Game_Over;
             _gameStaus.WinPlayerIds = winnerId;
 
             GameOverNotifier?.Invoke();
@@ -64,7 +60,7 @@ namespace GameLogic.Game
 
         public void RegisterGameOverEvent(Action caller)
         {
-            this.GameOverNotifier = caller;
+            GameOverNotifier = caller;
         }
 
         protected abstract void AddPlayer(int playerId);

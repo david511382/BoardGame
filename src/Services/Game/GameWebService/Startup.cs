@@ -31,6 +31,8 @@ namespace GameWebService
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            services.AddSingleton<ConfigService>();
+
             services.AddSingleton<IGameService, GameService>();
 
             string redisConnStr = Configuration.GetConnectionString("Redis");

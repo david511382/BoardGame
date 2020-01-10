@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RedisRepository
 {
-    public class RedisContext
+    public class RedisContext : IDisposable
     {
         public UserKey User;
         public RoomKey Room;
@@ -44,6 +44,11 @@ namespace RedisRepository
             await _sub.PublishAsync(channel.ToString(), message);
 
             return true;
+        }
+
+        public void Dispose()
+        {
+            _redis.Close();
         }
     }
 }

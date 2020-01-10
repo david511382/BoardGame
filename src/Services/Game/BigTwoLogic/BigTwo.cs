@@ -1,15 +1,23 @@
-﻿using GameLogic.Player;
+﻿using GameLogic.Game;
+using GameLogic.Player;
 using GameLogic.PokerGame;
 using GameLogic.PokerGame.Game;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace BigTwoLogic
 {
     public partial class BigTwo : PokerGame
     {
+        private struct LoadModel
+        {
+            public int CurrentTurn;
+            public bool IsFreeType;
+            public bool IsRequiredClub3;
+            public GameStatus GameStatus;
+            public GameBoard Table;
+            public PokerResource[] PlayerResources;
+        }
+
         public const int MAX_PLAYERS = 4;
         public const int MIN_PLAYERS = 4;
         public const int MAX_CARD_NUMBER = 2;
@@ -51,9 +59,9 @@ namespace BigTwoLogic
             base.InitGame();
 
             PokerCard club3 = new PokerCard(PokerSuit.Club, 3);
-            for(int i = 0; i < _playerResources.Count; i++)
+            for (int i = 0; i < _playerResources.Count; i++)
             {
-                if (base.GetResourceAt(i).GetHandCards().Where(d=>d.Suit == club3.Suit && d.Number == club3.Number).Count()>0)
+                if (base.GetResourceAt(i).GetHandCards().Where(d => d.Suit == club3.Suit && d.Number == club3.Number).Count() > 0)
                 {
                     currentTurn = i;
                     _lastPlayTurnId = ((currentTurn == 0) ?

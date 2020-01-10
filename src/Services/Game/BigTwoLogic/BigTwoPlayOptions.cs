@@ -1,17 +1,42 @@
-﻿using GameLogic.Player;
+﻿using GameLogic.Game;
 using GameLogic.PokerGame;
 using GameLogic.PokerGame.CardGroup;
 using GameLogic.PokerGame.Game;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace BigTwoLogic
 {
     public partial class BigTwo : PokerGame
     {
         private int _lastPlayTurnId;
+
+        public override void Load(string json)
+        {
+            LoadModel data = JsonConvert.DeserializeObject<LoadModel>(json);
+            _gameStaus = data.GameStatus;
+            _playerResources = data.PlayerResources.Select((p) => p as PlayerResource).ToList();
+            base.currentTurn = data.CurrentTurn;
+            IsFreeType = data.IsFreeType;
+            IsRequiredClub3 = data.IsRequiredClub3;
+            _table = data.Table;
+        }
+
+        public override string ExportData()
+        {
+            LoadModel data = new LoadModel
+            {
+                CurrentTurn = base.currentTurn,
+                IsFreeType = IsFreeType,
+                IsRequiredClub3 = IsRequiredClub3,
+                GameStatus = _gameStaus,
+                Table = _table,
+                PlayerResources = _playerResources.Select((p) => p as PokerResource).ToArray()
+            };
+
+            return JsonConvert.SerializeObject(data);
+        }
 
         public bool Pass()
         {
@@ -48,7 +73,7 @@ namespace BigTwoLogic
             if (!IsFreeType)
             {
                 //check previous type
-                PokerCardGroup lastGroup =(PokerCardGroup)GetTable().GetLastItem();
+                PokerCardGroup lastGroup = (PokerCardGroup)GetTable().GetLastItem();
                 PokerGroupType lastGroupType = lastGroup.GetGroupType();
 
                 bool isSameType = cardGroupType == lastGroupType;

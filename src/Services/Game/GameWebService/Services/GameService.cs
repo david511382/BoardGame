@@ -1,5 +1,6 @@
 ﻿using BigTwoLogic;
 using GameLogic.Game;
+using GameWebService.Domain;
 using RedisRepository.Models;
 using System;
 using System.Linq;
@@ -10,15 +11,7 @@ namespace GameWebService.Services
     {
         public GameStatusModel InitGame(GameStatusModel gameStatus)
         {
-            BoardGame game;
-            switch (gameStatus.Room.Game.ID)
-            {
-                case 2:
-                    game = new BigTwo();
-                    break;
-                default:
-                    throw new Exception("undefind game");
-            }
+            BoardGame game = LoadGame(gameStatus);
 
             foreach (int pId in gameStatus.Room.Players.Select((p) => p.ID).ToArray())
                 game.Join(pId);
@@ -27,6 +20,24 @@ namespace GameWebService.Services
             gameStatus.DataJson = game.ExportData();
 
             return gameStatus;
+        }
+
+        public BoardGame LoadGame(GameStatusModel gameStatus)
+        {
+            BoardGame game;
+            switch ((GameEnum)gameStatus.Room.Game.ID)
+            {
+                case GameEnum.BigTwo:
+                    game = new BigTwo();
+                    break;
+                default:
+                    throw new Exception("undefind game");
+            }
+
+            if (!string.IsNullOrEmpty(gameStatus.DataJson))
+                game.Load(gameStatus.DataJson);
+
+            return game;
         }
     }
 }

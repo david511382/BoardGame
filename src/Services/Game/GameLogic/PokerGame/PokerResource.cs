@@ -1,14 +1,11 @@
 ﻿using GameLogic.Game;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace GameLogic.PokerGame
 {
     public class PokerResource : PlayerResource
     {
-        List<PokerCard> _handCards;
+        public List<PokerCard> _handCards;
 
         public PokerResource(int playerId)
             : base(playerId)
