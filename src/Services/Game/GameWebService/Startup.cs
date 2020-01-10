@@ -35,15 +35,15 @@ namespace GameWebService
 
             services.AddSingleton<IGameService, GameService>();
 
-            string redisConnStr = Configuration.GetConnectionString("Redis");
-            services.AddSingleton<IRedisService>((sp) =>
-            {
-                ILogger<RedisService> logger = sp.GetService<ILogger<RedisService>>();
-                IGameService gameService = sp.GetService<IGameService>();
-                return new RedisService(redisConnStr, gameService, logger);
-            });
-
             services.AddScoped<IResponseService, ResponseService>();
+
+            services.AddSingleton((sp) =>
+            {
+                ConfigService cs = sp.GetService<ConfigService>();
+                IGameService gameService = sp.GetService<IGameService>();
+                ILogger<RedisNotifyService> logger = sp.GetService<ILogger<RedisNotifyService>>();
+                return new RedisNotifyService(cs, gameService, logger);
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -90,7 +90,7 @@ namespace GameWebService
         public void Configure(IApplicationBuilder app,
             IHostingEnvironment env,
             ILoggerFactory loggerFactory,
-            IRedisService redisService)
+            RedisNotifyService redisNotifyService)
         {
             loggerFactory.AddNLog();
 
@@ -114,7 +114,6 @@ namespace GameWebService
 
             app.UseMvc();
 
-            RedisNotifyService redisNotifyService = new RedisNotifyService(redisService);
             redisNotifyService.Run();
         }
     }
