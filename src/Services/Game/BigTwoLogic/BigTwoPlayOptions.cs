@@ -4,6 +4,7 @@ using GameLogic.PokerGame.CardGroup;
 using GameLogic.PokerGame.Game;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BigTwoLogic
@@ -15,6 +16,7 @@ namespace BigTwoLogic
         public override void Load(string json)
         {
             LoadModel data = JsonConvert.DeserializeObject<LoadModel>(json);
+            _lastPlayTurnId = data.LastPlayTurnId;
             _gameStaus = data.GameStatus;
             _playerResources = data.PlayerResources.Select((p) => p as PlayerResource).ToList();
             base.currentTurn = data.CurrentTurn;
@@ -32,6 +34,7 @@ namespace BigTwoLogic
                 IsRequiredClub3 = IsRequiredClub3,
                 GameStatus = _gameStaus,
                 Table = _table,
+                LastPlayTurnId = _lastPlayTurnId,
                 PlayerResources = _playerResources.Select((p) => p as PokerResource).ToArray()
             };
 
@@ -56,6 +59,114 @@ namespace BigTwoLogic
             return true;
         }
 
+        public PokerCard[] SelectCardGroup(int playerId, int[] containCardIndexs)
+        {
+            if (!IsTurn(playerId))
+                return null;
+
+            PokerResource playerResource = GetResource(playerId);
+            PokerCard[] cards = GetResource(playerId).GetHandCards()
+                .OrderBy(d => d.Number)
+                .ThenBy(d => d.Suit)
+                .ToArray();
+            List<PokerCard> containCard = cards.Choose(containCardIndexs)
+                .OrderBy(d => d.Number)
+                .ThenBy(d => d.Suit)
+                .ToList();
+
+            if (IsRequiredClub3)
+            {
+                for (int i = 0; i < containCard.Count; i++)
+                {
+                    if (IsCLub3(containCard[i]))
+                    {
+                        containCard.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                containCard.Add(CLUB_3);
+            }
+
+            PokerCard maxCard;
+            List<PokerGroupType> types = new List<PokerGroupType>();
+            PokerGroupType type = PokerGroupType.Single;
+            if (IsFreeType)
+            {
+                maxCard = null;
+                tryAllUntilExcetion(containCard, (selectedCards) =>
+                {
+                    type = PokerCardGroup.GetMinCardGroupType<BigTwoCardGroupModel>(cards, selectedCards);
+                });
+
+                types.Add(type);
+            }
+            else
+            {
+                //check previous type
+                type = lastGroup.GetGroupType();
+                maxCard = lastGroup.GetMaxValue();
+
+                types.Add(type);
+                types.AddRange(
+                    SUPER_GROUP_TYPE_ORDERS
+                        .Where(d => PokerCardGroup.Compare_Type(d, type) > 0)
+                );
+            }
+
+            PokerCard[] result = null;
+            tryAllUntilExcetion(containCard, (selectedCards) =>
+            {
+                PokerCard[] bufResult = null;
+                foreach (PokerGroupType t in types)
+                {
+                    PokerCard maxValueCard = null;
+                    if (t.Equals(type))
+                        maxValueCard = maxCard;
+
+                    bufResult = PokerCardGroup
+                        .GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(
+                            t,
+                            cards.ToList(),
+                            selectedCards,
+                            maxValueCard
+                        );
+
+                    if (bufResult != null)
+                    {
+                        result = bufResult;
+
+                        bool isUseSameContainCard = PokerCardGroup.Intersect(bufResult, containCard.ToArray()).Length == containCard.Count;
+                        if (isUseSameContainCard)
+                            break;
+                    }
+                }
+
+                if (result == null)
+                    throw new Exception();
+            });
+
+            return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
+        }
+
+        public bool PlayCard(int playerId, int[] cardIndexs)
+        {
+            if (!IsTurn(playerId))
+                return false;
+
+            // pass
+            if (cardIndexs == null || cardIndexs.Length == 0)
+                return Pass();
+
+            PokerCard[] cards = GetResource(playerId).GetHandCards()
+                .OrderBy(d => d.Number)
+                .ThenBy(d => d.Suit)
+                .ToArray();
+            PokerCard[] containCard = cards.Choose(cardIndexs).ToArray();
+
+            return PlayGroups(new PokerCardGroup(containCard));
+        }
+
         public bool PlayGroups(PokerCardGroup cardGroup)
         {
             if (IsGameOver())
@@ -68,6 +179,12 @@ namespace BigTwoLogic
 
             //check cards group type
             PokerGroupType cardGroupType = cardGroup.GetGroupType();
+
+            if (IsRequiredClub3)
+            {
+                if (!cardGroup.GetCards().Any((c) => IsCLub3(c)))
+                    return false;
+            }
 
             //check cards playable
             if (!IsFreeType)

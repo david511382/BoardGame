@@ -1,8 +1,8 @@
-﻿using System;
+﻿using GameLogic.Domain;
+using GameLogic.Player;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameLogic.Domain;
-using GameLogic.Player;
 
 namespace GameLogic.Game
 {
@@ -16,7 +16,7 @@ namespace GameLogic.Game
             get { return _currentTurn; }
             set
             {
-                _currentTurn =(value >= _playerResources.Count) ?
+                _currentTurn = (value >= _playerResources.Count) ?
                     0 :
                     value;
 
@@ -38,8 +38,8 @@ namespace GameLogic.Game
 
         public BoardGame(int maxPlayers, int minPlayers)
         {
-            this.MAX_GAME_PLAYERS = maxPlayers;
-            this.MIN_GAME_PLAYERS = minPlayers;
+            MAX_GAME_PLAYERS = maxPlayers;
+            MIN_GAME_PLAYERS = minPlayers;
 
             _playerResources = new List<PlayerResource>();
             _table = new GameBoard();
@@ -51,7 +51,7 @@ namespace GameLogic.Game
             return _table;
         }
 
-        public PlayerResource GetResource(int playerId)
+        public virtual PlayerResource GetResource(int playerId)
         {
             IEnumerable<PlayerResource> target = _playerResources.Where(d => d.PlayerId == playerId).Take(1);
             if (target.Count() == 0)
@@ -62,7 +62,7 @@ namespace GameLogic.Game
 
         public T GetResource<T>(int playerId) where T : PlayerResource
         {
-            var target = _playerResources.Where(d => d.PlayerId == playerId).Take(1);
+            IEnumerable<PlayerResource> target = _playerResources.Where(d => d.PlayerId == playerId).Take(1);
             if (target.Count() == 0)
                 throw new Exception("unknow player");
 
@@ -77,7 +77,7 @@ namespace GameLogic.Game
         }
 
         protected abstract void InitGame();
-        
+
         protected bool IsGameOver()
         {
             return _gameStaus.State == GameState.Game_Over;
