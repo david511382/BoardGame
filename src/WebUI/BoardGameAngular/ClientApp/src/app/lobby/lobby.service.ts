@@ -34,7 +34,9 @@ export class LobbyService {
     authService: AuthService,
     private roomService: RoomService) {
     this.userBackendUrl = config.userBackendUrl;
-    
+
+    this.authChanged(authService.canActivate(null, null));
+
     authService.authChanged.subscribe((isLogin) => this.authChanged(isLogin));
   }
 
