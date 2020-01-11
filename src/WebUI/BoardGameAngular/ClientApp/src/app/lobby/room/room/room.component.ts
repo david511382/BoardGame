@@ -1,6 +1,6 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { SetComponent } from '../../../share/set/set.component';
-import { RoomService, RoomModel } from '../room.service';
+import { RoomService } from '../room.service';
 import { GameRoomInfoComponent } from './game-room-info/game-room-info.component';
 import { RoomPlayerComponent } from './player/player.component';
 import { Router } from '@angular/router';
@@ -15,6 +15,7 @@ export class RoomRoomComponent implements OnInit{
   @ViewChild(GameRoomInfoComponent, { static: true }) roomInfo: GameRoomInfoComponent;
 
   public readonly LobbyPath: string = this.service.ListPath;
+  private readonly GamePath: string = "game";
 
   public get isHost() {
     return true;
@@ -65,8 +66,9 @@ export class RoomRoomComponent implements OnInit{
           return;
         }
 
-        if (resp.isSuccess)
-          alert(resp.message);//start
+        if (resp.isSuccess) {
+          this.router.navigate([this.GamePath]);
+        }
         else
           alert(resp.message);
       });

@@ -7,16 +7,16 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { RootRoutes } from './nav-menu/route.const';
-import { LobbyComponent } from './lobby/lobby.component';
 import { UserModule } from './user/user.module';
 import { GuestService } from './auth/guest.service';
-import { RoomModule } from './lobby/room/room.module';
+import { GameModule } from './game/game.module';
+import { LobbyService } from './lobby/lobby.service';
+import { LobbyModule } from './lobby/lobby.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    LobbyComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -26,10 +26,12 @@ import { RoomModule } from './lobby/room/room.module';
       RootRoutes,
       { useHash: true }),
     UserModule,
-    RoomModule,
+    LobbyModule,
+    GameModule,
   ],
   providers: [
-    GuestService
+    GuestService,
+    LobbyService
   ],
   bootstrap: [AppComponent]
 })

@@ -42,41 +42,31 @@ export class RoomService {
   public readonly RoomPath: string = "gameroom";
   public readonly ListPath: string = "";
   public readonly CreatePath: string = "createroom";
-  
+
   public RoomDataChanged = new EventEmitter<RoomModel>();
-  public GameDataChanged = new EventEmitter<RoomModel>();
 
   public get GetRoomData(): RoomModel {
     return this.roomData;
   }
 
-  private set setRoomData(data: RoomModel) {
+  private setRoomData(data: RoomModel) {
     this.roomData = data;
     this.RoomDataChanged.emit(this.roomData);
   }
 
   private readonly backendUrl: RoomUrl
-  private readonly userBackendUrl: UserUrl
 
   private roomData: RoomModel;
 
-  constructor(private http: HttpClient, config: UrlConfigService, authService: AuthService) {
+  constructor(private http: HttpClient, config: UrlConfigService) {
     this.backendUrl = config.roomBackendUrl;
-    this.userBackendUrl = config.userBackendUrl;
-
-    if (authService.canActivate(null,null))
-      this.getUserStatus();
-    else
-      this.roomData = null;
-
-    authService.authChanged.subscribe((isLogin) => {
-      if (isLogin)
-        this.getUserStatus();
-      else
-        this.roomData = null;
-    });
+    this.roomData = null;
   }
-  
+
+  public SetRoomData(roomData: RoomModel) {
+    this.setRoomData(roomData);
+  }
+
   public List(): Observable<ListResponse> {    
     return this.http.get<ListResponse>(this.backendUrl.List)
       .pipe(catchError(HandleErrorFun()));
@@ -96,7 +86,7 @@ export class RoomService {
         }
 
         if (resp.isSuccess)
-          this.setRoomData = resp.room;
+          this.setRoomData(resp.room);
       }))
   }
 
@@ -114,7 +104,7 @@ export class RoomService {
         }
 
         if (resp.isSuccess)
-          this.setRoomData = resp.room;
+          this.setRoomData(resp.room);
       }))
   }
 
@@ -142,24 +132,6 @@ export class RoomService {
           if (resp.isSuccess)
             this.roomData = null;
         }))
-  }
-
-  private getUserStatus() {
-    var ob = this.http.get<UserStatusResponse>(this.userBackendUrl.UserStatus)
-      .pipe(catchError(HandleErrorFun()));
-    if (ob)
-      ob.subscribe(resp => {
-        if (resp.isError) {
-          return;
-        }
-
-        if (resp.isInRoom) {
-          this.setRoomData = resp.room;
-        } else if (resp.isInGame) {
-          ///this.GameDataChanged.emit(this.RoomData);
-          alert("is in game");
-        }
-      });
   }
 }
 

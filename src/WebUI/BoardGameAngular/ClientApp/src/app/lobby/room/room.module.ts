@@ -14,7 +14,6 @@ import { GameService } from './game.service';
 import { RoomCreateComponent } from './create/create.component';
 import { RoomPlayerComponent } from './room/player/player.component';
 import { RoomRoomComponent } from './room/room.component';
-import { AuthService } from '../../auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -34,7 +33,6 @@ import { AuthService } from '../../auth/auth.service';
   ],
   providers: [
     UrlConfigService,
-    AuthService,
     RoomService,
     GameService,
   ],
