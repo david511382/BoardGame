@@ -52,13 +52,14 @@ namespace LobbyWebService.Controllers
 
                         bool isInGame = userStatus.GameRoomID.Value < 0;
                         bool isInRoom = userStatus.GameRoomID.Value > 0;
+                        int roomId = Math.Abs(userStatus.GameRoomID.Value);
 
                         RoomModel room;
                         if (isInRoom)
-                            room = await _redisService.Room(userStatus.GameRoomID.Value);
+                            room = await _redisService.Room(roomId);
                         else if (isInGame)
                         {
-                            GameStatusModel gameStatus = await _redisService.GameStatus(userStatus.GameRoomID.Value);
+                            GameStatusModel gameStatus = await _redisService.GameStatus(roomId);
                             room = gameStatus.Room;
                         }
                         else
