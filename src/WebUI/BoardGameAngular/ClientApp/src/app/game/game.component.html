@@ -1,1 +1,9 @@
-<app-game-bigtwo></app-game-bigtwo>
+<ng-template #Loading let-text>
+  {{text}}
+</ng-template>
+
+<ng-template #BigTwo let-game="bigtwo">
+  <app-game-bigtwo></app-game-bigtwo>
+</ng-template>
+
+<ng-container [ngTemplateOutlet]="displayPage" [ngTemplateOutletContext]="contextData"></ng-container>
