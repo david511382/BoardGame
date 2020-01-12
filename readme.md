@@ -1,3 +1,17 @@
+# 專案介紹
+## 架構說明
+	專案採用微服務架構，目前前端只有Angular網頁，中間有Ocelot Gateway，後端.Net Core Api業務目前有Auth(用戶語認證授權)、Lobby(大廳遊戲房間)、Game(遊戲邏輯)，MSSQL資料庫有Game(遊戲)、Member(用戶)，另外還有儲存遊戲房間跟遊戲狀態的3主3從叢集Redis，還有附加哨兵模式，Log使用NLog存在EK(Elasticsearch、Kibana)。
+![avatar](系統架構圖.png)
+
+## 檔案結構
+	src┬ApiGateways-OcelotApiGateway
+	   ├Services┬Game-GameWebService
+	   │		├AuthWebService
+	   │		└LobbyWebService
+	   ├WebUI-BoardGameAngular
+	   ├Respositories
+	   └Common
+
 # Getting started
 ## EF 資料庫 Migrations
 board-game-member-db
