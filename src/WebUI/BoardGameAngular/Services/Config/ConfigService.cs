@@ -1,5 +1,4 @@
-﻿using BoardGameAngular.Models.Config;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace BoardGameAngular.Services.Config
 {
@@ -24,11 +23,9 @@ namespace BoardGameAngular.Services.Config
 
         private readonly string _baseUrl;
 
-
-
-        public ConfigService(IOptions<ConnectionsStrings> connectionsStrings)
+        public ConfigService(string backendDomain)
         {
-            _baseUrl = connectionsStrings.Value.BackendDomain + "/api";
+            _baseUrl = backendDomain + "/api";
         }
     }
 }

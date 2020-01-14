@@ -168,7 +168,7 @@ namespace BoardGameAngular.Controllers
                          .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                          .To(_urlConfig.UserStatus)
                          .Get<StatusResponse>();
-
+                   
                    return result;
                });
         }

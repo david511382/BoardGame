@@ -15,8 +15,8 @@ namespace Domain.Api.Interfaces
     {
         IResponseMaker ValidateToken(Action<UserClaimModel> validateFun);
         IResponseMaker ValidateRequest(Action validateFun);
-        Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel> doFun, ActionReturn<Response, Exception, UserClaimModel> exceptionFun = null) where Response : ResponseModel;
-        Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel, StructLoggerEvent> doFun, ActionReturn<Response, Exception, UserClaimModel> exceptionFun = null) where Response : ResponseModel;
+        Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel> doFun, ActionReturn<Response, Exception, StructLoggerEvent> exceptionFun = null) where Response : ResponseModel;
+        Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel, StructLoggerEvent> doFun, ActionReturn<Response, Exception, StructLoggerEvent> exceptionFun = null) where Response : ResponseModel;
     }
 
     public interface IResponseService

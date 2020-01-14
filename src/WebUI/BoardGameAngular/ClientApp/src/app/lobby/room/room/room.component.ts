@@ -4,6 +4,7 @@ import { RoomService } from '../room.service';
 import { GameRoomInfoComponent } from './game-room-info/game-room-info.component';
 import { RoomPlayerComponent } from './player/player.component';
 import { Router } from '@angular/router';
+import { RoomSignalRService } from '../signalr.service';
 
 @Component({
   selector: 'app-lobby-room-room',
@@ -20,39 +21,48 @@ export class RoomRoomComponent implements OnInit{
   public get isHost() {
     return true;
   }
-
+  
   constructor(private service: RoomService,
-    private router: Router) {}
+    private router: Router,
+    private signalService: RoomSignalRService) {
+    service.RoomDataChanged.subscribe(() => this.load());
+    signalService.RoomStarted.subscribe((gameId) => {
+      //set game id
+      this.goGame();
+    });
+  }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      let roomData = this.service.GetRoomData;
-      if (roomData === null) {
-        this.router.navigate([this.LobbyPath]);
-        return;
-      }
+    setTimeout(() => this.load(), 0);
+  }
 
-      this.roomInfo.Show(roomData);
+  private load() {
+    let roomData = this.service.GetRoomData;
+    if (roomData === null) {
+      this.router.navigate([this.LobbyPath]);
+      return;
+    }
 
-      var teamSet = this.teamSet;
-      roomData.players.forEach((p) => {
-        teamSet.Add(RoomPlayerComponent, p);
-      })
-    }, 0);
+    this.roomInfo.Show(roomData);
+
+    this.teamSet.Clear();
+    var teamSet = this.teamSet;
+    roomData.players.forEach((p) => {
+      teamSet.Add(RoomPlayerComponent, p);
+    })
   }
 
   public LeaveRoom() {
-    var ob = this.service.Leave();
-    if (ob)
-      ob.subscribe((resp) => {
+    this.service.Leave()
+      .subscribe((resp) => {
         if (resp.isError) {
           alert(resp.errorMessage)
           return;
         }
 
         if (resp.isSuccess)
-          this.router.navigate([this.LobbyPath]);
-        else
+          this.goLobby();
+        else 
           alert(resp.message);
       });
   }
@@ -66,11 +76,18 @@ export class RoomRoomComponent implements OnInit{
           return;
         }
 
-        if (resp.isSuccess) {
-          this.router.navigate([this.GamePath]);
-        }
+        if (resp.isSuccess)
+          this.goGame();
         else
           alert(resp.message);
       });
+  }
+
+  private goLobby() {
+    this.router.navigate([this.LobbyPath]);
+  }
+
+  private goGame() {
+    this.router.navigate([this.GamePath]);
   }
 }

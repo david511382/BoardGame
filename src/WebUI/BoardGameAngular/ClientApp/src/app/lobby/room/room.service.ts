@@ -1,11 +1,11 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable  } from "rxjs";
 import { catchError, tap } from 'rxjs/operators';
 import { GeneralResponse, HandleErrorFun, SuccessResponse } from '../../domain/response.const';
-import { UrlConfigService, RoomUrl, UserUrl } from '../../config/config.service';
+import { UrlConfigService, RoomUrl } from '../../config/config.service';
 import { GameModel } from './game.service';
-import { AuthService } from '../../auth/auth.service';
+import { RoomSignalRService } from './signalr.service';
 
 export class UserModel {
   constructor(public id: number, public name: string, public username: string) { }
@@ -29,10 +29,9 @@ interface RoomResponse extends SuccessResponse {
   room: RoomModel,
 }
 
-interface UserStatusResponse extends GeneralResponse {
-  room: RoomModel,
-  isInRoom: boolean,
-  isInGame: boolean,
+interface StartRoomResponse extends SuccessResponse {
+  hostID: number;
+  gameID: number;
 }
 
 @Injectable({
@@ -58,9 +57,15 @@ export class RoomService {
 
   private roomData: RoomModel;
 
-  constructor(private http: HttpClient, config: UrlConfigService) {
+  constructor(
+    private http: HttpClient,
+    private signalService: RoomSignalRService,
+    config: UrlConfigService) {
     this.backendUrl = config.roomBackendUrl;
     this.roomData = null;
+
+    signalService.RoomPlayerChanged.subscribe((roomData: RoomModel) => this.setRoomData(roomData));
+    signalService.RoomClose.subscribe(() => this.setRoomData(null));
   }
 
   public SetRoomData(roomData: RoomModel) {
@@ -76,9 +81,15 @@ export class RoomService {
     let formData: FormData = new FormData();
     formData.append('gameID', gameID.toString());
 
+    var option = {
+      headers: new HttpHeaders()
+        .append('cid', this.signalService.ConnectionId)
+    };
+
     return this.http.post<RoomResponse>(
       this.backendUrl.Create,
-      formData
+      formData,
+      option
     ).pipe(catchError(HandleErrorFun()),
       tap(resp => {
         if (resp.isError) {
@@ -94,9 +105,15 @@ export class RoomService {
     let formData: FormData = new FormData();
     formData.append('hostID', hostID.toString());
 
+    var option = {
+      headers: new HttpHeaders()
+        .append('cid', this.signalService.ConnectionId)
+    };
+
     return this.http.patch<RoomResponse>(
       this.backendUrl.Join,
-      formData
+      formData,
+      option
     ).pipe(catchError(HandleErrorFun()),
       tap(resp => {
         if (resp.isError) {
@@ -109,7 +126,12 @@ export class RoomService {
   }
 
   public Leave(): Observable<SuccessResponse> {
-    return this.http.delete<SuccessResponse>(this.backendUrl.Join)
+    var option = {
+      headers: new HttpHeaders()
+        .append('cid', this.signalService.ConnectionId)
+    };
+
+    return this.http.delete<SuccessResponse>(this.backendUrl.Join, option)
       .pipe(catchError(HandleErrorFun()),
         tap(resp => {
           if (resp.isError) {
@@ -121,8 +143,8 @@ export class RoomService {
         }))
   }
 
-  public Start(): Observable<SuccessResponse> {
-    return this.http.delete<SuccessResponse>(this.backendUrl.Start)
+  public Start(): Observable<StartRoomResponse> {
+    return this.http.delete<StartRoomResponse>(this.backendUrl.Start)
       .pipe(catchError(HandleErrorFun()),
         tap(resp => {
           if (resp.isError) {

@@ -9,6 +9,7 @@ namespace Domain.Api.Models.Response.Lobby
         public RoomResponse()
         {
             IsSuccess = true;
+            Room = null;
         }
     }
 }

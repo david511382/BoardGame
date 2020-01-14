@@ -1,6 +1,4 @@
-﻿using StackExchange.Redis;
-
-namespace RedisRepository
+﻿namespace RedisRepository
 {
     internal sealed class Key
     {
@@ -19,6 +17,7 @@ namespace RedisRepository
 
     public enum Channel
     {
-        InitGame
+        InitGame,
+        StartGameDone
     }
 }

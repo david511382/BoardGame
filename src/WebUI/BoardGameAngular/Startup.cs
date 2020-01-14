@@ -1,8 +1,10 @@
-using BoardGameAngular.Models.Config;
+using BoardGameAngular.Services;
 using BoardGameAngular.Services.Config;
 using Domain.Api.Interfaces;
 using Domain.Api.Services;
 using Domain.Logger;
+using GameWebService.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BoardGameAngular
 {
@@ -25,8 +29,17 @@ namespace BoardGameAngular
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {           
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddHostedService<RedisNotifyService>();
+
+            string redisConnStr = Configuration.GetConnectionString("Redis");
+            services.AddSignalR()
+               .AddStackExchangeRedis(redisConnStr, options =>
+               {
+                    //options.Configuration.ChannelPrefix = "Frontend";
+                });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -34,9 +47,8 @@ namespace BoardGameAngular
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.Configure<ConnectionsStrings>(Configuration.GetSection("ConnectionsStrings"));
-
-            services.AddSingleton(typeof(ConfigService));
+            string backendDomainStr = Configuration.GetConnectionString("BackendDomain");
+            services.AddSingleton(new ConfigService(backendDomainStr));
 
             services.AddScoped<IResponseService, ResponseService>();
         }
@@ -59,6 +71,13 @@ namespace BoardGameAngular
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+
+            app.UseAuthentication();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<RoomHub>("/roomHub");
+            });
 
             app.UseMvc(routes =>
             {

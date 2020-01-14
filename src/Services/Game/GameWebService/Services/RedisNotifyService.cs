@@ -77,6 +77,11 @@ namespace GameWebService.Services
                             return;
                         await _channel.Handle(CHANNEL, hostID);
 
+                        StartGameDoneModel publishMessage = new StartGameDoneModel
+                        {
+                            IsSuccess = false,
+                            HostID = hostID
+                        };
                         try
                         {
                             GameStatusModel currentGameStatus = await _gameStatus.Get(hostID);
@@ -84,14 +89,18 @@ namespace GameWebService.Services
                             GameStatusModel newGameStatus = _gameService.InitGame(currentGameStatus);
 
                             await _gameStatus.Set(newGameStatus);
+
+                            publishMessage.IsSuccess = true;
                         }
                         catch
                         {
                             await _gameStatus.Delete(hostID);
+
                             throw;
                         }
                         finally
                         {
+                            await _redis.Publish(Channel.StartGameDone, publishMessage);
                             await _channel.Done(CHANNEL, hostID);
                         }
                     }

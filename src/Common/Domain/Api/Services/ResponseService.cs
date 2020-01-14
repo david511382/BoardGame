@@ -87,7 +87,7 @@ namespace Domain.Api.Services
             return this;
         }
 
-        public async Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel> doFun, ActionReturn<Response, Exception, UserClaimModel> exceptionFun = null) where Response : ResponseModel
+        public async Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel> doFun, ActionReturn<Response, Exception, StructLoggerEvent> exceptionFun = null) where Response : ResponseModel
         {
             return await Do(async (response, user, logger) =>
             {
@@ -96,7 +96,7 @@ namespace Domain.Api.Services
             exceptionFun);
         }
 
-        public async Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel, StructLoggerEvent> doFun, ActionReturn<Response, Exception, UserClaimModel> exceptionFun = null) where Response : ResponseModel
+        public async Task<IActionResult> Do<Response>(ActionReturn<Response, UserClaimModel, StructLoggerEvent> doFun, ActionReturn<Response, Exception, StructLoggerEvent> exceptionFun = null) where Response : ResponseModel
         {
             _logEvent.Log("Start Do:");
 
@@ -135,7 +135,7 @@ namespace Domain.Api.Services
                 if (exceptionFun == null)
                     response.Error(e.Message);
                 else
-                    response = await exceptionFun(response, e, _user);
+                    response = await exceptionFun(response, e, _logEvent);
             }
 
             _logEvent.Log("Response", response);

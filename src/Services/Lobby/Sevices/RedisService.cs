@@ -210,148 +210,14 @@ namespace LobbyWebService.Services
             }
         }
 
-        public async Task RemoveRoomPlayer(int playerID)
-        {
-            int roomID = 0;
-            try
-            {
-                if (!await Retry(TRY_LOCK_TIMES, () => _user.Lock(playerID), WAIT_LOCK_MS))
-                    throw new Exception("LockUser Fail");
-
-                UserModel userInfo = null;
-                try
-                {
-                    userInfo = await User(playerID);
-                    if (userInfo.GameRoomID == null)
-                        throw new Exception();
-                }
-                catch
-                {
-                    throw new Exception("不在任何房間");
-                }
-
-                roomID = userInfo.GameRoomID.Value;
-                if (!await Retry(TRY_LOCK_TIMES, () => _room.Lock(roomID), WAIT_LOCK_MS))
-                    throw new Exception("LockRoom Fail");
-
-                await removeRoomPlayer(roomID, userInfo);
-            }
-            finally
-            {
-                await _room.Release(roomID);
-                await _user.Release(playerID);
-            }
-        }
-
         public async Task<UserModel> User(int userID)
         {
             return await _user.Get(userID);
         }
 
-        public async Task StartRoom(int hostID)
-        {
-            int roomID = hostID;
-            RoomModel oriRoom = null;
-            try
-            {
-                if (!await Retry(TRY_LOCK_TIMES, () => _room.Lock(roomID), WAIT_LOCK_MS))
-                    throw new Exception("LockRoom Fail");
-
-                oriRoom = await Room(roomID);
-
-                UserModel userInfo = null;
-                try
-                {
-                    userInfo = await User(hostID);
-                    if (userInfo.GameRoomID == null)
-                        throw new Exception();
-                }
-                catch
-                {
-                    throw new Exception("不在任何房間");
-                }
-
-                foreach (UserInfoModel player in oriRoom.Players)
-                    if (!await Retry(TRY_LOCK_TIMES, () => _user.Lock(player.ID), WAIT_LOCK_MS))
-                        throw new Exception("LockUser Fail");
-
-                if (!await _gameStatus.Set(new GameStatusModel
-                {
-                    Room = oriRoom
-                }))
-                    throw new Exception("SetGameStatus Fail");
-
-                try
-                {
-                    await removeRoomPlayer(roomID, userInfo, -hostID);
-                    if (!await _dal.Publish(Channel.InitGame,hostID, hostID.ToString()))
-                        throw new Exception("Publish Fail");
-                }
-                catch
-                {
-                    await _gameStatus.Delete(hostID);
-                    throw;
-                }
-            }
-            finally
-            {
-                await _room.Release(roomID);
-
-                if (oriRoom != null)
-                    foreach (UserInfoModel player in oriRoom.Players)
-                        await _user.Release(player.ID);
-            }
-        }
-
         public async Task<GameStatusModel> GameStatus(int hostID)
         {
             return await _gameStatus.Get(hostID);
-        }
-
-        private async Task removeRoomPlayer(int roomID, UserModel userInfo, int? GameRoomID = null)
-        {
-            ITransaction tran = _dal.Begin();
-            
-            List<UserInfoModel> removeList = new List<UserInfoModel>();
-            RoomModel oriRoom = await Room(roomID);
-            bool isHost = roomID == userInfo.UserInfo.ID;
-            if (isHost)
-                removeList = oriRoom.Players.ToList();
-            else
-                removeList.Add(userInfo.UserInfo);
-
-            Task<UserModel>[] getUsers = removeList.Select((info) => User(info.ID))
-                    .Select(async (t) =>
-                    {
-                        UserModel u = await t;
-                        u.GameRoomID = GameRoomID;
-                        return u;
-                    }).ToArray();
-            foreach (Task<UserModel> getUser in getUsers)
-            {
-                UserModel u = await getUser;
-                _ = _user.Set(u, tran);
-            }
-
-            if (isHost)
-                _ = _room.Delete(roomID, tran);
-            else
-            {
-                UserInfoModel[] newPlayers = oriRoom.Players
-                    .Where((p) => p.ID != userInfo.UserInfo.ID)
-                    .ToArray();
-                RoomModel newRoom = new RoomModel
-                {
-                    Game = oriRoom.Game,
-                    HostID = oriRoom.HostID,
-                    Players = newPlayers
-                };
-
-                _ = _room.Set(newRoom, tran);
-            }
-
-            if (!await tran.ExecuteAsync())
-                throw new Exception("ExecuteAsync Fail");
         }
     }
 }

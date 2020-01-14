@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using Newtonsoft.Json;
+using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
 
@@ -36,12 +37,14 @@ namespace RedisRepository
             await _sub.SubscribeAsync(channel.ToString(), handler);
         }
 
-        public async Task<bool> Publish(Channel channel, int identity, string message)
+        public async Task<bool> Publish<T>(Channel channel, T json, int identity = 0)
         {
-            if (!await ChannelManager.CreateChannelStatus(channel, identity))
-                return false;
+            if (identity != 0)
+                if (!await ChannelManager.CreateChannelStatus(channel, identity))
+                    return false;
 
-            await _sub.PublishAsync(channel.ToString(), message);
+            string msg = JsonConvert.SerializeObject(json);
+            await _sub.PublishAsync(channel.ToString(), msg);
 
             return true;
         }

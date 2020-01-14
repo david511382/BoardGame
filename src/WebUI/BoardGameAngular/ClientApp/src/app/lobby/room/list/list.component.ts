@@ -5,6 +5,7 @@ import { GameRoomComponent } from './game-room/game-room.component';
 import { GameRoomInfoComponent } from '../room/game-room-info/game-room-info.component';
 import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
+import { RoomSignalRService } from '../signalr.service';
 
 @Component({
   selector: 'app-lobby-room-list',
@@ -22,7 +23,8 @@ export class RoomListComponent implements OnInit{
   
   constructor(private service: RoomService,
     private authService: AuthService,
-    private router: Router) {
+    private router: Router,
+    signalService:RoomSignalRService) {
     this.isClickRoom = false;
 
     if (this.service.GetRoomData !== null)
@@ -31,6 +33,8 @@ export class RoomListComponent implements OnInit{
       if (roomData !== null)
         this.router.navigate([this.RoomPath]);
     });
+
+    signalService.RoomOpened.subscribe(() => this.load());
   }
 
   public CreateRoom() {
@@ -57,6 +61,7 @@ export class RoomListComponent implements OnInit{
           return;
         }
 
+        this.roomSet.Clear();
         var roomSet = this.roomSet;
         resp.rooms.forEach((room) => {
           roomSet.Add(GameRoomComponent, room);

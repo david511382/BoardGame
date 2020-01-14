@@ -1,13 +1,17 @@
 ﻿using Domain.Api.Interfaces;
-using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Lobby;
+using Domain.Api.Services;
 using Domain.JWTUser;
 using LobbyWebService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using RedisRepository;
 using RedisRepository.Models;
+using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,11 +25,18 @@ namespace LobbyWebService.Controllers
         private readonly IResponseService _responseService;
         private readonly ILogger _logger;
 
-        public RoomController(IRedisService redisService, IResponseService responseService, ILogger<RoomController> logger)
+        private readonly string _redisConnectString;
+
+        private const int TRY_LOCK_TIMES = 3;
+        private const int WAIT_LOCK_MS = 50;
+
+        public RoomController(IConfiguration configuration, IRedisService redisService, IResponseService responseService, ILogger<RoomController> logger)
         {
             _redisService = redisService;
             _responseService = responseService;
             _logger = logger;
+
+            _redisConnectString = configuration.GetConnectionString("Redis");
         }
 
         /// <summary>
@@ -149,28 +160,65 @@ namespace LobbyWebService.Controllers
         [HttpDelete]
         [Route("")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> LeaveRoom()
         {
-            return await _responseService.Init<BoolResponseModel>(this, _logger)
+            return await _responseService.Init<RoomResponse>(this, _logger)
                 .ValidateToken((user) => { })
-                .Do<BoolResponseModel>(async (result, user, logger) =>
+                .Do<RoomResponse>(async (result, user, logger) =>
                 {
-                    try
+                    int roomID = 0;
+                    int playerID = user.Id;
+                    RoomModel room = null;
+                    using (RedisContext redis = new RedisContext(_redisConnectString))
                     {
-                        await _redisService.RemoveRoomPlayer(user.Id);
-                    }
-                    catch (Exception e)
-                    {
-                        logger.Log("Exception", e);
+                        UserKey redisUser = redis.User;
+                        RoomKey redisRoom = redis.Room;
+                        GameKey redisGame = redis.Game;
+                        GameStatusKey redisGameStatus = redis.GameStatus;
 
-                        result.Error("離開房間出錯");
-                        return result;
+                        try
+                        {
+                            if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisUser.Lock(playerID), WAIT_LOCK_MS))
+                                throw new Exception("LockUser Fail");
+
+                            UserModel userInfo = null;
+                            try
+                            {
+                                userInfo = await redisUser.Get(playerID);
+                                if (userInfo.GameRoomID == null)
+                                    throw new Exception();
+                            }
+                            catch
+                            {
+                                throw new Exception("不在任何房間");
+                            }
+
+                            roomID = userInfo.GameRoomID.Value;
+                            if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisRoom.Lock(roomID), WAIT_LOCK_MS))
+                                throw new Exception("LockRoom Fail");
+
+                            room = await removeRoomPlayer(redis, roomID, userInfo);
+                        }
+                        finally
+                        {
+                            await redisRoom.Release(roomID);
+                            await redisUser.Release(playerID);
+                        }
                     }
+
+                    bool isRoomClose = room == null;
+                    result.Room = (isRoomClose) ?
+                    new Domain.Api.Models.Base.Lobby.RoomModel { HostID = roomID, Players = null } :
+                    room.ToApiRoom();
 
                     result.Success("離開房間完成");
+                    return result;
+                }, async (result, e, logger) =>
+                {
+                    result.Error("離開房間出錯");
                     return result;
                 });
         }
@@ -178,28 +226,84 @@ namespace LobbyWebService.Controllers
         [HttpDelete]
         [Route("Start")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(StartRoomResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StartRoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> StartGame()
         {
-            return await _responseService.Init<BoolResponseModel>(this, _logger)
+            return await _responseService.Init<StartRoomResponse>(this, _logger)
                 .ValidateToken((user) => { })
-                .Do<BoolResponseModel>(async (result, user, logger) =>
+                .Do<StartRoomResponse>(async (result, user, logger) =>
                 {
-                    try
+                    int hostID = user.Id;
+                    result.HostID = hostID;
+                    using (RedisContext redis = new RedisContext(_redisConnectString))
                     {
-                        await _redisService.StartRoom(user.Id);
-                    }
-                    catch (Exception e)
-                    {
-                        logger.Log("Exception", e);
+                        UserKey redisUser = redis.User;
+                        RoomKey redisRoom = redis.Room;
+                        GameKey redisGame = redis.Game;
+                        GameStatusKey redisGameStatus = redis.GameStatus;
 
-                        result.Error("無法開始遊戲");
-                        return result;
+                        int roomID = hostID;
+                        RoomModel oriRoom = null;
+                        try
+                        {
+                            if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisRoom.Lock(roomID), WAIT_LOCK_MS))
+                                throw new Exception("LockRoom Fail");
+
+                            oriRoom = await redisRoom.Get(roomID);
+
+                            result.GameID = oriRoom.Game.ID;
+
+                            UserModel userInfo = null;
+                            try
+                            {
+                                userInfo = await redisUser.Get(hostID);
+                                if (userInfo.GameRoomID == null)
+                                    throw new Exception();
+                            }
+                            catch
+                            {
+                                throw new Exception("不在任何房間");
+                            }
+
+                            foreach (UserInfoModel player in oriRoom.Players)
+                                if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisUser.Lock(player.ID), WAIT_LOCK_MS))
+                                    throw new Exception("LockUser Fail");
+
+                            if (!await redisGameStatus.Set(new GameStatusModel
+                            {
+                                Room = oriRoom
+                            }))
+                                throw new Exception("SetGameStatus Fail");
+
+                            try
+                            {
+                                await removeRoomPlayer(redis, roomID, userInfo, -hostID);
+                                if (!await redis.Publish(Channel.InitGame, hostID.ToString(), hostID))
+                                    throw new Exception("Publish Fail");
+                            }
+                            catch
+                            {
+                                await redisGameStatus.Delete(hostID);
+                                throw;
+                            }
+                        }
+                        finally
+                        {
+                            await redisRoom.Release(roomID);
+
+                            if (oriRoom != null)
+                                foreach (UserInfoModel player in oriRoom.Players)
+                                    await redisUser.Release(player.ID);
+                        }
                     }
 
                     result.Success("開始遊戲");
+                    return result;
+                }, async (result, e, logger) =>
+                {
+                    result.Error("無法開始遊戲");
                     return result;
                 });
         }
@@ -214,5 +318,59 @@ namespace LobbyWebService.Controllers
             };
         }
 
+
+        private async Task<RoomModel> removeRoomPlayer(RedisContext redis, int roomID, UserModel userInfo, int? GameRoomID = null)
+        {
+            UserKey redisUser = redis.User;
+            RoomKey redisRoom = redis.Room;
+            GameKey redisGame = redis.Game;
+            GameStatusKey redisGameStatus = redis.GameStatus;
+
+            ITransaction tran = redis.Begin();
+
+            List<UserInfoModel> removeList = new List<UserInfoModel>();
+            RoomModel oriRoom = await redisRoom.Get(roomID);
+            bool isHost = roomID == userInfo.UserInfo.ID;
+            if (isHost)
+                removeList = oriRoom.Players.ToList();
+            else
+                removeList.Add(userInfo.UserInfo);
+
+            Task<UserModel>[] getUsers = removeList.Select((info) => redisUser.Get(info.ID))
+                    .Select(async (t) =>
+                    {
+                        UserModel u = await t;
+                        u.GameRoomID = GameRoomID;
+                        return u;
+                    }).ToArray();
+            foreach (Task<UserModel> getUser in getUsers)
+            {
+                UserModel u = await getUser;
+                _ = redisUser.Set(u, tran);
+            }
+
+            RoomModel newRoom = null;
+            if (isHost)
+                _ = redisRoom.Delete(roomID, tran);
+            else
+            {
+                UserInfoModel[] newPlayers = oriRoom.Players
+                    .Where((p) => p.ID != userInfo.UserInfo.ID)
+                    .ToArray();
+                newRoom = new RoomModel
+                {
+                    Game = oriRoom.Game,
+                    HostID = oriRoom.HostID,
+                    Players = newPlayers
+                };
+
+                _ = redisRoom.Set(newRoom, tran);
+            }
+
+            if (!await tran.ExecuteAsync())
+                throw new Exception("ExecuteAsync Fail");
+
+            return newRoom;
+        }
     }
 }
