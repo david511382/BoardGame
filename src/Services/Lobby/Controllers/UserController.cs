@@ -41,41 +41,42 @@ namespace LobbyWebService.Controllers
                 .ValidateToken((user) => { })
                 .Do<StatusResponse>(async (result, user, logger) =>
                 {
+                    UserModel userStatus;
                     try
                     {
-                        UserModel userStatus = await _redisService.User(user.Id);
+                        userStatus = await _redisService.User(user.Id);
                         if (userStatus.GameRoomID == null)
-                        {
-                            result.Room = null;
-                            return result;
-                        }
-
-                        bool isInGame = userStatus.GameRoomID.Value < 0;
-                        bool isInRoom = userStatus.GameRoomID.Value > 0;
-                        int roomId = Math.Abs(userStatus.GameRoomID.Value);
-
-                        RoomModel room;
-                        if (isInRoom)
-                            room = await _redisService.Room(roomId);
-                        else if (isInGame)
-                        {
-                            GameStatusModel gameStatus = await _redisService.GameStatus(roomId);
-                            room = gameStatus.Room;
-                        }
-                        else
-                            throw new Exception("資料錯誤");
-
-                        result.IsInGame = isInGame;
-                        result.IsInRoom = isInRoom;
-                        result.Room = room.ToApiRoom();
+                            throw new Exception();
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        logger.Log("Exception", e);
-
-                        result.Error(e.Message);
+                        result.Room = null;
+                        return result;
                     }
 
+                    bool isInGame = userStatus.GameRoomID.Value < 0;
+                    bool isInRoom = userStatus.GameRoomID.Value > 0;
+                    int roomId = Math.Abs(userStatus.GameRoomID.Value);
+
+                    RoomModel room;
+                    if (isInRoom)
+                        room = await _redisService.Room(roomId);
+                    else if (isInGame)
+                    {
+                        GameStatusModel gameStatus = await _redisService.GameStatus(roomId);
+                        room = gameStatus.Room;
+                    }
+                    else
+                        throw new Exception("資料錯誤");
+
+                    result.IsInGame = isInGame;
+                    result.IsInRoom = isInRoom;
+                    result.Room = room.ToApiRoom();
+
+                    return result;
+                }, async (result, e, logger) =>
+                {
+                    result.Error(e.Message);
                     return result;
                 });
         }
