@@ -2,7 +2,6 @@
 using Domain.Api.Services;
 using Domain.Logger;
 using LobbyWebService.Services;
-using LobbyWebService.Sevices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,9 +30,6 @@ namespace LobbyWebService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            string gameDbConnStr = Configuration.GetConnectionString("GameDb");
-            services.AddSingleton<IGameService>(new GameService(gameDbConnStr));
 
             string redisConnStr = Configuration.GetConnectionString("Redis");
             services.AddSingleton<IRedisService>(new RedisService(redisConnStr));
@@ -82,10 +78,7 @@ namespace LobbyWebService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-            ILoggerFactory loggerFactory,
-            IRedisService redisService,
-            IGameService gameService)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();
 
@@ -108,9 +101,6 @@ namespace LobbyWebService
             });
 
             app.UseMvc();
-
-            RedisLoader redisLoader = new RedisLoader(redisService, gameService);
-            redisLoader.Load();
         }
     }
 }

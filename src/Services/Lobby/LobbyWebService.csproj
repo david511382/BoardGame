@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Domain\Domain.csproj" />
-    <ProjectReference Include="..\..\Repositories\Game\GameRespository.csproj" />
     <ProjectReference Include="..\..\Repositories\Redis\RedisRepository.csproj" />
   </ItemGroup>
 

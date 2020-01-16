@@ -44,16 +44,6 @@ namespace LobbyWebService.Services
             return await _game.Get(id);
         }
 
-        public async Task<GameModel[]> ListGames()
-        {
-            return await _game.ListGames();
-        }
-
-        public async Task AddGames(GameModel[] games)
-        {
-            await _game.AddGames(games);
-        }
-
         public async Task<RoomModel> CreateRoom(UserInfoModel userInfo, int gameID)
         {
             int hostID = userInfo.ID;

@@ -5,9 +5,7 @@ namespace LobbyWebService.Services
 {
     public interface IRedisService
     {
-        Task<GameModel[]> ListGames();
         Task<GameModel> Game(int ID);
-        Task AddGames(GameModel[] games);
 
         Task<RoomModel[]> ListRooms();
         Task<RoomModel> CreateRoom(UserInfoModel info, int gameID);

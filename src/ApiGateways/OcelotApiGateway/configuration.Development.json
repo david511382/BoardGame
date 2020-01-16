@@ -56,19 +56,20 @@
         "AllowedScopes": []
       }
     },
-    // lobby
+    // game
     {
       "DownstreamPathTemplate": "/api/Game/List",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 51136
+          "Port": 53695
         }
       ],
       "UpstreamPathTemplate": "/api/Game",
       "UpstreamHttpMethod": [ "GET" ]
     },
+    // lobby
     {
       "DownstreamPathTemplate": "/api/Room",
       "DownstreamScheme": "http",
