@@ -1,6 +1,6 @@
 using BoardGameAngular.Models.SignalR;
-using BoardGameAngular.Services;
 using BoardGameAngular.Services.Config;
+using BoardGameAngular.Services.SignalRHub;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Lobby;
@@ -22,12 +22,12 @@ namespace BoardGameAngular.Controllers
         private readonly ConfigService _urlConfig;
         private readonly IResponseService _responseService;
         private readonly ILogger _logger;
-        private readonly IHubContext<RoomHub, IRoomHub> _hubContext;
+        private readonly IHubContext<GameRoomHub, IGameRoomHub> _hubContext;
 
         public RoomController(
             ConfigService config,
             IResponseService responseService,
-            IHubContext<RoomHub, IRoomHub> hubContext,
+            IHubContext<GameRoomHub, IGameRoomHub> hubContext,
             ILogger<RoomController> logger)
         {
             _urlConfig = config;
@@ -170,7 +170,7 @@ namespace BoardGameAngular.Controllers
                     {
                         Domain.Api.Models.Base.Lobby.RoomModel room = response.Room;
                         string groupName = room.HostID.ToString();
-                        IRoomHub group = _hubContext.Clients.Group(groupName);
+                        IGameRoomHub group = _hubContext.Clients.Group(groupName);
 
                         if (room.Players == null)
                             await group.RoomClose();

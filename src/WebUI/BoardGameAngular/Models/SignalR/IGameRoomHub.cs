@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 
 namespace BoardGameAngular.Models.SignalR
 {
-    public interface IRoomHub : IConnectionHub
+    public interface IGameRoomHub : IConnectionHub
     {
         Task RoomOpened();
         Task RoomPlayerChanged(RoomModel roomData);
         Task RoomStarted(int gameId);
         Task RoomClose();
+
+        Task GameStarted();
     }
 }

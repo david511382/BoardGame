@@ -1,5 +1,5 @@
 ﻿using BoardGameAngular.Models.SignalR;
-using BoardGameAngular.Services;
+using BoardGameAngular.Services.SignalRHub;
 using Domain.Logger;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +19,7 @@ namespace GameWebService.Services
         private const int TRY_LOCK_TIMES = 5;
         private const int WAIT_LOCK_MS = 50;
 
-        private readonly IHubContext<RoomHub, IRoomHub> _roomHub;
+        private readonly IHubContext<GameRoomHub, IGameRoomHub> _gameRoomHub;
 
         private UserKey _user => _redis.User;
         private RoomKey _room => _redis.Room;
@@ -30,11 +30,11 @@ namespace GameWebService.Services
 
         private readonly ILogger _logger;
 
-        public RedisNotifyService(IConfiguration configuration, IHubContext<RoomHub, IRoomHub> roomHub, ILogger<RedisNotifyService> logger)
+        public RedisNotifyService(IConfiguration configuration, IHubContext<GameRoomHub, IGameRoomHub> gameRoomHub, ILogger<RedisNotifyService> logger)
         {
             string connectStr = configuration.GetConnectionString("Redis");
             _redis = new RedisContext(connectStr);
-            _roomHub = roomHub;
+            _gameRoomHub = gameRoomHub;
             _logger = logger;
         }
 
@@ -67,8 +67,8 @@ namespace GameWebService.Services
                         return;
                     }
 
-                    //int hostId = msgData.HostID;
-                    //await _roomHub.Clients.Group(hostId.ToString()).RoomStarted();
+                    string groupId = msgData.HostID.ToString();
+                    await _gameRoomHub.Clients.Group(groupId).GameStarted();
                 });
             });
             return Task.CompletedTask;

@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TextBoxComponent } from './text-box/text-box.component';
 import { SetComponent } from './set/set.component';
 import { ViewContainerDirective } from './view-container/view-container.directive';
-import { SignalRService } from './services/signalr.service';
+import { SignalRService } from './services/signalR/signalr-manager.service';
 
 @NgModule({
   declarations: [
