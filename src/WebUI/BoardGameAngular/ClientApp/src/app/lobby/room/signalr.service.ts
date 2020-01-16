@@ -10,7 +10,7 @@ export class RoomSignalRService {
 
   RoomOpened = new EventEmitter();
   RoomPlayerChanged = new EventEmitter<RoomModel>();
-  RoomStarted = new EventEmitter();
+  RoomStarted = new EventEmitter<number>();
   RoomClose = new EventEmitter();
   
   constructor(private signalRService: SignalRService) {
@@ -28,8 +28,8 @@ export class RoomSignalRService {
     this.signalRService.RegisterOnServerEvents(hubId,'RoomPlayerChanged', (roomData: RoomModel) => {
       this.RoomPlayerChanged.emit(roomData);
     });
-    this.signalRService.RegisterOnServerEvents(hubId,'RoomStarted', () => {
-      this.RoomStarted.emit();
+    this.signalRService.RegisterOnServerEvents(hubId,'RoomStarted', (gameId) => {
+      this.RoomStarted.emit(gameId);
     });
     this.signalRService.RegisterOnServerEvents(hubId,'RoomClose', () => {
       this.RoomClose.emit();

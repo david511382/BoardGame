@@ -5,6 +5,7 @@ import { GameRoomInfoComponent } from './game-room-info/game-room-info.component
 import { RoomPlayerComponent } from './player/player.component';
 import { Router } from '@angular/router';
 import { RoomSignalRService } from '../signalr.service';
+import { CommonDataService } from '../../../share/services/common-data/common-data.service';
 
 @Component({
   selector: 'app-lobby-room-room',
@@ -24,10 +25,11 @@ export class RoomRoomComponent implements OnInit{
   
   constructor(private service: RoomService,
     private router: Router,
-    private signalService: RoomSignalRService) {
+    signalService: RoomSignalRService,
+    dataService: CommonDataService) {
     service.RoomDataChanged.subscribe(() => this.load());
     signalService.RoomStarted.subscribe((gameId) => {
-      //set game id
+      dataService.Set("gameId", gameId);
       this.goGame();
     });
   }
@@ -76,9 +78,7 @@ export class RoomRoomComponent implements OnInit{
           return;
         }
 
-        if (resp.isSuccess)
-          this.goGame();
-        else
+        if (!resp.isSuccess)
           alert(resp.message);
       });
   }
