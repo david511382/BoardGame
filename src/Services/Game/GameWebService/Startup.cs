@@ -1,11 +1,13 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Services;
 using Domain.Logger;
+using GameRespository;
 using GameWebService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -32,6 +34,12 @@ namespace GameWebService
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<ConfigService>();
+
+            services.AddDbContext<GameContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("GameDb"));
+            });
+            services.AddScoped<IGameInfoDAL, GameInfoDAL>();
 
             services.AddSingleton<IGameService, GameService>();
 

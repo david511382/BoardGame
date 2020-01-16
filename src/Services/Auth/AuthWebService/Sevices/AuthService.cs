@@ -10,11 +10,11 @@ namespace AuthWebService.Sevices
 {
     class AuthService : IAuthService
     {
-        private UserInfoDAL _db;
+        private readonly IUserInfoDAL _db;
 
-        public AuthService(string dbConnectStr)
+        public AuthService(IUserInfoDAL db)
         {
-            _db = new UserInfoDAL(dbConnectStr);
+            _db = db;
         }
 
         public async Task RegisterPlayer(UserInfo info)

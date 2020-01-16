@@ -1,18 +1,19 @@
-﻿using GameRespository.Models;
+﻿using GameRespository;
+using GameRespository.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GameRespository
+namespace GameWebService.Services
 {
-    public class GameInfoDAL
+    public class GameInfoDAL : IGameInfoDAL
     {
         private GameContext _ctx;
 
-        public GameInfoDAL(string connectStr)
+        public GameInfoDAL(GameContext ctx)
         {
-            _ctx = new DesignDbContextFactory().CreateDbContext(connectStr);
+            _ctx = ctx;
         }
 
         ~GameInfoDAL()

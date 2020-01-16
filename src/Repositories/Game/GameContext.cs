@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GameRespository
 {
-    internal class GameContext : DbContext
+    public class GameContext : DbContext
     {
         public DbSet<GameInfo> GameInfos { get; set; }
 

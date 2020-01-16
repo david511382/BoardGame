@@ -3,10 +3,12 @@ using AuthWebService.Sevices;
 using Domain.Api.Interfaces;
 using Domain.Api.Services;
 using Domain.Logger;
+using MemberRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -64,8 +66,13 @@ namespace AuthWebService
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            string memberDbConnStr = Configuration.GetSection("MemberDbConfig").Value;
-            services.AddSingleton<IAuthService>(new AuthService(memberDbConnStr));
+            services.AddDbContext<MemberContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("MemberDb"));
+            });
+            services.AddScoped<IUserInfoDAL, UserInfoDAL>();
+
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddSingleton<IJWTService, JWTService>();
 

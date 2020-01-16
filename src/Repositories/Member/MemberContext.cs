@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MemberRepository
 {
-    internal class MemberContext : DbContext
+    public class MemberContext : DbContext
     {
         public DbSet<UserInfo> UserInfos { get; set; }
 

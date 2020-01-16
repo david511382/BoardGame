@@ -1,17 +1,18 @@
-﻿using MemberRepository.Models;
+﻿using MemberRepository;
+using MemberRepository.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MemberRepository
+namespace AuthWebService.Sevices
 {
-    public class UserInfoDAL
+    public class UserInfoDAL : IUserInfoDAL
     {
         private MemberContext _ctx;
 
-        public UserInfoDAL(string connectStr)
+        public UserInfoDAL(MemberContext ctx)
         {
-            _ctx = new DesignDbContextFactory().CreateDbContext(connectStr);
+            _ctx = ctx;
         }
 
         ~UserInfoDAL()

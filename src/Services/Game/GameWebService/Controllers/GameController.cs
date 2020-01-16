@@ -2,7 +2,6 @@
 using Domain.Api.Models.Base.Lobby;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Lobby;
-using GameRespository;
 using GameWebService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,28 +29,17 @@ namespace GameWebService.Controllers
         }
         private RedisContext _redis;
 
-        private GameInfoDAL dbCtx
-        {
-            get
-            {
-                if (_db == null)
-                    _db = new GameInfoDAL(GameDbConnStr);
-                return _db;
-            }
-        }
-        private GameInfoDAL _db;
-
+        private readonly IGameInfoDAL _db;
         private readonly IGameService _gameService;
         private readonly IResponseService _responseService;
         private readonly ILogger _logger;
 
-        private readonly string GameDbConnStr;
         private readonly string RedisConnStr;
-        public GameController(IConfiguration configuration, IGameService gameService, IResponseService responseService, ILogger<GameController> logger)
+        public GameController(IGameInfoDAL db, IConfiguration configuration, IGameService gameService, IResponseService responseService, ILogger<GameController> logger)
         {
-            GameDbConnStr = configuration.GetConnectionString("GameDb");
             RedisConnStr = configuration.GetConnectionString("Redis");
             _responseService = responseService;
+            _db = db;
             _gameService = gameService;
             _logger = logger;
         }
@@ -75,7 +63,7 @@ namespace GameWebService.Controllers
 
                     if (list.Length == 0)
                     {
-                        list = (await dbCtx.List())
+                        list = (await _db.List())
                         .Select((g) => new RedisRepository.Models.GameModel
                         {
                             ID = g.ID,
