@@ -69,6 +69,22 @@
       "UpstreamPathTemplate": "/api/Game",
       "UpstreamHttpMethod": [ "GET" ]
     },
+    {
+      "DownstreamPathTemplate": "/api/Game/StartGame",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "api.game",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Game/StartGame",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
     // lobby
     {
       "DownstreamPathTemplate": "/api/Room",

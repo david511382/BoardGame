@@ -200,6 +200,17 @@ namespace BoardGameAngular.Controllers
             return await _responseService.Init<StartRoomResponse>(this, _logger)
                 .Do<StartRoomResponse>(async (result, user, logger) =>
                 {
+                    var startGameResponse = await HttpHelper.HttpRequest.New()
+                     .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
+                     .To(_urlConfig.StartGame)
+                     .Post<BoolResponseModel>();
+
+                    if (!startGameResponse.IsSuccess)
+                    {
+                        result.Fail(startGameResponse.Message);
+                        return result;
+                    }
+
                     result = await HttpHelper.HttpRequest.New()
                         .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                         .To(_urlConfig.RoomStart)

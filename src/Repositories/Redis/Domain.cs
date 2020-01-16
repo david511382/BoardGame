@@ -17,7 +17,5 @@
 
     public enum Channel
     {
-        InitGame,
-        StartGameDone
     }
 }

@@ -1,12 +1,15 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Lobby;
+using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Lobby;
 using GameRespository;
+using GameWebService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RedisRepository;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,16 +41,18 @@ namespace GameWebService.Controllers
         }
         private GameInfoDAL _db;
 
+        private readonly IGameService _gameService;
         private readonly IResponseService _responseService;
         private readonly ILogger _logger;
 
         private readonly string GameDbConnStr;
         private readonly string RedisConnStr;
-        public GameController(IConfiguration configuration, IResponseService responseService, ILogger<GameController> logger)
+        public GameController(IConfiguration configuration, IGameService gameService, IResponseService responseService, ILogger<GameController> logger)
         {
             GameDbConnStr = configuration.GetConnectionString("GameDb");
             RedisConnStr = configuration.GetConnectionString("Redis");
             _responseService = responseService;
+            _gameService = gameService;
             _logger = logger;
         }
 
@@ -100,6 +105,69 @@ namespace GameWebService.Controllers
                         MinPlayerCount = g.MinPlayerCount
                     }).ToArray();
 
+                    return result;
+                });
+        }
+
+        [HttpPost]
+        [Route("StartGame")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> StartGame()
+        {
+            return await _responseService.Init<BoolResponseModel>(this, _logger)
+                .ValidateToken((user) => { })
+                .Do<BoolResponseModel>(async (result, user, logger) =>
+                {
+                    int hostID = user.Id;
+
+                    RedisRepository.Models.UserModel userInfo = null;
+                    try
+                    {
+                        userInfo = await rdsCtx.User.Get(hostID);
+                        if (userInfo.GameRoomID == null)
+                            throw new Exception("userInfo.GameRoomID == null");
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Log(e.ToString());
+
+                        result.Fail("不在任何房間");
+                        return result;
+                    }
+                    if (userInfo.GameRoomID < 0)
+                    {
+                        result.Fail("正在遊戲中");
+                        return result;
+                    }
+                    else if (userInfo.GameRoomID != hostID)
+                    {
+                        result.Fail("不是房主");
+                        return result;
+                    }
+
+                    RedisRepository.Models.RoomModel oriRoom = await rdsCtx.Room.Get(hostID);
+
+                    try
+                    {
+                        RedisRepository.Models.GameStatusModel gameStatus = new RedisRepository.Models.GameStatusModel { Room = oriRoom };
+                        RedisRepository.Models.GameStatusModel newGameStatus = _gameService.InitGame(gameStatus);
+
+                        await rdsCtx.GameStatus.Set(newGameStatus);
+                    }
+                    catch
+                    {
+                        await rdsCtx.GameStatus.Delete(hostID);
+                        throw;
+                    }
+
+                    result.Success("成功");
+                    return result;
+                }, async (result, e, logger) =>
+                {
+                    result.Fail("發生錯誤");
                     return result;
                 });
         }

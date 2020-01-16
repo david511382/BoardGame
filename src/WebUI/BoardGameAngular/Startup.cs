@@ -3,7 +3,6 @@ using BoardGameAngular.Services.SignalRHub;
 using Domain.Api.Interfaces;
 using Domain.Api.Services;
 using Domain.Logger;
-using GameWebService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +27,6 @@ namespace BoardGameAngular
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddHostedService<RedisNotifyService>();
 
             string redisConnStr = Configuration.GetConnectionString("Redis");
             services.AddSignalR()

@@ -19,6 +19,7 @@ namespace BoardGameAngular.Services.Config
         private string _roomBase => _baseUrl + "/Room";
 
         public string ListGame => _gameBase;
+        public string StartGame => _gameBase + "/StartGame";
         private string _gameBase => _baseUrl + "/Game";
 
         private readonly string _baseUrl;

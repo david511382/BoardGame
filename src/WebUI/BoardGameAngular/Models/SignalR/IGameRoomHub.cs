@@ -9,7 +9,5 @@ namespace BoardGameAngular.Models.SignalR
         Task RoomPlayerChanged(RoomModel roomData);
         Task RoomStarted(int gameId);
         Task RoomClose();
-
-        Task GameStarted();
     }
 }

@@ -25,7 +25,17 @@ namespace LobbyWebService.Controllers
         private readonly IResponseService _responseService;
         private readonly ILogger _logger;
 
-        private readonly string _redisConnectString;
+        private RedisContext rdsCtx
+        {
+            get
+            {
+                if (_redis == null)
+                    _redis = new RedisContext(RedisConnStr);
+                return _redis;
+            }
+        }
+        private RedisContext _redis;
+        private readonly string RedisConnStr;
 
         private const int TRY_LOCK_TIMES = 3;
         private const int WAIT_LOCK_MS = 50;
@@ -36,7 +46,7 @@ namespace LobbyWebService.Controllers
             _responseService = responseService;
             _logger = logger;
 
-            _redisConnectString = configuration.GetConnectionString("Redis");
+            RedisConnStr = configuration.GetConnectionString("Redis");
         }
 
         /// <summary>
@@ -172,41 +182,39 @@ namespace LobbyWebService.Controllers
                     int roomID = 0;
                     int playerID = user.Id;
                     RoomModel room = null;
-                    using (RedisContext redis = new RedisContext(_redisConnectString))
-                    {
-                        UserKey redisUser = redis.User;
-                        RoomKey redisRoom = redis.Room;
-                        GameKey redisGame = redis.Game;
-                        GameStatusKey redisGameStatus = redis.GameStatus;
 
+                    UserKey redisUser = rdsCtx.User;
+                    RoomKey redisRoom = rdsCtx.Room;
+                    GameKey redisGame = rdsCtx.Game;
+                    GameStatusKey redisGameStatus = rdsCtx.GameStatus;
+
+                    try
+                    {
+                        if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisUser.Lock(playerID), WAIT_LOCK_MS))
+                            throw new Exception("LockUser Fail");
+
+                        UserModel userInfo = null;
                         try
                         {
-                            if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisUser.Lock(playerID), WAIT_LOCK_MS))
-                                throw new Exception("LockUser Fail");
-
-                            UserModel userInfo = null;
-                            try
-                            {
-                                userInfo = await redisUser.Get(playerID);
-                                if (userInfo.GameRoomID == null)
-                                    throw new Exception();
-                            }
-                            catch
-                            {
-                                throw new Exception("不在任何房間");
-                            }
-
-                            roomID = userInfo.GameRoomID.Value;
-                            if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisRoom.Lock(roomID), WAIT_LOCK_MS))
-                                throw new Exception("LockRoom Fail");
-
-                            room = await removeRoomPlayer(redis, roomID, userInfo);
+                            userInfo = await redisUser.Get(playerID);
+                            if (userInfo.GameRoomID == null)
+                                throw new Exception();
                         }
-                        finally
+                        catch
                         {
-                            await redisRoom.Release(roomID);
-                            await redisUser.Release(playerID);
+                            throw new Exception("不在任何房間");
                         }
+
+                        roomID = userInfo.GameRoomID.Value;
+                        if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisRoom.Lock(roomID), WAIT_LOCK_MS))
+                            throw new Exception("LockRoom Fail");
+
+                        room = await removeRoomPlayer(rdsCtx, roomID, userInfo);
+                    }
+                    finally
+                    {
+                        await redisRoom.Release(roomID);
+                        await redisUser.Release(playerID);
                     }
 
                     bool isRoomClose = room == null;
@@ -237,66 +245,52 @@ namespace LobbyWebService.Controllers
                 {
                     int hostID = user.Id;
                     result.HostID = hostID;
-                    using (RedisContext redis = new RedisContext(_redisConnectString))
-                    {
-                        UserKey redisUser = redis.User;
-                        RoomKey redisRoom = redis.Room;
-                        GameKey redisGame = redis.Game;
-                        GameStatusKey redisGameStatus = redis.GameStatus;
 
-                        int roomID = hostID;
-                        RoomModel oriRoom = null;
+                    UserKey redisUser = rdsCtx.User;
+                    RoomKey redisRoom = rdsCtx.Room;
+                    GameKey redisGame = rdsCtx.Game;
+                    GameStatusKey redisGameStatus = rdsCtx.GameStatus;
+
+                    int roomID = hostID;
+                    RoomModel oriRoom = null;
+                    try
+                    {
+                        if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisRoom.Lock(roomID), WAIT_LOCK_MS))
+                            throw new Exception("LockRoom Fail");
+
+                        oriRoom = await redisRoom.Get(roomID);
+
+                        result.GameID = oriRoom.Game.ID;
+
+                        foreach (UserInfoModel player in oriRoom.Players)
+                            if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisUser.Lock(player.ID), WAIT_LOCK_MS))
+                                throw new Exception("LockUser Fail");
+
+                        UserModel userInfo = null;
                         try
                         {
-                            if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisRoom.Lock(roomID), WAIT_LOCK_MS))
-                                throw new Exception("LockRoom Fail");
-
-                            oriRoom = await redisRoom.Get(roomID);
-
-                            result.GameID = oriRoom.Game.ID;
-
-                            UserModel userInfo = null;
-                            try
-                            {
-                                userInfo = await redisUser.Get(hostID);
-                                if (userInfo.GameRoomID == null)
-                                    throw new Exception();
-                            }
-                            catch
-                            {
-                                throw new Exception("不在任何房間");
-                            }
-
-                            foreach (UserInfoModel player in oriRoom.Players)
-                                if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redisUser.Lock(player.ID), WAIT_LOCK_MS))
-                                    throw new Exception("LockUser Fail");
-
-                            if (!await redisGameStatus.Set(new GameStatusModel
-                            {
-                                Room = oriRoom
-                            }))
-                                throw new Exception("SetGameStatus Fail");
-
-                            try
-                            {
-                                await removeRoomPlayer(redis, roomID, userInfo, -hostID);
-                                if (!await redis.Publish(Channel.InitGame, hostID.ToString(), hostID))
-                                    throw new Exception("Publish Fail");
-                            }
-                            catch
-                            {
-                                await redisGameStatus.Delete(hostID);
-                                throw;
-                            }
+                            userInfo = await redisUser.Get(hostID);
+                            if (userInfo.GameRoomID == null)
+                                throw new Exception();
                         }
-                        finally
+                        catch
                         {
-                            await redisRoom.Release(roomID);
-
-                            if (oriRoom != null)
-                                foreach (UserInfoModel player in oriRoom.Players)
-                                    await redisUser.Release(player.ID);
+                            throw new Exception("不在任何房間");
                         }
+
+                        await removeRoomPlayer(rdsCtx, roomID, userInfo, -hostID);
+                    }
+                    catch
+                    {
+                        await redisGameStatus.Delete(hostID);
+                        throw;
+                    }
+                    finally
+                    {
+                        await redisRoom.Release(roomID);
+                        if (oriRoom != null)
+                            foreach (UserInfoModel player in oriRoom.Players)
+                                await redisUser.Release(player.ID);
                     }
 
                     result.Success("開始遊戲");

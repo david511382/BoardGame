@@ -37,14 +37,6 @@ namespace GameWebService
 
             services.AddScoped<IResponseService, ResponseService>();
 
-            services.AddSingleton((sp) =>
-            {
-                ConfigService cs = sp.GetService<ConfigService>();
-                IGameService gameService = sp.GetService<IGameService>();
-                ILogger<RedisNotifyService> logger = sp.GetService<ILogger<RedisNotifyService>>();
-                return new RedisNotifyService(cs, gameService, logger);
-            });
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(
@@ -89,8 +81,7 @@ namespace GameWebService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
             IHostingEnvironment env,
-            ILoggerFactory loggerFactory,
-            RedisNotifyService redisNotifyService)
+            ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();
 
@@ -113,8 +104,6 @@ namespace GameWebService
             });
 
             app.UseMvc();
-
-            redisNotifyService.Run();
         }
     }
 }
