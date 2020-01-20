@@ -1,12 +1,12 @@
-.board {
+div.board {
   border-color: black;
   border-width: 2px;
   border-style: solid;
   border-collapse: separate;
   border-spacing: 0px 20px;
-  margin: 5px;
   width: 10em;
   height: 15em;
+  background-color: white;
 }
 
 span {

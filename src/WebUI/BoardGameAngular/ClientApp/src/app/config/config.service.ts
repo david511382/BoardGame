@@ -9,12 +9,14 @@ export class UrlConfigService extends BaseUrl{
   public readonly userBackendUrl: UserUrl
   public readonly roomBackendUrl: RoomUrl
   public readonly gameBackendUrl: GameUrl
-
+  public readonly bigTwoBackendUrl: BigTwoUrl
+  
   constructor(@Inject('BASE_URL') baseUrl: string) {
     super(`${baseUrl}api`);
     this.userBackendUrl = new UserUrl(`${this.baseUrl}/User`);
     this.roomBackendUrl = new RoomUrl(`${this.baseUrl}/Room`);
     this.gameBackendUrl = new RoomUrl(`${this.baseUrl}/Game`);
+    this.bigTwoBackendUrl = new BigTwoUrl(`${this.baseUrl}/BigTwo`);
   }
 }
 
@@ -69,5 +71,15 @@ export class GameUrl extends BaseUrl {
 
   get List(): string {
     return `${this.baseUrl}`;
+  }
+}
+
+export class BigTwoUrl extends BaseUrl {
+  constructor(baseUrl: string) {
+    super(baseUrl);
+  }
+
+  get HandCards(): string {
+    return `${this.baseUrl}/HandCards`;
   }
 }

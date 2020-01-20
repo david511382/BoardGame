@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 import { BigtwoComponent } from './bigtwo/bigtwo.component';
 import { GameMainComponent } from './game.component';
-import { ShareModule } from './share/share.module'
+import { GameShareModule } from './share/game-share.module';
 
 @NgModule({
   declarations: [
@@ -12,7 +12,6 @@ import { ShareModule } from './share/share.module'
     BigtwoComponent,
   ],
   exports: [
-    GameMainComponent,
   ],
   providers: [
   ],
@@ -21,10 +20,9 @@ import { ShareModule } from './share/share.module'
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     FormsModule,
     ReactiveFormsModule,
-    ShareModule
+    GameShareModule
   ],
   entryComponents: [
-    BigtwoComponent,
   ]
 })
 export class GameModule { }

@@ -85,6 +85,23 @@
         "AllowedScopes": []
       }
     },
+    // bigtwo
+    {
+      "DownstreamPathTemplate": "/api/{game}/{method}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53695
+        }
+      ],
+      "UpstreamPathTemplate": "/api/boardgame/{game}/{method}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
     // lobby
     {
       "DownstreamPathTemplate": "/api/Room",
