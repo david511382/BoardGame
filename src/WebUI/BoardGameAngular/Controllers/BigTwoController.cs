@@ -1,6 +1,8 @@
 using BoardGameAngular.Models.BigTwo.Response;
 using BoardGameAngular.Services.Config;
 using Domain.Api.Interfaces;
+using Domain.Api.Models.Request.Game;
+using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -36,6 +38,25 @@ namespace BoardGameAngular.Controllers
                         .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                         .To(_urlConfig.HandCards)
                         .Get<HandCardsResponse>();
+
+                    return result;
+                });
+        }
+
+        [HttpPost("SelectCards")]
+        [ProducesResponseType(typeof(SelectCardResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SelectCardResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SelectCards([FromBody] IndexesRequest request)
+        {
+            return await _responseService.Init<SelectCardResponse>(this, _logger)
+                .Do<SelectCardResponse>(async (result, user, logger) =>
+                {
+                    result = await HttpHelper.HttpRequest.New()
+                        .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
+                        .SetJson(request)
+                        .To(_urlConfig.SelectCards)
+                        .Post<SelectCardResponse>();
 
                     return result;
                 });

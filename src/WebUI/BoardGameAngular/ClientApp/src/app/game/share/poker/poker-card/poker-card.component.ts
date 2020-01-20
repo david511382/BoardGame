@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
-import { SetItemComponent } from '../../../../share/set/set-item.component';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 
 export enum SuitEnum {
   S = 3,
@@ -69,7 +68,7 @@ export class CardComponent{
 
   @Output() MouseEnterEvent = new EventEmitter<any>();
   @Output() MouseLeaveEvent = new EventEmitter<any>();
-  @Output() ClickEvent = new EventEmitter<any>();
+  @Output() MouseClickEvent = new EventEmitter<any>();
   @Output() DoubleClickEvent = new EventEmitter<any>();
 
   public get SuitColor() {

@@ -26,25 +26,41 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
   @Input() cards: CardModel[];
   @ViewChildren("pokerCard") private pokerCardViews: QueryList<CardComponent>;
 
-  @Output() ClickEvent = new EventEmitter<number>();
+  @Output() SelectCardEvent = new EventEmitter<number[]>();
 
   public viewCards: ViewCard[];
 
   private readonly CARD_WIDTH = 160;
   private readonly CARD_SHOW_WIDTH = 50;
   private readonly CARD_BORDER_WIDTH = 2;
+  private readonly CARD_SELECTED_UP_TOP = -100;
   private get CARD_HIDE_WIDTH() {
     return this.CARD_WIDTH - this.CARD_SHOW_WIDTH - this.CARD_BORDER_WIDTH;
   }
+
+  private readonly MAX_SELECTED_CARD= 5;
+
+  private selectedIndexes: number[];
 
   ngAfterViewInit(): void {
   }
 
   ngOnInit(): void {
+    this.selectedIndexes = [];
     this.viewCards = [];
 
     if (this.cards)
       this.ShowCards(this.cards);
+  }
+
+  SelectCards(cardIndexes: number[]) {
+    this.viewCards.forEach((v,index) => {
+      this.viewCards[index].top = 0;
+    });
+
+    cardIndexes.forEach((index) => {
+      this.viewCards[index].top = this.CARD_SELECTED_UP_TOP;
+    });
   }
 
   ShowCards(cards: CardModel[]) {
@@ -61,7 +77,7 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
       this.pokerCardViews.forEach((c, index) => {
         c.MouseEnterEvent.subscribe((e) => this.onMouseOn(index));
         c.MouseLeaveEvent.subscribe((e) => this.onMouseLeave(index));
-        c.ClickEvent.subscribe((e) => this.ClickEvent.emit(index));
+        c.MouseClickEvent.subscribe((e) => this.onMouseClick(index));
       });
     }, 0);
   }
@@ -77,6 +93,23 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
 
   private onMouseLeave(index: number) {
     this.setCardPosition(index);
+  }
+
+  private onMouseClick(index: number) {
+    if (this.selectedIndexes.length > 0) {
+      let lastSelectedIndex = this.selectedIndexes[this.selectedIndexes.length - 1];
+      if (lastSelectedIndex === index)
+        return;
+      
+      this.viewCards[lastSelectedIndex].top = 0;
+
+      if (this.selectedIndexes.length >= this.MAX_SELECTED_CARD)
+        this.selectedIndexes.shift();          
+    }
+
+    this.selectedIndexes.push(index);
+    this.viewCards[index].top = this.CARD_SELECTED_UP_TOP;
+    this.SelectCardEvent.emit(this.selectedIndexes);
   }
 
   private onDrag(index: number) {

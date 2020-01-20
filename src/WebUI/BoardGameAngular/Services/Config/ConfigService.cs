@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-
-namespace BoardGameAngular.Services.Config
+﻿namespace BoardGameAngular.Services.Config
 {
     public class ConfigService
     {
@@ -21,7 +19,8 @@ namespace BoardGameAngular.Services.Config
         public string ListGame => _gameBase;
         public string StartGame => _gameBase + "/StartGame";
         private string _gameBase => _baseUrl + "/Game";
-        
+
+        public string SelectCards => _bigTwoBase + "/SelectCards";
         public string HandCards => _bigTwoBase + "/HandCards";
         private string _bigTwoBase => _boardgameBase + "/BigTwo";
 

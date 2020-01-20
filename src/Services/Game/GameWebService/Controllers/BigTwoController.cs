@@ -6,7 +6,6 @@ using Domain.Api.Models.Response.Game.PokerGame;
 using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
 using GameLogic.PokerGame;
 using GameWebService.Domain;
-using GameWebService.Models.BoardGame;
 using GameWebService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -75,15 +74,15 @@ namespace GameWebService.Controllers
         /// <summary>
         /// 自動選牌
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="request">index越後面權限越高</param>
         /// <returns></returns>
-        [Route("SelectCard")]
+        [Route("SelectCards")]
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(typeof(SelectCardResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(SelectCardResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> SelectCard([FromBody] IndexesRequest request)
+        public async Task<IActionResult> SelectCards([FromBody] IndexesRequest request)
         {
             return await _responseService.Init<SelectCardResponse>(this, _logger)
                  .ValidateToken((user) => { })
@@ -97,14 +96,17 @@ namespace GameWebService.Controllers
 
                      if (!game.IsTurn(user.Id))
                      {
-                         result.CardIndexs = null;
+                         result.CardIndexes = null;
                          return result;
                      }
 
                      PokerCard[] pokerCards = game.SelectCardGroup(user.Id, request.Indexes);
-                     PokerCard[] handCards = game.GetResource(user.Id).GetHandCards().ToArray();
+                     PokerCard[] handCards = game.GetResource(user.Id).GetHandCards()
+                     .OrderBy(d => d.Number)
+                     .ThenBy(d => d.Suit)
+                     .ToArray();
 
-                     result.CardIndexs = handCards.GetIndexOfCards(pokerCards);
+                     result.CardIndexes = handCards.GetIndexOfCards(pokerCards);
 
                      return result;
 
@@ -138,7 +140,7 @@ namespace GameWebService.Controllers
                            throw new Exception("不在遊戲中");
 
                        int roomID = -redisUser.GameRoomID.Value;
-                      redisGameStatus = await redis.GameStatus.Get(roomID);
+                       redisGameStatus = await redis.GameStatus.Get(roomID);
                        if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
                            throw new Exception("錯誤遊戲");
 

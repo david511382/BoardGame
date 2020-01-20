@@ -82,4 +82,7 @@ export class BigTwoUrl extends BaseUrl {
   get HandCards(): string {
     return `${this.baseUrl}/HandCards`;
   }
+  get SelectCards(): string {
+    return `${this.baseUrl}/SelectCards`;
+  }
 }

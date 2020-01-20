@@ -70,8 +70,6 @@ namespace BigTwoLogic
                 .ThenBy(d => d.Suit)
                 .ToArray();
             List<PokerCard> containCard = cards.Choose(containCardIndexs)
-                .OrderBy(d => d.Number)
-                .ThenBy(d => d.Suit)
                 .ToList();
 
             if (IsRequiredClub3)

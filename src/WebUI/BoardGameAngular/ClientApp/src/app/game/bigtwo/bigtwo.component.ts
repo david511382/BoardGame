@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CardModel } from '../share/poker/poker-card/poker-card.component';
-import { BigTwoService } from './bigtwo.service';
+import { BigTwoService, SelectCardRequest } from './bigtwo.service';
 import { HandCardsComponent } from '../share/poker/hand-cards/hand-cards.component';
 
 @Component({
@@ -38,5 +38,24 @@ export class BigtwoComponent implements OnInit {
   private load() {
     this.cards = [];
     this.getHandCards();
+    this.handCardView.SelectCardEvent.subscribe((is) => this.selectCard(is));
+  }
+
+  private selectCard(cardIndexes: number[]) {
+    var request: SelectCardRequest = new SelectCardRequest();
+    request.Indexes = cardIndexes;
+    this.service.SelectCards(request)
+      .subscribe((resp) => {
+        if (resp.isError) {
+          alert(resp.errorMessage)
+          return;
+        }
+
+        let cardIndexes = resp.cardIndexes;
+        if (!cardIndexes)
+          return;
+
+        this.handCardView.SelectCards(cardIndexes);
+      });
   }
 }

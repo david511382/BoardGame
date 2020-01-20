@@ -1,4 +1,4 @@
-  <div class="board" (mouseenter)="MouseEnterEvent.emit($event)" (mouseleave)="MouseLeaveEvent.emit($event)" (click)="ClickEvent.emit($event)">
+  <div class="board" (mouseenter)="MouseEnterEvent.emit($event)" (mouseleave)="MouseLeaveEvent.emit($event)" (click)="MouseClickEvent.emit($event)">
     <span class="Number" [style.color]="SuitColor">{{data.NumberText}}</span>
     <span class="Suit" [style.color]="SuitColor">{{data.SuitText}}</span>
   </div>
