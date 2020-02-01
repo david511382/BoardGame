@@ -100,6 +100,13 @@ services:
       context: redis/createnode/
       args:
         REDIS_VERSION: $REDIS_VERSION
+    environment:
+     - REDIS_DOMAIN1=172.54.87.12:6379
+     - REDIS_DOMAIN2=172.54.87.13:6379
+     - REDIS_DOMAIN3=172.54.87.14:6379
+     - REDIS_SLAVE_DOMAIN1=172.54.87.15:6379
+     - REDIS_SLAVE_DOMAIN2=172.54.87.16:6379
+     - REDIS_SLAVE_DOMAIN3=172.54.87.17:6379
     networks:
          board-game-network:
     depends_on:

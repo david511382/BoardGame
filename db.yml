@@ -1,0 +1,37 @@
+version: '3.2'
+services:
+  member.db:
+    container_name: board-game-member-db
+    image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
+    environment:
+     - ACCEPT_EULA=Y
+     - SA_PASSWORD="f#JF39F3jds"
+    ports:
+      - "1487:1433"
+    volumes:
+      - member-db-volume:/var/opt/mssql
+    networks:
+        boardgame_board-game-network:
+            ipv4_address: 172.54.87.10
+
+  db.game:
+    container_name: db-game
+    image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
+    environment:
+     - ACCEPT_EULA=Y
+     - SA_PASSWORD="f#JF39F3jds"
+    ports:
+      - "1488:1433"
+    volumes:
+      - game-db-volume:/var/opt/mssql
+    networks:
+        boardgame_board-game-network:
+            ipv4_address: 172.54.87.11
+
+volumes:
+  member-db-volume:
+  game-db-volume:
+
+networks:
+   boardgame_board-game-network:
+     external: true

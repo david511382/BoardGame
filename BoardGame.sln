@@ -14,7 +14,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}"
 	ProjectSection(SolutionItems) = preProject
 		.env = .env
+		api.yml = api.yml
+		db.yml = db.yml
 		docker-compose.yml = docker-compose.yml
+		elk.yml = elk.yml
+		redis.yml = redis.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}"

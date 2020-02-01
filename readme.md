@@ -20,6 +20,10 @@
 	   └Common
 
 # Getting started
+## Docker Compose
+完整全部執行 docker-compose up --build -d
+部分執行 docker-compose -f redis.yml -f elk.yml up --build -d
+
 ## EF 資料庫 Migrations
 board-game-member-db
 1. 在啟動docker-compose後，連上資料庫localhost,1487，以SA帳號登入
