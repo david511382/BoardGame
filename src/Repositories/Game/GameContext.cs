@@ -1,6 +1,7 @@
 ﻿
 using GameRespository.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace GameRespository
 {
@@ -19,6 +20,27 @@ namespace GameRespository
             modelBuilder.Entity<GameInfo>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
+
+            modelBuilder.Entity<GameInfo>().HasData(
+                new GameInfo()
+                {
+                    ID = 1,
+                    Name = "軍棋",
+                    Description = "象棋遊戲",
+                    MaxPlayerCount = 2,
+                    MinPlayerCount = 2,
+                    CreateTime = DateTime.Now
+                },
+                new GameInfo()
+                {
+                    ID = 2,
+                    Name = "大老二",
+                    Description = "撲克牌遊戲",
+                    MaxPlayerCount = 4,
+                    MinPlayerCount = 2,
+                    CreateTime = DateTime.Now
+                }
+            );
         }
     }
 }
