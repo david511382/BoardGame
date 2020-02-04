@@ -118,13 +118,13 @@ namespace GameWebService.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Route("PlayCard")]
+        [Route("PlayCards")]
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PlayCard([FromBody] IndexesRequest request)
+        public async Task<IActionResult> PlayCards([FromBody] IndexesRequest request)
         {
             return await _responseService.Init<BoolResponseModel>(this, _logger)
                .ValidateToken((user) => { })

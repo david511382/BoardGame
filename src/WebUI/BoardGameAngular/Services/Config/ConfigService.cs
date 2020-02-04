@@ -20,6 +20,7 @@
         public string StartGame => _gameBase + "/StartGame";
         private string _gameBase => _baseUrl + "/Game";
 
+        public string PlayCards => _bigTwoBase + "/PlayCards";
         public string SelectCards => _bigTwoBase + "/SelectCards";
         public string HandCards => _bigTwoBase + "/HandCards";
         private string _bigTwoBase => _boardgameBase + "/BigTwo";

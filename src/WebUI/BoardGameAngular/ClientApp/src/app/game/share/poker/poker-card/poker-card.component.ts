@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, ElementRef } from '@angular/core';
 
 export enum SuitEnum {
   S = 3,
@@ -70,6 +70,10 @@ export class CardComponent{
   @Output() MouseLeaveEvent = new EventEmitter<any>();
   @Output() MouseClickEvent = new EventEmitter<any>();
   @Output() DoubleClickEvent = new EventEmitter<any>();
+
+  constructor(
+    public Ref: ElementRef
+  ) { }
 
   public get SuitColor() {
     switch (this.data.Suit) {

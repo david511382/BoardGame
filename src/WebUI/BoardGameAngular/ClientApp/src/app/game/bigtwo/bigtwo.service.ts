@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient} from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { UrlConfigService, BigTwoUrl } from '../../config/config.service';
-import { HandleErrorFun, GeneralResponse } from '../../domain/response.const';
+import { HandleErrorFun, GeneralResponse, SuccessResponse } from '../../domain/response.const';
 import { Observable } from 'rxjs';
 
-export class SelectCardRequest {
+export class CardIndexesRequest {
   Indexes :number[]
 }
 
@@ -36,8 +36,13 @@ export class BigTwoService {
       .pipe(catchError(HandleErrorFun()));
   }
 
-  public SelectCards(request: SelectCardRequest ): Observable<CardIndexesResponse> {
+  public SelectCards(request: CardIndexesRequest ): Observable<CardIndexesResponse> {
     return this.http.post<CardIndexesResponse>(this.bigTwoBackendUrl.SelectCards, request)
+      .pipe(catchError(HandleErrorFun()));
+  }
+
+  public PlayCards(request: CardIndexesRequest): Observable<SuccessResponse> {
+    return this.http.post<SuccessResponse>(this.bigTwoBackendUrl.PlayCards, request)
       .pipe(catchError(HandleErrorFun()));
   }
 }
