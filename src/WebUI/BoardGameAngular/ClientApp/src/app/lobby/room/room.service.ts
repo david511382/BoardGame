@@ -6,6 +6,7 @@ import { GeneralResponse, HandleErrorFun, SuccessResponse } from '../../domain/r
 import { UrlConfigService, RoomUrl } from '../../config/config.service';
 import { GameModel } from './game.service';
 import { RoomSignalREventService } from './signalr-event.service';
+import { AuthService } from '../../auth/auth.service';
 
 export class UserModel {
   constructor(public id: number, public name: string, public username: string) { }
@@ -60,9 +61,15 @@ export class RoomService {
   constructor(
     private http: HttpClient,
     private signalService: RoomSignalREventService,
+    authService:AuthService,
     config: UrlConfigService) {
     this.backendUrl = config.roomBackendUrl;
     this.roomData = null;
+
+    authService.authChanged.subscribe((isLogin) => {
+      if (!isLogin)
+        this.roomData = null;
+    });
 
     signalService.RoomPlayerChanged.subscribe((roomData: RoomModel) => this.setRoomData(roomData));
     signalService.RoomClose.subscribe(() => this.setRoomData(null));

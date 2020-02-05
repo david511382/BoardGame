@@ -15,6 +15,7 @@ import { RoomCreateComponent } from './create/create.component';
 import { RoomPlayerComponent } from './room/player/player.component';
 import { RoomRoomComponent } from './room/room.component';
 import { RoomSignalREventService } from './signalr-event.service';
+import { AuthService } from '../../auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { RoomSignalREventService } from './signalr-event.service';
     UrlConfigService,
     RoomService,
     GameService,
-    RoomSignalREventService
+    RoomSignalREventService,
+    AuthService
   ],
   imports: [
     HttpModule,
