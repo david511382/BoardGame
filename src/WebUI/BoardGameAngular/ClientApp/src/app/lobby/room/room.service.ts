@@ -5,7 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { GeneralResponse, HandleErrorFun, SuccessResponse } from '../../domain/response.const';
 import { UrlConfigService, RoomUrl } from '../../config/config.service';
 import { GameModel } from './game.service';
-import { RoomSignalRService } from './signalr.service';
+import { RoomSignalREventService } from './signalr-event.service';
 
 export class UserModel {
   constructor(public id: number, public name: string, public username: string) { }
@@ -53,13 +53,13 @@ export class RoomService {
     this.RoomDataChanged.emit(this.roomData);
   }
 
-  private readonly backendUrl: RoomUrl
+  private readonly backendUrl: RoomUrl;
 
   private roomData: RoomModel;
 
   constructor(
     private http: HttpClient,
-    private signalService: RoomSignalRService,
+    private signalService: RoomSignalREventService,
     config: UrlConfigService) {
     this.backendUrl = config.roomBackendUrl;
     this.roomData = null;
@@ -83,7 +83,7 @@ export class RoomService {
 
     var option = {
       headers: new HttpHeaders()
-        .append('cid', this.signalService.ConnectionId)
+        .append('cid', this.signalService.connectionId)
     };
 
     return this.http.post<RoomResponse>(
@@ -107,7 +107,7 @@ export class RoomService {
 
     var option = {
       headers: new HttpHeaders()
-        .append('cid', this.signalService.ConnectionId)
+        .append('cid', this.signalService.connectionId)
     };
 
     return this.http.patch<RoomResponse>(
@@ -122,13 +122,13 @@ export class RoomService {
 
         if (resp.isSuccess)
           this.setRoomData(resp.room);
-      }))
+      }));
   }
 
   public Leave(): Observable<SuccessResponse> {
     var option = {
       headers: new HttpHeaders()
-        .append('cid', this.signalService.ConnectionId)
+        .append('cid', this.signalService.connectionId)
     };
 
     return this.http.delete<SuccessResponse>(this.backendUrl.Join, option)
@@ -140,7 +140,7 @@ export class RoomService {
 
           if (resp.isSuccess)
             this.roomData = null;
-        }))
+        }));
   }
 
   public Start(): Observable<StartRoomResponse> {
@@ -153,7 +153,7 @@ export class RoomService {
 
           if (resp.isSuccess)
             this.roomData = null;
-        }))
+        }));
   }
 }
 

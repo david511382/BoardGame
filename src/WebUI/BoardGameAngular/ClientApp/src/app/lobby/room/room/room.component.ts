@@ -4,7 +4,7 @@ import { RoomService } from '../room.service';
 import { GameRoomInfoComponent } from './game-room-info/game-room-info.component';
 import { RoomPlayerComponent } from './player/player.component';
 import { Router } from '@angular/router';
-import { RoomSignalRService } from '../signalr.service';
+import { RoomSignalREventService } from '../signalr-event.service';
 import { CommonDataService } from '../../../share/services/common-data/common-data.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class RoomRoomComponent implements OnInit{
   
   constructor(private service: RoomService,
     private router: Router,
-    signalService: RoomSignalRService,
+    private signalService: RoomSignalREventService,
     dataService: CommonDataService) {
     service.RoomDataChanged.subscribe(() => this.load());
     signalService.RoomStarted.subscribe((gameId) => {
@@ -40,10 +40,12 @@ export class RoomRoomComponent implements OnInit{
 
   private load() {
     let roomData = this.service.GetRoomData;
-    if (roomData === null) {
+    if (!roomData) {
       this.router.navigate([this.LobbyPath]);
       return;
     }
+
+    this.signalService.goInGroup(roomData.hostID.toString());
 
     this.roomInfo.Show(roomData);
 
@@ -51,7 +53,7 @@ export class RoomRoomComponent implements OnInit{
     var teamSet = this.teamSet;
     roomData.players.forEach((p) => {
       teamSet.Add(RoomPlayerComponent, p);
-    })
+    });
   }
 
   public LeaveRoom() {

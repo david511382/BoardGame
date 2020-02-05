@@ -13,20 +13,25 @@ export class SignalRService {
 
   constructor() {
     this._hubs = new Map<HubEnum, SignalRHub>();
-
-    var gameRoomUrl = "/gameRoomHub";
-    var gameRoomHub = new SignalRHub(gameRoomUrl);
-    gameRoomHub.ConnectionErrHandler.subscribe((err) => this.connectionErrHandler(gameRoomHub, err));
-    gameRoomHub.ConnectionEstablished.subscribe(() => this.startConnectionHandler(gameRoomHub));
-    this._hubs.set(HubEnum.GameRoom, gameRoomHub);
   }
 
-  public Send(hubId: HubEnum, channel: string, data?: any) {
+  public create(hubEnum: HubEnum, url: string, startHandler: (h: SignalRHub) => void) {
+    var hub = this._hubs.get(hubEnum);
+    if (hub)
+      return;
+
+    hub = new SignalRHub(url);
+    hub.ConnectionErrHandler.subscribe((err) => this.connectionErrHandler(hub, err));
+    hub.ConnectionEstablished.subscribe(() => this.startConnectionHandler(hub, startHandler));
+    this._hubs.set(hubEnum, hub);
+  }
+
+  public send(hubId: HubEnum, channel: string, data?: any) {
     var hub = this._hubs.get(hubId);
     hub.Send(channel, data);
   }
 
-  public RegisterOnServerEvents(hubId: HubEnum, channel: string, handler: (...args: any[]) => void): void {
+  public registerOnServerEvents(hubId: HubEnum, channel: string, handler: (...args: any[]) => void): void {
     var hub = this._hubs.get(hubId);
     var isFirstRegistered = !hub.isRegistered;
 
@@ -36,9 +41,9 @@ export class SignalRService {
       hub.StartConnection();
   }
 
-  private startConnectionHandler(hub: SignalRHub) {
+  private startConnectionHandler(hub: SignalRHub, startHandler: (h: SignalRHub) => void) {
     console.log('Hub connection started');
-    hub.Send("GetConnectionId");
+    startHandler(hub);
   }
 
   private connectionErrHandler(hub: SignalRHub, err: any) {

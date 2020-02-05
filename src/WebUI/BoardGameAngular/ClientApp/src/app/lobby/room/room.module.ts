@@ -14,6 +14,7 @@ import { GameService } from './game.service';
 import { RoomCreateComponent } from './create/create.component';
 import { RoomPlayerComponent } from './room/player/player.component';
 import { RoomRoomComponent } from './room/room.component';
+import { RoomSignalREventService } from './signalr-event.service';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { RoomRoomComponent } from './room/room.component';
     UrlConfigService,
     RoomService,
     GameService,
+    RoomSignalREventService
   ],
   imports: [
     HttpModule,

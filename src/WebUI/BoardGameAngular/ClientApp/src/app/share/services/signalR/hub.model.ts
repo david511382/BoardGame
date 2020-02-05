@@ -27,7 +27,8 @@ export class SignalRHub {
   public Send(channel: string, data?: any) {
     if (data !== undefined)
       this._hubConnection.invoke(channel, data);
-    this._hubConnection.invoke(channel);
+    else
+      this._hubConnection.invoke(channel);
   }
 
   public RegisterOnServerEvents(channel: string, handler: (...args: any[]) => void): void {
