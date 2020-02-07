@@ -22,7 +22,7 @@ namespace BigTwoLogic
             base.currentTurn = data.CurrentTurn;
             IsFreeType = data.IsFreeType;
             IsRequiredClub3 = data.IsRequiredClub3;
-            _table = data.Table;
+            Table = data.Table;
         }
 
         public override string ExportData()
@@ -33,7 +33,7 @@ namespace BigTwoLogic
                 IsFreeType = IsFreeType,
                 IsRequiredClub3 = IsRequiredClub3,
                 GameStatus = _gameStaus,
-                Table = _table,
+                Table = Table,
                 LastPlayTurnId = _lastPlayTurnId,
                 PlayerResources = _playerResources.Select((p) => p as PokerResource).ToArray()
             };
@@ -134,7 +134,10 @@ namespace BigTwoLogic
                     {
                         result = bufResult;
 
-                        bool isUseSameContainCard = PokerCardGroup.Intersect(bufResult, containCard.ToArray()).Length == containCard.Count;
+                        bool isUseSameContainCard = PokerCardGroup.Intersect(
+                                                        bufResult,
+                                                        containCard.ToArray()
+                                                        ).Length == containCard.Count;
                         if (isUseSameContainCard)
                             break;
                     }
@@ -142,7 +145,7 @@ namespace BigTwoLogic
 
                 if (result == null)
                     throw new Exception();
-            });
+            }, true);
 
             return result.OrderBy(d => d.Number).ThenBy(d => d.Suit).ToArray();
         }
@@ -215,7 +218,7 @@ namespace BigTwoLogic
             }
 
             //play
-            _table.Put(cardGroup);
+            Table.Put(cardGroup);
 
             IsFreeType = false;
             IsRequiredClub3 = false;

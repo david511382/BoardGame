@@ -1,12 +1,11 @@
 ﻿using GameLogic.Domain;
-using GameLogic.Player;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GameLogic.Game
 {
-    public abstract partial class BoardGame
+    public abstract partial class BoardGame<TBoardItem> : IBoardGame where TBoardItem : GameObj
     {
         protected readonly int MAX_GAME_PLAYERS = 4;
         protected readonly int MIN_GAME_PLAYERS = 2;
@@ -25,7 +24,7 @@ namespace GameLogic.Game
         }
 
         protected List<PlayerResource> _playerResources;
-        protected GameBoard _table;
+        protected GameBoard<TBoardItem> Table;
         private int _currentTurn;
         protected GameStatus _gameStaus;
 
@@ -42,13 +41,13 @@ namespace GameLogic.Game
             MIN_GAME_PLAYERS = minPlayers;
 
             _playerResources = new List<PlayerResource>();
-            _table = new GameBoard();
+            Table = new GameBoard<TBoardItem>();
             _gameStaus = new GameStatus(GameState.Game_Over);
         }
 
-        public GameBoard GetTable()
+        public GameBoard<TBoardItem> GetTable()
         {
-            return _table;
+            return Table;
         }
 
         public virtual PlayerResource GetResource(int playerId)
@@ -59,18 +58,7 @@ namespace GameLogic.Game
 
             return target.First();
         }
-
-        public T GetResource<T>(int playerId) where T : PlayerResource
-        {
-            IEnumerable<PlayerResource> target = _playerResources.Where(d => d.PlayerId == playerId).Take(1);
-            if (target.Count() == 0)
-                throw new Exception("unknow player");
-
-            return (T)target.First();
-        }
-
-        public abstract GamePlayer CreatePlayer(PlayerInfo playerInfo);
-
+        
         protected virtual PlayerResource GetResourceAt(int i)
         {
             return _playerResources[i];

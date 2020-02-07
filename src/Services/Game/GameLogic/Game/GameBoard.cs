@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace GameLogic.Game
 {
-    public class GameBoard
+    public class GameBoard<TItem> where TItem : GameObj
     {
-        List<GameObj> _items;
+        public List<TItem> Items;
 
         public GameBoard()
         {
-            _items = new List<GameObj>();
+            Items = new List<TItem>();
         }
 
-        public void Put(GameObj item)
+        public void Put(TItem item)
         {
-            _items.Add(item);
+            Items.Add(item);
         }
 
-        public GameObj GetLastItem()
+        public TItem GetLastItem()
         {
-            return _items.LastOrDefault();
+            return Items.LastOrDefault();
         }
     }
 }

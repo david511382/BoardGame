@@ -40,13 +40,22 @@ namespace BoardGame.GameLogicTests.BigTwoTest
 
             PokerCard currentMax = new PokerCard(PokerSuit.Heart, 2);
 
-            PokerCard[] selectCards = new PokerCard[]
+            PokerCard[] selectCards = new PokerCard[0];
+
+            PokerCard[] result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(PokerGroupType.Pair, handCards.ToList(), selectCards, currentMax);
+            PokerCard[] expectResult = {
+                new PokerCard(PokerSuit.Club,2),
+                new PokerCard(PokerSuit.Spade,2)
+            };
+            CheckEqualPokerCards(result, expectResult);
+
+            selectCards = new PokerCard[]
              {
                  new PokerCard(PokerSuit.Heart,1)
              };
 
-            PokerCard[] result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(PokerGroupType.Full_House, handCards.ToList(), selectCards, currentMax);
-            PokerCard[] expectResult = {
+            result = PokerCardGroup.GetMinCardGroupInGroupTypeGreaterThenCard<BigTwoCardGroupModel>(PokerGroupType.Full_House, handCards.ToList(), selectCards, currentMax);
+            expectResult = new PokerCard[]{
                     new PokerCard(PokerSuit.Club,1),
                     new PokerCard(PokerSuit.Heart,1),
                     new PokerCard(PokerSuit.Club,2),

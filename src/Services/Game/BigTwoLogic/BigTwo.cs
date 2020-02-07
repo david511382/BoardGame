@@ -1,5 +1,4 @@
 ﻿using GameLogic.Game;
-using GameLogic.Player;
 using GameLogic.PokerGame;
 using GameLogic.PokerGame.CardGroup;
 using GameLogic.PokerGame.Game;
@@ -17,7 +16,7 @@ namespace BigTwoLogic
             public bool IsFreeType;
             public bool IsRequiredClub3;
             public GameStatus GameStatus;
-            public GameBoard Table;
+            public GameBoard<PokerCardGroup> Table;
             public PokerResource[] PlayerResources;
             public int LastPlayTurnId;
         }
@@ -50,11 +49,11 @@ namespace BigTwoLogic
         {
             get
             {
-                GameObj tableLastItem = _table.GetLastItem();
+                PokerCardGroup tableLastItem = Table.GetLastItem();
                 if (tableLastItem == null)
                     return null;
 
-                return (PokerCardGroup)tableLastItem;
+                return tableLastItem;
             }
         }
 
@@ -68,11 +67,6 @@ namespace BigTwoLogic
         public new PokerResource GetResource(int playerId)
         {
             return base.GetResource(playerId) as PokerResource;
-        }
-
-        public override GamePlayer CreatePlayer(PlayerInfo playerInfo)
-        {
-            return new BigTwoPlayer(playerInfo);
         }
 
         protected override void InitGame()
@@ -99,12 +93,13 @@ namespace BigTwoLogic
             ++currentTurn;
         }
 
-        private void tryAllUntilExcetion(List<PokerCard> selectedCards, Action<PokerCard[]> action)
+        private void tryAllUntilExcetion(List<PokerCard> selectedCards, Action<PokerCard[]> action, bool includeEmpty = false)
         {
             List<PokerCard> cards = new List<PokerCard>();
             cards.AddRange(selectedCards);
 
-            for (; cards.Count > 0; cards.RemoveAt(0))
+            int endCount = (includeEmpty) ? 0 : 1;
+            for (; cards.Count >= endCount; cards.RemoveAt(0))
             {
                 try
                 {

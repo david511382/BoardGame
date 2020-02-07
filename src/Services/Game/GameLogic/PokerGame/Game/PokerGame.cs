@@ -1,11 +1,12 @@
-﻿using System;
+﻿using GameLogic.PokerGame.CardGroup;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace GameLogic.PokerGame.Game
 {
-    public abstract class PokerGame : GameLogic.Game.BoardGame
+    public abstract class PokerGame : GameLogic.Game.BoardGame<PokerCardGroup>
     {
         protected Poker _poker;
 

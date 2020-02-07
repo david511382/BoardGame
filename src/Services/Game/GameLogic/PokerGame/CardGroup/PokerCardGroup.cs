@@ -1,8 +1,5 @@
 ﻿using GameLogic.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace GameLogic.PokerGame.CardGroup
 {
@@ -15,13 +12,13 @@ namespace GameLogic.PokerGame.CardGroup
             dontCare
         }
 
-        private PokerCard[] _cards;
-        private PokerGroupType _groupType;
-        private PokerCard _maxCard;
+        public PokerCard[] Cards;
+        public PokerGroupType GroupType;
+        public PokerCard MaxCard;
 
         public PokerCardGroup()
         {
-            _maxCard = null;
+            MaxCard = null;
         }
 
         public PokerCardGroup(PokerCard[] cards)
@@ -40,27 +37,27 @@ namespace GameLogic.PokerGame.CardGroup
                 return;
             }
 
-            _groupType = type;
-            _cards = cards;
-            _maxCard = GetMaxValueOfCardGroup<CardGroupModel>(_cards);
+            GroupType = type;
+            Cards = cards;
+            MaxCard = GetMaxValueOfCardGroup<CardGroupModel>(Cards);
         }
 
         public PokerCard GetMaxValue()
         {
-            return _maxCard;
+            return MaxCard;
         }
 
         public PokerCard[] GetCards()
         {
-            return _cards;
+            return Cards;
         }
 
         public PokerGroupType GetGroupType()
         {
-            if (_maxCard == null)
+            if (MaxCard == null)
                 throw new Exception("no type");
 
-            return _groupType;
+            return GroupType;
         }
     }
 }

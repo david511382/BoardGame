@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GameLogic.Game
+﻿namespace GameLogic.Game
 {
     public abstract class GameObj
     {

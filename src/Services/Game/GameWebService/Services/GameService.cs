@@ -11,7 +11,7 @@ namespace GameWebService.Services
     {
         public GameStatusModel InitGame(GameStatusModel gameStatus)
         {
-            BoardGame game = LoadGame(gameStatus);
+            IBoardGame game = LoadGame(gameStatus);
 
             foreach (int pId in gameStatus.Room.Players.Select((p) => p.ID).ToArray())
                 game.Join(pId);
@@ -22,9 +22,9 @@ namespace GameWebService.Services
             return gameStatus;
         }
 
-        public BoardGame LoadGame(GameStatusModel gameStatus)
+        public IBoardGame LoadGame(GameStatusModel gameStatus)
         {
-            BoardGame game;
+            IBoardGame game;
             switch ((GameEnum)gameStatus.Room.Game.ID)
             {
                 case GameEnum.BigTwo:
