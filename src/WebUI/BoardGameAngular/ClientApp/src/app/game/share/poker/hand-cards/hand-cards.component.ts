@@ -53,22 +53,21 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
     return this.dragData.draggingCardData !== null;
   }
 
-  public cardWidth: number = 160;
-  private get scaleCardHeight() {
+  public cardWidth: number = 156;
+  private get scaleCardWidth() {
     return this.cardWidth * this.scale;
   }
   public get cardHeight() {
-    return this.scaleCardHeight * 1.5;
+    return this.scaleCardWidth * 1.5;
   }
-  
   private get cardShowWidth(): number {
-    return this.cardShowRate * this.scaleCardHeight;
+    return this.cardShowRate * this.scaleCardWidth - this.cardBoarderWidth;
   } 
-  private readonly CARD_BORDER_WIDTH = 2;
-  private readonly CARD_SELECTED_UP_TOP = -100;
   private get CARD_HIDE_WIDTH() {
-    return this.scaleCardHeight - this.cardShowWidth - this.CARD_BORDER_WIDTH;
+    return this.scaleCardWidth - this.cardBoarderWidth - this.cardShowWidth;
   }
+  public readonly cardBoarderWidth = 2;
+  private readonly CARD_SELECTED_UP_TOP = -100;
 
   private readonly MAX_SELECTED_CARD= 6;
 
@@ -202,7 +201,7 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
       }
       else
         lefts.push(left);
-      left += this.scaleCardHeight;
+      left += this.scaleCardWidth;
     });
 
     var viewArr = this.pokerCardViews.toArray();

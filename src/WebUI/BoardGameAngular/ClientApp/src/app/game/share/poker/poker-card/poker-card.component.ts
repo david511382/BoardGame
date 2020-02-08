@@ -68,6 +68,7 @@ export class CardComponent{
   @Input() scale = 1;
   @Input() width= 160;
   @Input() height = 240;
+  @Input() boarderWidth = 2;
 
   @Output() MouseEnterEvent = new EventEmitter<any>();
   @Output() MouseLeaveEvent = new EventEmitter<any>();

@@ -6,6 +6,7 @@
                          [scale]="scale"
                          [width]="cardWidth"
                          [height]="cardHeight"
+                         [boarderWidth]="cardBoarderWidth"
                          [cdkDragDisabled]="isDragging || !viewCard.isSelecting"
                          [cdkDragData]="viewCard.card"
                          (cdkDragStarted)="dragStartedEvent.emit($event)"
