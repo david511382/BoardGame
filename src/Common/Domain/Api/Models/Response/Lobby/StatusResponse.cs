@@ -7,6 +7,9 @@ namespace Domain.Api.Models.Response.Lobby
         public RoomModel Room { get; set; }
         public bool IsInRoom { get; set; }
         public bool IsInGame { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Username { get; set; }
 
         public StatusResponse()
         {

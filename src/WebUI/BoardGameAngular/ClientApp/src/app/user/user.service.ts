@@ -10,8 +10,12 @@ export class LoginRequest {
   constructor(public Username: string, public Password: string) {}
 }
 
-export class UserInfoModel {
+export class UserInfoRequest{
   constructor(public Name: string,public Username: string, public Password: string) { }
+}
+
+export class UserInfoModel {
+  constructor(public Name: string, public Username: string) { }
 }
 
 interface LoginResponse extends GeneralResponse {
@@ -23,31 +27,19 @@ interface LoginResponse extends GeneralResponse {
   providedIn: 'root',//singleton 
 })
 export class UserService {
-  public UserInfo: UserInfoModel
-
-  private readonly backendUrl: UserUrl
-  
-  constructor(private http: HttpClient, config: UrlConfigService, private authService: AuthService) {
-    this.backendUrl = config.userBackendUrl;
-    this.UserInfo = new UserInfoModel("", "", "");
+  public get userInfo(): UserInfoModel {
+    var dataBuf = this.authService.userDataBuffer;
+    if (dataBuf)
+      return new UserInfoModel(dataBuf.name, dataBuf.username);
+    return null;
   }
-  
-  public LoadInfo(){
-    if (this.authService.canActivate(null, null)) {
-      return this.http.get<LoginResponse>(this.backendUrl.Info)
-        .pipe(catchError(HandleErrorFun()),
-          tap(resp => {
-            if (resp.isError) {
-              return;
-            }
 
-            this.updateUserInfo(resp.name, resp.username);
-          }))
-        .toPromise();
-    }
-    else {
-      return () => { };
-    }
+  private readonly backendUrl: UserUrl;
+  
+  constructor(private http: HttpClient,
+    config: UrlConfigService,
+    private authService: AuthService) {
+    this.backendUrl = config.userBackendUrl;
   }
 
   public Login(request: LoginRequest): Observable<LoginResponse> {
@@ -79,7 +71,7 @@ export class UserService {
       ));
   }
 
-  public RegisterAndLogin(request: UserInfoModel): Observable<LoginResponse> {
+  public RegisterAndLogin(request: UserInfoRequest): Observable<LoginResponse> {
     if (!request.Name || request.Name === "") {
       alert("請輸入名稱");
       return;
@@ -108,14 +100,14 @@ export class UserService {
       ));
   }
 
-  public Update(request: UserInfoModel): Observable<SuccessResponse> {
+  public Update(request: UserInfoRequest): Observable<SuccessResponse> {
     if (!request.Name || request.Name === "") {
       alert("請輸入名稱");
-      return;
+      return null;
     }
     if (!request.Username || request.Username === "") {
       alert("請輸入使用者名稱");
-      return;
+      return null;
     }
     
     return this.http.put<SuccessResponse>(
@@ -129,10 +121,9 @@ export class UserService {
       }));
   }
 
-  private updateUserInfo(name:string, username:string) {
-    this.UserInfo.Name = name;
-    this.UserInfo.Username = username;
-    this.UserInfo.Password = null;
+  public updateUserInfo(name: string, username: string) {
+    this.authService.userDataBuffer.name = name;
+    this.authService.userDataBuffer.username = username;
   }
 }
 

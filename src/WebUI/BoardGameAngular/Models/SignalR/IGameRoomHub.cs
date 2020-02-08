@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BoardGameAngular.Models.SignalR
 {
-    public interface IGameRoomHub : IConnectionHub
+    public interface IGameRoomHub : IConnectionHub, IBigTwoHub
     {
         Task RoomOpened();
         Task RoomPlayerChanged(RoomModel roomData);

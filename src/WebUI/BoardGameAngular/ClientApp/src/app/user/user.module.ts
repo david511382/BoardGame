@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { LoginComponent } from './login/login.component';
@@ -23,19 +23,13 @@ import { AuthService } from '../auth/auth.service';
     UserInfoComponent,
     LoginComponent,
     RegisterComponent,
-    UpdateComponent,
+    UpdateComponent
   ],
   providers: [
     UrlConfigService,
     CookieService,
     UserService,
-    AuthService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (authService: UserService) => () => authService.LoadInfo(),
-      deps: [UserService, AuthService],
-      multi: true
-    }
+    AuthService
   ],
   imports: [
     HttpModule,

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -10,8 +10,9 @@ import { RootRoutes } from './nav-menu/route.const';
 import { UserModule } from './user/user.module';
 import { GuestService } from './auth/guest.service';
 import { GameModule } from './game/game.module';
-import { LobbyService } from './lobby/lobby.service';
 import { LobbyModule } from './lobby/lobby.module';
+import { AuthService } from './auth/auth.service';
+import { SignalRModule } from './signalR/signalR.module';
 
 @NgModule({
   declarations: [
@@ -28,10 +29,17 @@ import { LobbyModule } from './lobby/lobby.module';
     UserModule,
     LobbyModule,
     GameModule,
+    SignalRModule
   ],
   providers: [
     GuestService,
-    LobbyService
+    AuthService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (authService: AuthService) => () => authService.getUserStatus(),
+      deps: [AuthService],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { SetItemComponent } from '../../../../share/set/set-item.component';
-import { UserModel } from '../../room.service';
+import { UserModel } from '../../../../domain/user-status-model.const';
 
 @Component({
   selector: 'app-lobby-room-room-player',
@@ -26,8 +26,6 @@ export class RoomPlayerComponent implements SetItemComponent{
         return "gray";
     }
   }
-
-  constructor() {}
 
   public Init(info: UserModel) {
     this.name = info.name;

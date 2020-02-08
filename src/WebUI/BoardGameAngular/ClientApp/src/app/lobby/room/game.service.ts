@@ -4,15 +4,7 @@ import { Observable  } from "rxjs";
 import { catchError } from 'rxjs/operators';
 import { GeneralResponse, HandleErrorFun } from '../../domain/response.const';
 import { UrlConfigService, GameUrl } from '../../config/config.service';
-
-export class GameModel {
-  constructor(
-    public id: number,
-    public name: string,
-    public description: string,
-    public maxPlayerCount: number,
-    public minPlayerCount: number) { }
-}
+import { GameModel } from '../../domain/user-status-model.const';
 
 interface ListResponse extends GeneralResponse {
   games: GameModel[],
@@ -22,7 +14,7 @@ interface ListResponse extends GeneralResponse {
   providedIn: 'root',//singleton 
 })
 export class GameService {
-  private readonly backendUrl: GameUrl
+  private readonly backendUrl: GameUrl;
   
   constructor(private http: HttpClient, config: UrlConfigService) {
     this.backendUrl = config.gameBackendUrl;

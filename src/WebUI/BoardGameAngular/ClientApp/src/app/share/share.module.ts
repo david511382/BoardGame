@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TextBoxComponent } from './text-box/text-box.component';
 import { SetComponent } from './set/set.component';
 import { ViewContainerDirective } from './view-container/view-container.directive';
-import { SignalRService } from './services/signalR/signalr-manager.service';
 import { CommonDataService } from './services/common-data/common-data.service';
 
 @NgModule({
@@ -23,7 +22,6 @@ import { CommonDataService } from './services/common-data/common-data.service';
     FormsModule
   ],
   providers: [
-    SignalRService,
     CommonDataService
   ],
   entryComponents: [

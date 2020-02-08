@@ -16,6 +16,7 @@ import { RoomPlayerComponent } from './room/player/player.component';
 import { RoomRoomComponent } from './room/room.component';
 import { RoomSignalREventService } from './signalr-event.service';
 import { AuthService } from '../../auth/auth.service';
+import { SignalRModule } from '../../signalR/signalR.module';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { AuthService } from '../../auth/auth.service';
     ShareModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SignalRModule
   ],
   entryComponents: [
     GameRoomComponent,

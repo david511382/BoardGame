@@ -172,29 +172,6 @@ namespace AuthWebService.Controllers
                 });
         }
 
-        /// <summary>
-        /// 取得會員資料
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("")]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get()
-        {
-            return await _responseService.Init<LoginResponse>(this, _logger)
-                .ValidateToken((x) => { })
-                .Do<LoginResponse>(async (result, user) =>
-                {
-                    result.Username = user.Username;
-                    result.Name = user.Name;
-
-                    return result;
-                });
-        }
-
         private void vailidateUserPsw(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username) ||

@@ -1,5 +1,4 @@
 import { Component, ViewChild, TemplateRef } from '@angular/core';
-import { GameSignalREventService } from './signalr-event.service';
 import { CommonDataService } from '../share/services/common-data/common-data.service';
 
 enum gameEnum {
@@ -10,7 +9,6 @@ enum gameEnum {
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css'],
-  providers: [GameSignalREventService]
 })
 export class GameMainComponent{
   @ViewChild('Loading', { static: true }) LoadingPage: TemplateRef<any>;

@@ -40,22 +40,6 @@
         "AllowedScopes": []
       }
     },
-    {
-      "DownstreamPathTemplate": "/api/User",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 53694
-        }
-      ],
-      "UpstreamPathTemplate": "/api/User",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
-    },
     // game
     {
       "DownstreamPathTemplate": "/api/Game/List",

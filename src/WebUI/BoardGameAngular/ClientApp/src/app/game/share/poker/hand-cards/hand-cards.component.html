@@ -1,14 +1,14 @@
 <ng-container *ngFor="let viewCard of viewCards">
-    <game-share-poker-card #pokerCard
-                           [style.left.px]="viewCard.left"
-                           [style.top.px]="viewCard.top"
-                           [data]="viewCard.card"
-                           [cdkDragDisabled]="isDragging || !viewCard.isSelecting"
-                           [cdkDragData]="viewCard.card"
-                           (cdkDragStarted)="dragStartedEvent.emit($event)"
-                           (cdkDragReleased)="dragSelectingCardsReleaseEvent($event)"
-                           (cdkDragMoved)="dragMoveEvent.emit($event)"
-                           [cdkDragFreeDragPosition]="dragData.dragPosition"
-                           cdkDrag>
-    </game-share-poker-card>
+  <game-share-poker-card #pokerCard
+                         [style.left.px]="viewCard.left"
+                         [style.top.px]="viewCard.top"
+                         [data]="viewCard.card"
+                         [cdkDragDisabled]="isDragging || !viewCard.isSelecting"
+                         [cdkDragData]="viewCard.card"
+                         (cdkDragStarted)="dragStartedEvent.emit($event)"
+                         (cdkDragReleased)="dragSelectingCardsReleaseEvent($event)"
+                         (cdkDragMoved)="dragMoveEvent.emit($event)"
+                         [cdkDragFreeDragPosition]="dragData.dragPosition"
+                         cdkDrag>
+  </game-share-poker-card>
 </ng-container>

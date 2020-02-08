@@ -15,7 +15,7 @@ export class SignalRService {
     this._hubs = new Map<HubEnum, SignalRHub>();
   }
 
-  public create(hubEnum: HubEnum, url: string, startHandler: (h: SignalRHub) => void) {
+  public create(hubEnum: HubEnum, url: string, startHandler?: (h: SignalRHub) => void) {
     var hub = this._hubs.get(hubEnum);
     if (hub)
       return;
@@ -24,6 +24,8 @@ export class SignalRService {
     hub.ConnectionErrHandler.subscribe((err) => this.connectionErrHandler(hub, err));
     hub.ConnectionEstablished.subscribe(() => this.startConnectionHandler(hub, startHandler));
     this._hubs.set(hubEnum, hub);
+
+    hub.StartConnection();
   }
 
   public send(hubId: HubEnum, channel: string, data?: any) {
@@ -33,17 +35,13 @@ export class SignalRService {
 
   public registerOnServerEvents(hubId: HubEnum, channel: string, handler: (...args: any[]) => void): void {
     var hub = this._hubs.get(hubId);
-    var isFirstRegistered = !hub.isRegistered;
-
     hub.RegisterOnServerEvents(channel, handler);
-
-    if (isFirstRegistered)
-      hub.StartConnection();
   }
 
-  private startConnectionHandler(hub: SignalRHub, startHandler: (h: SignalRHub) => void) {
+  private startConnectionHandler(hub: SignalRHub, startHandler?: (h: SignalRHub) => void) {
     console.log('Hub connection started');
-    startHandler(hub);
+    if (startHandler)
+      startHandler(hub);
   }
 
   private connectionErrHandler(hub: SignalRHub, err: any) {

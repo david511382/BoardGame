@@ -1,5 +1,5 @@
-import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
-import { UserService, UserInfoModel } from '../user.service';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { UserService, UserInfoRequest } from '../user.service';
 import { UserInfoComponent } from '../info/info.component';
 
 @Component({
@@ -7,26 +7,26 @@ import { UserInfoComponent } from '../info/info.component';
   templateUrl: './update.component.html',
   styleUrls: ['./update.component.css'],
 })
-export class UpdateComponent {
-  @ViewChild(UserInfoComponent, { static: false }) UserInfo: UserInfoComponent;
+export class UpdateComponent implements AfterViewInit {
+  @ViewChild(UserInfoComponent, { static: false }) userInfo: UserInfoComponent;
 
-  constructor(private service: UserService) {
-    setTimeout(() => this.onLoad(), 0);
+  constructor(private service: UserService) {}
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.userInfo.name = this.service.userInfo.Name;
+      this.userInfo.username = this.service.userInfo.Username;
+      this.userInfo.password = null;
+    },0);
   }
-
-  private onLoad() {
-    this.UserInfo.name = this.service.UserInfo.Name;
-    this.UserInfo.username = this.service.UserInfo.Username;
-    this.UserInfo.password = this.service.UserInfo.Password;
-  }
-
+  
   public Update() {
-    var request = new UserInfoModel(this.UserInfo.name, this.UserInfo.username, this.UserInfo.password);
+    var request = new UserInfoRequest(this.userInfo.name, this.userInfo.username, this.userInfo.password);
     var ob = this.service.Update(request);
     if (ob)
       ob.subscribe((resp) => {
         if (resp.isError) {
-          alert(resp.errorMessage)
+          alert(resp.errorMessage);
           return;
         }
 

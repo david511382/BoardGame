@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { RoomModel } from '../../room.service';
 import { SetItemComponent } from '../../../../share/set/set-item.component';
-import { GameModel } from '../../game.service';
+import { RoomModel, GameModel } from '../../../../domain/user-status-model.const';
 
 @Component({
   selector: 'app-lobby-room-list-game-room',

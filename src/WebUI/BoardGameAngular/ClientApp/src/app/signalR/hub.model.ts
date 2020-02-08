@@ -4,13 +4,16 @@ import { EventEmitter } from '@angular/core';
 export class SignalRHub {
   public ConnectionEstablished = new EventEmitter<Boolean>();
   public ConnectionErrHandler = new EventEmitter<any>();
-
-  public isRegistered: boolean = false;
-
+  
   private connectionIsEstablished = false;
   private _hubConnection: HubConnection;
+  private sendEvents: (() => void)[] = [];
 
-  constructor(url:string) {
+  constructor(url: string) {
+    this.ConnectionEstablished.subscribe(() => {
+      this.sendEvents.forEach((e) => e());
+      this.sendEvents = [];
+    });
     this.createConnection(url);
   }
 
@@ -25,16 +28,17 @@ export class SignalRHub {
   }
 
   public Send(channel: string, data?: any) {
-    if (data !== undefined)
-      this._hubConnection.invoke(channel, data);
-    else
-      this._hubConnection.invoke(channel);
+    if (!this.connectionIsEstablished)
+      this.sendEvents.push(() => this.Send(channel, data));
+    else {
+      if (data !== undefined)
+        this._hubConnection.invoke(channel, data);
+      else
+        this._hubConnection.invoke(channel);
+    }
   }
 
   public RegisterOnServerEvents(channel: string, handler: (...args: any[]) => void): void {
-    if (!this.isRegistered) 
-      this.isRegistered = true;
-
     this._hubConnection.on(channel, handler);
   }
 

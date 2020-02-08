@@ -4,23 +4,9 @@ import { Observable  } from "rxjs";
 import { catchError, tap } from 'rxjs/operators';
 import { GeneralResponse, HandleErrorFun, SuccessResponse } from '../../domain/response.const';
 import { UrlConfigService, RoomUrl } from '../../config/config.service';
-import { GameModel } from './game.service';
 import { RoomSignalREventService } from './signalr-event.service';
 import { AuthService } from '../../auth/auth.service';
-
-export class UserModel {
-  constructor(public id: number, public name: string, public username: string) { }
-}
-
-export class RoomModel {
-  constructor(public hostID: number, public game: GameModel, public players: UserModel[]) { }
-}
-
-export class UserStatusModel{
-  constructor(public room: RoomModel,
-    public isInRoom: boolean,
-    public isInGame: boolean) { }
-}
+import { RoomModel } from '../../domain/user-status-model.const';
 
 interface ListResponse extends GeneralResponse {
   rooms: RoomModel[],
@@ -46,30 +32,27 @@ export class RoomService {
   public RoomDataChanged = new EventEmitter<RoomModel>();
 
   public get GetRoomData(): RoomModel {
-    return this.roomData;
+    return this.authService.userDataBuffer.room;
   }
 
   private setRoomData(data: RoomModel) {
-    this.roomData = data;
-    this.RoomDataChanged.emit(this.roomData);
+    this.authService.userDataBuffer.room = data;
+    this.RoomDataChanged.emit(data);
   }
 
   private readonly backendUrl: RoomUrl;
 
-  private roomData: RoomModel;
-
   constructor(
     private http: HttpClient,
     private signalService: RoomSignalREventService,
-    authService:AuthService,
+    private authService:AuthService,
     config: UrlConfigService) {
     this.backendUrl = config.roomBackendUrl;
-    this.roomData = null;
 
-    authService.authChanged.subscribe((isLogin) => {
-      if (!isLogin)
-        this.roomData = null;
-    });
+    authService.userStatusDataChanged.subscribe((data) => this.SetRoomData(data.room));
+    if (authService.userDataBuffer) {
+      this.SetRoomData(this.authService.userDataBuffer.room);
+    }
 
     signalService.RoomPlayerChanged.subscribe((roomData: RoomModel) => this.setRoomData(roomData));
     signalService.RoomClose.subscribe(() => this.setRoomData(null));
@@ -105,7 +88,7 @@ export class RoomService {
 
         if (resp.isSuccess)
           this.setRoomData(resp.room);
-      }))
+      }));
   }
 
   public Join(hostID: number): Observable<RoomResponse> {
@@ -146,7 +129,7 @@ export class RoomService {
           }
 
           if (resp.isSuccess)
-            this.roomData = null;
+            this.setRoomData(null);
         }));
   }
 
@@ -159,7 +142,7 @@ export class RoomService {
           }
 
           if (resp.isSuccess)
-            this.roomData = null;
+            this.setRoomData(null);
         }));
   }
 }

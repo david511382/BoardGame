@@ -1,10 +1,11 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { SetComponent } from '../../../share/set/set.component';
 import { GameInfoComponent } from './gam-info/game-info.component';
-import { GameModel, GameService } from '../game.service';
 import { GameComponent } from './game/game.component';
 import { RoomService } from '../room.service';
 import { Router } from '@angular/router';
+import { GameModel } from '../../../domain/user-status-model.const';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-lobby-room-create',

@@ -5,6 +5,7 @@ using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Game.PokerGame;
 using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
 using GameLogic.PokerGame;
+using GameLogic.PokerGame.CardGroup;
 using GameWebService.Domain;
 using GameWebService.Services;
 using Microsoft.AspNetCore.Http;
@@ -121,14 +122,14 @@ namespace GameWebService.Controllers
         [Route("PlayCards")]
         [HttpPost]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(PlayCardResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PlayCardResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PlayCards([FromBody] IndexesRequest request)
         {
-            return await _responseService.Init<BoolResponseModel>(this, _logger)
+            return await _responseService.Init<PlayCardResponse>(this, _logger)
                .ValidateToken((user) => { })
-               .Do<BoolResponseModel>(async (result, user) =>
+               .Do<PlayCardResponse>(async (result, user) =>
                {
                    BigTwoLogic.BigTwo game;
                    RedisRepository.Models.GameStatusModel redisGameStatus;
@@ -161,6 +162,14 @@ namespace GameWebService.Controllers
                        {
                            await redis.GameStatus.Set(redisGameStatus);
                        }
+
+                       result.Cards = ((PokerCardGroup)game.GetTable().GetLastItem()).GetCards()
+                           .Select((c) => new PockerCardModel
+                           {
+                               Suit = (int) c.Suit,
+                               Number = c.Number
+
+                           }).ToArray();
                    }
 
                    return result;

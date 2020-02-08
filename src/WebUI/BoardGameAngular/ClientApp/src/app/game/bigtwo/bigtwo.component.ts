@@ -2,31 +2,27 @@ import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/co
 import { CardModel } from '../share/poker/poker-card/poker-card.component';
 import { BigTwoService, CardIndexesRequest } from './bigtwo.service';
 import { HandCardsComponent} from '../share/poker/hand-cards/hand-cards.component';
-
-enum GameBoardBorderColor {
-  InitColor = "gray",
-  InColor = "green",
-  OutColor = "red",
-}
+import { GameBoardComponent, BorderColor } from './game-board/game-board.component';
+import { BigtwoSignalREventService } from './bigtwo-signalr-event.service';
 
 @Component({
   selector: 'app-game-bigtwo',
   templateUrl: './bigtwo.component.html',
   styleUrls: ['./bigtwo.component.css'],
-  providers: [BigTwoService]
 })
 export class BigtwoComponent implements OnInit {
   @ViewChild(HandCardsComponent, { static: true }) private handCardView: HandCardsComponent;
-  @ViewChild("gameBoard", { static: true }) private gameBoard: ElementRef;
+  @ViewChild("gameBoard", { static: true }) private gameBoard: GameBoardComponent;
 
   public cards: CardModel[];
 
   constructor(private service: BigTwoService,
-    private renderer: Renderer2) { }
+    private signalService: BigtwoSignalREventService,) { }
 
   ngOnInit(): void {
+    this.signalService.gameBoardUpdateEvent
+      .subscribe((data) => this.gameBoard.putCards(data));
     this.load();
-    this.setGameBoardBoarderColor(GameBoardBorderColor.InitColor);
   }
 
   private getHandCards() {
@@ -45,25 +41,19 @@ export class BigtwoComponent implements OnInit {
       });
   }
 
-  public isMouseOnTable: boolean = false;
   private load() {
     this.cards = [];
     this.getHandCards();
     this.handCardView.selectCardEvent.subscribe((is) => this.selectCard(is));
     this.handCardView.dragStartedEvent.subscribe(() => {
-      this.setGameBoardBoarderColor(GameBoardBorderColor.OutColor);
+      this.gameBoard.setBoarderColor(BorderColor.OutColor);
     });
     this.handCardView.dragMoveEvent.subscribe((e) => {
-      var x = e.pointerPosition.x,y = e.pointerPosition.y;
-      var gbEl = this.gameBoard.nativeElement;
-      this.isMouseOnTable = x >= gbEl.offsetLeft && x <= gbEl.offsetLeft + gbEl.offsetWidth &&
-        y >= gbEl.offsetTop && y <= gbEl.offsetTop + gbEl.offsetHeight;
-
-      var gameBoardBorderColor = (this.isMouseOnTable) ? GameBoardBorderColor.InColor : GameBoardBorderColor.OutColor;
-      this.setGameBoardBoarderColor(gameBoardBorderColor);
+      var x = e.pointerPosition.x, y = e.pointerPosition.y;
+      this.gameBoard.dragOn(x,y);
     });
     this.handCardView.playCardsEvent.subscribe((cardIndexes) => {
-      if (this.isMouseOnTable)
+      if (this.gameBoard.isMouseOnTable)
         this.playCards(cardIndexes);
       else
         this.handCardView.dragCardsCancel();
@@ -105,12 +95,8 @@ export class BigtwoComponent implements OnInit {
           return;
         }
 
-        this.setGameBoardBoarderColor(GameBoardBorderColor.InitColor);
+        this.gameBoard.setBoarderColor(BorderColor.InitColor);
         this.handCardView.useDraggingCards();
       });
-  }
-
-  private setGameBoardBoarderColor(color: GameBoardBorderColor) {
-    this.renderer.setStyle(this.gameBoard.nativeElement, "border-color", color);
   }
 }

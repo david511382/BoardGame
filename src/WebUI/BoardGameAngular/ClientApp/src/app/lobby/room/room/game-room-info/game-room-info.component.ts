@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RoomModel } from '../../room.service';
+import { RoomModel } from '../../../../domain/user-status-model.const';
 
 @Component({
   selector: 'app-lobby-room-list-game-room-info',

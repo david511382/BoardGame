@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { RoomModel } from './room.service';
-import { RoomSignalRService } from '../../share/services/signalR/room-signalr.service';
+import { RoomModel } from '../../domain/user-status-model.const';
+import { RoomSignalRService } from '../../signalR/room-signalr.service';
 
 @Injectable()
 export class RoomSignalREventService {
@@ -15,10 +15,6 @@ export class RoomSignalREventService {
     this.connectionId = this.signalRService.connectionId;
     this.signalRService.connectIdEvent.subscribe((id) => this.connectionId = id);
     this.registerChannel();
-  }
-
-  public goInGroup(roomId: string) {
-    this.signalRService.send("GoInGroup", roomId);
   }
 
   private registerChannel() {

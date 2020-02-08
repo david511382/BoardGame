@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { UrlConfigService, BigTwoUrl } from '../../config/config.service';
 import { HandleErrorFun, GeneralResponse, SuccessResponse } from '../../domain/response.const';
 import { Observable } from 'rxjs';
+import { BigtwoSignalREventService } from './bigtwo-signalr-event.service';
 
 export class CardIndexesRequest {
   Indexes :number[]
 }
 
-interface CardResponseModel{
+export interface ICardResponseModel{
   number: number;
   suit: number;
 }
-interface HandCardsResponse extends GeneralResponse {
-  cards: CardResponseModel[]
+interface IHandCardsResponse extends GeneralResponse {
+  cards: ICardResponseModel[]
 }
-interface CardIndexesResponse extends GeneralResponse {
+interface ICardIndexesResponse extends GeneralResponse {
   cardIndexes: number[]
 }
 
@@ -24,26 +25,35 @@ interface CardIndexesResponse extends GeneralResponse {
   providedIn: 'root',//singleton 
 })
 export class BigTwoService {
-  private readonly bigTwoBackendUrl: BigTwoUrl
+  private readonly bigTwoBackendUrl: BigTwoUrl;
 
   constructor(private http: HttpClient,
+    private signalService: BigtwoSignalREventService,
     config: UrlConfigService) {
     this.bigTwoBackendUrl = config.bigTwoBackendUrl;
   }
 
-  public GetHandCards(): Observable<HandCardsResponse> {
-    return this.http.get<HandCardsResponse>(this.bigTwoBackendUrl.HandCards)
+  public GetHandCards(): Observable<IHandCardsResponse> {
+    return this.http.get<IHandCardsResponse>(this.bigTwoBackendUrl.HandCards)
       .pipe(catchError(HandleErrorFun()));
   }
 
-  public SelectCards(request: CardIndexesRequest ): Observable<CardIndexesResponse> {
-    return this.http.post<CardIndexesResponse>(this.bigTwoBackendUrl.SelectCards, request)
+  public SelectCards(request: CardIndexesRequest): Observable<ICardIndexesResponse> {
+    return this.http.post<ICardIndexesResponse>(this.bigTwoBackendUrl.SelectCards, request)
       .pipe(catchError(HandleErrorFun()));
   }
 
   public PlayCards(request: CardIndexesRequest): Observable<SuccessResponse> {
-    return this.http.post<SuccessResponse>(this.bigTwoBackendUrl.PlayCards, request)
-      .pipe(catchError(HandleErrorFun()));
+    var option = {
+      headers: new HttpHeaders()
+        .append("cid", this.signalService.connectionId)
+    };
+
+    return this.http.post<SuccessResponse>(
+      this.bigTwoBackendUrl.PlayCards,
+      request,
+      option
+    ).pipe(catchError(HandleErrorFun()));
   }
 }
 

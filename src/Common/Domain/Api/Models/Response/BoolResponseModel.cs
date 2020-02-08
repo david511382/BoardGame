@@ -15,5 +15,16 @@
             IsSuccess = false;
             Message = msg;
         }
+        public BoolResponseModel()
+        {
+        }
+
+        public BoolResponseModel(BoolResponseModel d)
+        {
+            IsSuccess = d.IsSuccess;
+            ErrorMessage = d.ErrorMessage;
+            IsError = d.IsError;
+            Message = d.Message;
+        }
     }
 }

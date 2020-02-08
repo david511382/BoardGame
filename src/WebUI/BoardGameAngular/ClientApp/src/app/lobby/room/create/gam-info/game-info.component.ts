@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GameModel } from '../../game.service';
+import { GameModel } from '../../../../domain/user-status-model.const';
 
 @Component({
   selector: 'app-lobby-room-list-game-info',

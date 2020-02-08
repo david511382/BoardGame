@@ -41,6 +41,10 @@ namespace LobbyWebService.Controllers
                 .ValidateToken((user) => { })
                 .Do<StatusResponse>(async (result, user, logger) =>
                 {
+                    result.Id = user.Id;
+                    result.Name= user.Name;
+                    result.Username = user.Username;
+
                     UserModel userStatus;
                     try
                     {

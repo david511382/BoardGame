@@ -25,7 +25,7 @@ export class RoomRoomComponent implements OnInit{
   
   constructor(private service: RoomService,
     private router: Router,
-    private signalService: RoomSignalREventService,
+    signalService: RoomSignalREventService,
     dataService: CommonDataService) {
     service.RoomDataChanged.subscribe(() => this.load());
     signalService.RoomStarted.subscribe((gameId) => {
@@ -44,8 +44,6 @@ export class RoomRoomComponent implements OnInit{
       this.router.navigate([this.LobbyPath]);
       return;
     }
-
-    this.signalService.goInGroup(roomData.hostID.toString());
 
     this.roomInfo.Show(roomData);
 

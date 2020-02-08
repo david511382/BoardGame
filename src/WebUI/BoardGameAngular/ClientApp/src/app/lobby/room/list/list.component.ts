@@ -1,11 +1,12 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { SetComponent } from '../../../share/set/set.component';
-import { RoomService, RoomModel } from '../room.service';
+import { RoomService } from '../room.service';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { GameRoomInfoComponent } from '../room/game-room-info/game-room-info.component';
 import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
 import { RoomSignalREventService } from '../signalr-event.service';
+import { RoomModel } from '../../../domain/user-status-model.const';
 
 @Component({
   selector: 'app-lobby-room-list',

@@ -136,30 +136,11 @@ namespace BoardGameAngular.Controllers
                  });
         }
 
-        [HttpGet]
-        [Route("")]
-        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get()
-        {
-            return await _responseService.Init<LoginResponse>(this, _logger)
-                .Do<LoginResponse>(async (result, user) =>
-                {
-                    result = await HttpHelper.HttpRequest.New()
-                          .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
-                          .To(_urlConfig.UserInfo)
-                          .Get<LoginResponse>();
-
-                    return result;
-                });
-        }
-
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Status()
+        public async Task<IActionResult> GetStatus()
         {
             return await _responseService.Init<StatusResponse>(this, _logger)
                .Do<StatusResponse>(async (result, user) =>
