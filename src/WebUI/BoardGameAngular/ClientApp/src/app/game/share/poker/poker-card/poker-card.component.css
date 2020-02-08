@@ -4,8 +4,6 @@ div.board {
   border-style: solid;
   border-collapse: separate;
   border-spacing: 0px 20px;
-  width: 10em;
-  height: 15em;
   background-color: white;
 }
 

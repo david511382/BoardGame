@@ -11,8 +11,6 @@ div.gameboard {
 
 div.lastcards {
   margin: auto;
-  width: 75%;
-  height: 75%;
 }
 div.lastcards game-share-poker-hand-cards {
   position: absolute;

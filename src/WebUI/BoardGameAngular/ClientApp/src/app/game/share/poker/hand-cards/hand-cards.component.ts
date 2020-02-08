@@ -36,8 +36,8 @@ export class ViewCard {
   styleUrls: ['./hand-cards.component.css'],
 })
 export class HandCardsComponent implements OnInit, AfterViewInit{
-  @Input() cardWidth: number = 160;
-  @Input() cardShowWidth: number = 50;
+  @Input() scale = 1;
+  @Input() cardShowRate = 5/16;
   @Input() cards: CardModel[];
   @ViewChildren("pokerCard") private pokerCardViews: QueryList<CardComponent>;
   
@@ -53,10 +53,21 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
     return this.dragData.draggingCardData !== null;
   }
 
+  public cardWidth: number = 160;
+  private get scaleCardHeight() {
+    return this.cardWidth * this.scale;
+  }
+  public get cardHeight() {
+    return this.scaleCardHeight * 1.5;
+  }
+  
+  private get cardShowWidth(): number {
+    return this.cardShowRate * this.scaleCardHeight;
+  } 
   private readonly CARD_BORDER_WIDTH = 2;
   private readonly CARD_SELECTED_UP_TOP = -100;
   private get CARD_HIDE_WIDTH() {
-    return this.cardWidth - this.cardShowWidth - this.CARD_BORDER_WIDTH;
+    return this.scaleCardHeight - this.cardShowWidth - this.CARD_BORDER_WIDTH;
   }
 
   private readonly MAX_SELECTED_CARD= 6;
@@ -191,7 +202,7 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
       }
       else
         lefts.push(left);
-      left += this.cardWidth;
+      left += this.scaleCardHeight;
     });
 
     var viewArr = this.pokerCardViews.toArray();

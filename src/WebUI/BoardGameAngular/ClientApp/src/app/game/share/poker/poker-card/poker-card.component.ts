@@ -65,15 +65,20 @@ export class CardModel {
 })
 export class CardComponent{
   @Input() data: CardModel;
+  @Input() scale = 1;
+  @Input() width= 160;
+  @Input() height = 240;
 
   @Output() MouseEnterEvent = new EventEmitter<any>();
   @Output() MouseLeaveEvent = new EventEmitter<any>();
   @Output() MouseClickEvent = new EventEmitter<any>();
   @Output() DoubleClickEvent = new EventEmitter<any>();
 
-  constructor(
-    public Ref: ElementRef
-  ) { }
+  public get transformCss() {
+    return `scale(${this.scale},${this.scale})`;
+  } 
+
+  constructor(public Ref: ElementRef) { }
 
   public get SuitColor() {
     switch (this.data.Suit) {
