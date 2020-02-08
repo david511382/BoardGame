@@ -2,7 +2,6 @@
 using BoardGameAngular.Services.Config;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
-using Domain.Api.Models.Response.Lobby;
 using Domain.Api.Models.Response.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -134,24 +133,6 @@ namespace BoardGameAngular.Controllers
 
                      return result;
                  });
-        }
-
-        [HttpGet("[action]")]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetStatus()
-        {
-            return await _responseService.Init<StatusResponse>(this, _logger)
-               .Do<StatusResponse>(async (result, user) =>
-               {
-                   result = await HttpHelper.HttpRequest.New()
-                         .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
-                         .To(_urlConfig.UserStatus)
-                         .Get<StatusResponse>();
-                   
-                   return result;
-               });
         }
 
         private async Task<HttpHelper.Domain.Model.ResponseModel> login(string username, string password)

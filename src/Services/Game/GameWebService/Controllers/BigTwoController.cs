@@ -1,11 +1,9 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Game.PokerGame;
 using Domain.Api.Models.Request.Game;
-using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Game.PokerGame;
 using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
 using GameLogic.PokerGame;
-using GameLogic.PokerGame.CardGroup;
 using GameWebService.Domain;
 using GameWebService.Services;
 using Microsoft.AspNetCore.Http;
@@ -128,53 +126,90 @@ namespace GameWebService.Controllers
         public async Task<IActionResult> PlayCards([FromBody] IndexesRequest request)
         {
             return await _responseService.Init<PlayCardResponse>(this, _logger)
-               .ValidateToken((user) => { })
-               .Do<PlayCardResponse>(async (result, user) =>
-               {
-                   BigTwoLogic.BigTwo game;
-                   RedisRepository.Models.GameStatusModel redisGameStatus;
-                   using (RedisContext redis = new RedisContext(_redisConnectString))
-                   {
-                       RedisRepository.Models.UserModel redisUser = await redis.User.Get(user.Id);
-                       bool isNotInGame = redisUser.GameRoomID.Value >= 0;
-                       if (isNotInGame)
-                           throw new Exception("不在遊戲中");
+                .ValidateToken((user) => { })
+                .Do<PlayCardResponse>(async (result, user) =>
+                {
+                    using (RedisContext redis = new RedisContext(_redisConnectString))
+                    {
+                        RedisRepository.Models.UserModel redisUser = await redis.User.Get(user.Id);
+                        bool isNotInGame = redisUser.GameRoomID.Value >= 0;
+                        if (isNotInGame)
+                            throw new Exception("不在遊戲中");
 
-                       int roomID = -redisUser.GameRoomID.Value;
-                       redisGameStatus = await redis.GameStatus.Get(roomID);
-                       if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
-                           throw new Exception("錯誤遊戲");
+                        int roomID = -redisUser.GameRoomID.Value;
+                        RedisRepository.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
+                        if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
+                            throw new Exception("錯誤遊戲");
 
-                       game = _gameService.LoadGame(redisGameStatus) as BigTwoLogic.BigTwo;
-                   }
+                        BigTwoLogic.BigTwo game = _gameService.LoadGame(redisGameStatus) as BigTwoLogic.BigTwo;
 
-                   if (!game.IsTurn(user.Id))
-                   {
-                       result.Fail("不是你的回合");
-                       return result;
-                   }
 
-                   result.IsSuccess = game.PlayCard(user.Id, request.Indexes);
-                   if (result.IsSuccess)
-                   {
-                       redisGameStatus.DataJson = game.ExportData();
-                       using (RedisContext redis = new RedisContext(_redisConnectString))
-                       {
-                           await redis.GameStatus.Set(redisGameStatus);
-                       }
+                        if (!game.IsTurn(user.Id))
+                        {
+                            result.Fail("不是你的回合");
+                            return result;
+                        }
 
-                       result.Cards = ((PokerCardGroup)game.GetTable().GetLastItem()).GetCards()
-                           .Select((c) => new PockerCardModel
-                           {
-                               Suit = (int) c.Suit,
-                               Number = c.Number
+                        result.IsSuccess = game.PlayCard(user.Id, request.Indexes);
+                        if (result.IsSuccess)
+                        {
+                            redisGameStatus.DataJson = game.ExportData();
+                            await redis.GameStatus.Set(redisGameStatus);
 
-                           }).ToArray();
-                   }
+                            result.Cards = game.GetTable().GetLastItem().GetCards()
+                                .Select((c) => new PockerCardModel
+                                {
+                                    Suit = (int)c.Suit,
+                                    Number = c.Number
 
-                   return result;
+                                }).ToArray();
+                        }
+                    }
 
-               });
+                    return result;
+
+                });
+        }
+
+        [HttpGet("GameStatus")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GameStatusResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GameStatusResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GameStatus()
+        {
+            return await _responseService.Init<GameStatusResponse>(this, _logger)
+              .ValidateToken((user) => { })
+              .Do<GameStatusResponse>(async (result, user) =>
+              {
+                  BigTwoLogic.BigTwo game;
+                  using (RedisContext redis = new RedisContext(_redisConnectString))
+                  {
+                      game = await vaildUserGame(redis, user.Id);
+                  }
+
+                  result.TableCards = game.GetTable().Items
+                      .Select((i) =>
+                          i.GetCards()
+                              .Select((c) => new PockerCardModel
+                              {
+                                  Suit = (int)c.Suit,
+                                  Number = c.Number
+                              }).ToArray()
+                      ).ToArray();
+                  result.PlayerCards = game.GetResource()
+                      .Select((r) =>
+                          new GameStatusResponse.PlayerData(
+                              r.PlayerId,
+                              r._handCards.Select((c) => new PockerCardModel
+                              {
+                                  Suit = (int)c.Suit,
+                                  Number = c.Number
+                              }).ToArray()
+                          )).ToArray();
+                  return result;
+
+              });
         }
 
         private async Task<BigTwoLogic.BigTwo> vaildUserGame(RedisContext redis, int userId)

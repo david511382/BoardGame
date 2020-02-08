@@ -2,7 +2,7 @@ import { Injectable, EventEmitter, Injector} from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { UserUrl, UrlConfigService } from '../config/config.service';
+import { UrlConfigService, StatusUrl } from '../config/config.service';
 import { HttpClient } from '@angular/common/http';
 import { GeneralResponse, HandleErrorFun } from '../domain/response.const';
 import { catchError, tap } from 'rxjs/operators';
@@ -16,18 +16,24 @@ export class UserStatusData {
   isInRoom: boolean;
   isInGame: boolean;
 
+  tableCards: any;
+  playerCards: any;
+
   constructor() {
     this.room = null;
   }
 }
 
-interface IUserStatusResponse extends GeneralResponse {
+interface IStatusResponse extends GeneralResponse {
   id: number,
   name: string,
   username: string,
   room: RoomModel,
   isInRoom: boolean,
   isInGame: boolean,
+  
+  tableCards: any;
+  playerCards: any;
 }
 
 @Injectable({
@@ -39,7 +45,7 @@ export class AuthService implements CanActivate {
 
   public userDataBuffer = new UserStatusData();
 
-  private readonly backendUrl: UserUrl;
+  private readonly backendUrl: StatusUrl;
 
   private readonly TOKEN_COOKIE_NAME: string = "token";
 
@@ -52,7 +58,7 @@ export class AuthService implements CanActivate {
     private http: HttpClient,
     private cookieService: CookieService,
     private injector: Injector) {
-    this.backendUrl = config.userBackendUrl;
+    this.backendUrl = config.statusBackendUrl;
     this.authChanged.subscribe((isLogin) => {
       if (isLogin)
         this.getUserStatus();
@@ -61,8 +67,8 @@ export class AuthService implements CanActivate {
     });
   }
 
-  public getUserStatus(): Promise<IUserStatusResponse> {
-    return this.http.get<IUserStatusResponse>(this.backendUrl.getStatus)
+  public getUserStatus(): Promise<IStatusResponse> {
+    return this.http.get<IStatusResponse>(this.backendUrl.getStatus)
       .pipe(catchError(HandleErrorFun()),
         tap(resp => {
           if (resp.isError) {
@@ -74,6 +80,9 @@ export class AuthService implements CanActivate {
           this.userDataBuffer.id= resp.id;
           this.userDataBuffer.isInGame= resp.isInGame;
           this.userDataBuffer.isInRoom= resp.isInRoom;
+
+          this.userDataBuffer.tableCards = resp.tableCards;
+          this.userDataBuffer.playerCards = resp.playerCards;
 
           this.userStatusDataChanged.emit(this.userDataBuffer);
         })).toPromise();

@@ -10,13 +10,13 @@ import { GameRoomComponent } from './list/game-room/game-room.component';
 import { GameRoomInfoComponent } from './room/game-room-info/game-room-info.component';
 import { GameComponent } from './create/game/game.component';
 import { GameInfoComponent } from './create/gam-info/game-info.component';
-import { GameService } from './game.service';
 import { RoomCreateComponent } from './create/create.component';
 import { RoomPlayerComponent } from './room/player/player.component';
 import { RoomRoomComponent } from './room/room.component';
 import { RoomSignalREventService } from './signalr-event.service';
 import { AuthService } from '../../auth/auth.service';
 import { SignalRModule } from '../../signalR/signalR.module';
+import { GameListService } from './game-list.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,7 @@ import { SignalRModule } from '../../signalR/signalR.module';
   providers: [
     UrlConfigService,
     RoomService,
-    GameService,
+    GameListService,
     RoomSignalREventService,
     AuthService
   ],

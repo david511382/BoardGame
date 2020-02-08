@@ -64,6 +64,11 @@ namespace BigTwoLogic
             IsRequiredClub3 = true;
         }
 
+        public IEnumerable<PokerResource> GetResource()
+        {
+            return _playerResources.Select((s) => s as PokerResource);
+        }
+
         public new PokerResource GetResource(int playerId)
         {
             return base.GetResource(playerId) as PokerResource;

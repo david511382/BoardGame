@@ -19,6 +19,7 @@
         public string StartGame => _gameBase + "/StartGame";
         private string _gameBase => _baseUrl + "/Game";
 
+        public string GameStatus => _bigTwoBase + "/GameStatus";
         public string PlayCards => _bigTwoBase + "/PlayCards";
         public string SelectCards => _bigTwoBase + "/SelectCards";
         public string HandCards => _bigTwoBase + "/HandCards";

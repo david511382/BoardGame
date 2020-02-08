@@ -2,8 +2,8 @@
   {{text}}
 </ng-template>
 
-<ng-template #BigTwo let-game="bigtwo">
-  <app-game-bigtwo></app-game-bigtwo>
+<ng-template #BigTwo let-game="gameData">
+  <app-game-bigtwo [gameData]="game"></app-game-bigtwo>
 </ng-template>
 
 <ng-container [ngTemplateOutlet]="displayPage" [ngTemplateOutletContext]="contextData"></ng-container>

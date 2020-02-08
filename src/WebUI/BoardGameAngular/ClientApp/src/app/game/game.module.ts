@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 import { GameMainComponent } from './game.component';
 import { BigtwoModule } from './bigtwo/bigtwo.module';
+import { GameService } from './game.service';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,7 @@ import { BigtwoModule } from './bigtwo/bigtwo.module';
   exports: [
   ],
   providers: [
+    GameService
   ],
   imports: [
     HttpModule,

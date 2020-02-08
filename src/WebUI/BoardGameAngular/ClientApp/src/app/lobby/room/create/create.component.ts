@@ -5,7 +5,7 @@ import { GameComponent } from './game/game.component';
 import { RoomService } from '../room.service';
 import { Router } from '@angular/router';
 import { GameModel } from '../../../domain/user-status-model.const';
-import { GameService } from '../game.service';
+import { GameListService } from '../game-list.service';
 
 @Component({
   selector: 'app-lobby-room-create',
@@ -25,7 +25,7 @@ export class RoomCreateComponent implements OnInit{
 
   private selectedGame: GameModel;
 
-  constructor(private service: GameService,
+  constructor(private service: GameListService,
     private roomService: RoomService,
     private router: Router) {
     this.selectedGame = null;

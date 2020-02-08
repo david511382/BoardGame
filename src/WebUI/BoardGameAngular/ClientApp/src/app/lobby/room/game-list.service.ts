@@ -13,7 +13,7 @@ interface ListResponse extends GeneralResponse {
 @Injectable({
   providedIn: 'root',//singleton 
 })
-export class GameService {
+export class GameListService {
   private readonly backendUrl: GameUrl;
   
   constructor(private http: HttpClient, config: UrlConfigService) {

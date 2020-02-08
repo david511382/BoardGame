@@ -1,19 +1,30 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, Input, AfterViewInit } from '@angular/core';
 import { CardModel } from '../share/poker/poker-card/poker-card.component';
-import { BigTwoService, CardIndexesRequest } from './bigtwo.service';
+import { BigTwoService, CardIndexesRequest, ICardResponseModel } from './bigtwo.service';
 import { HandCardsComponent} from '../share/poker/hand-cards/hand-cards.component';
 import { GameBoardComponent, BorderColor } from './game-board/game-board.component';
 import { BigtwoSignalREventService } from './bigtwo-signalr-event.service';
+
+interface IPlayerModel {
+  id: number;
+  handCards: ICardResponseModel[];
+}
+
+interface IBigtwoData{
+  tableData: ICardResponseModel[][];
+  playerData: IPlayerModel[];
+}
 
 @Component({
   selector: 'app-game-bigtwo',
   templateUrl: './bigtwo.component.html',
   styleUrls: ['./bigtwo.component.css'],
 })
-export class BigtwoComponent implements OnInit {
+export class BigtwoComponent implements OnInit, AfterViewInit {
+  @Input() gameData: IBigtwoData;
   @ViewChild(HandCardsComponent, { static: true }) private handCardView: HandCardsComponent;
   @ViewChild("gameBoard", { static: true }) private gameBoard: GameBoardComponent;
-
+  
   public cards: CardModel[];
 
   constructor(private service: BigTwoService,
@@ -23,6 +34,14 @@ export class BigtwoComponent implements OnInit {
     this.signalService.gameBoardUpdateEvent
       .subscribe((data) => this.gameBoard.putCards(data));
     this.load();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.gameData.tableData.forEach((cards) => {
+        this.gameBoard.putCards(cards);
+      });
+    }, 0);
   }
 
   private getHandCards() {

@@ -1,5 +1,9 @@
 import { Component, ViewChild, TemplateRef } from '@angular/core';
-import { CommonDataService } from '../share/services/common-data/common-data.service';
+import { GameService } from './game.service';
+
+export class GameData {
+  constructor(public tableData: any, public playerData: any) {}
+}
 
 enum gameEnum {
   BigTwo=2
@@ -15,24 +19,27 @@ export class GameMainComponent{
   @ViewChild('BigTwo', { static: true }) BigTwoPage: TemplateRef<any>;
 
   public displayPage: TemplateRef<any>;
-  public contextData = { $implicit: 'Loading...', game: 'game' };
+  public contextData = {
+    $implicit: 'Loading...', gameData: null
+  };
   
-  constructor(private dataService: CommonDataService) {
+  constructor(private service: GameService) {
     setTimeout(() => this.init(), 0);
   }
 
   private init() {
-    var gameId = this.dataService.Get("gameId");
-    this.showGame(gameId);
+    this.contextData.gameData = new GameData(this.service.tableData, this.service.playerData);
+    this.showGame();
   }
 
-  private showGame(gameID: number) {
-    switch (gameID as gameEnum) {
+  private showGame() {
+    var gameId = this.service.gameId;
+    switch (gameId as gameEnum) {
       case gameEnum.BigTwo:
         this.displayPage = this.BigTwoPage;
         break;
       default:
-        console.error(`undefind game id ${gameID}`);
+        console.error(`undefind game id ${gameId}`);
         this.displayPage = this.LoadingPage;
     }
   }

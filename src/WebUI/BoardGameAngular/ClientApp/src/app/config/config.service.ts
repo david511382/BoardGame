@@ -10,6 +10,7 @@ export class UrlConfigService extends BaseUrl{
   public readonly roomBackendUrl: RoomUrl;
   public readonly gameBackendUrl: GameUrl;
   public readonly bigTwoBackendUrl: BigTwoUrl;
+  public readonly statusBackendUrl: StatusUrl;
   
   constructor(@Inject('BASE_URL') baseUrl: string) {
     super(`${baseUrl}api`);
@@ -17,6 +18,7 @@ export class UrlConfigService extends BaseUrl{
     this.roomBackendUrl = new RoomUrl(`${this.baseUrl}/Room`);
     this.gameBackendUrl = new RoomUrl(`${this.baseUrl}/Game`);
     this.bigTwoBackendUrl = new BigTwoUrl(`${this.baseUrl}/BigTwo`);
+    this.statusBackendUrl = new StatusUrl(`${this.baseUrl}/Status`);
   }
 }
 
@@ -24,10 +26,7 @@ export class UserUrl extends BaseUrl{
   constructor(baseUrl: string) {
     super(baseUrl);
   }
-  
-  get getStatus(): string {
-    return `${this.baseUrl}/GetStatus`;
-  }
+ 
   get Login(): string {
     return `${this.baseUrl}/Login`;
   }
@@ -57,6 +56,16 @@ export class RoomUrl extends BaseUrl {
     return `${this.baseUrl}`;
   }
   get Leave(): string {
+    return `${this.baseUrl}`;
+  }
+}
+
+export class StatusUrl extends BaseUrl {
+  constructor(baseUrl: string) {
+    super(baseUrl);
+  }
+
+  get getStatus(): string {
     return `${this.baseUrl}`;
   }
 }
