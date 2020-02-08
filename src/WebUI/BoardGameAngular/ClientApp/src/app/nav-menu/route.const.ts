@@ -8,6 +8,8 @@ import { GuestService } from "../auth/guest.service";
 import { RoomRoomComponent } from "../lobby/room/room/room.component";
 import { RoomCreateComponent } from "../lobby/room/create/create.component";
 import { GameMainComponent } from "../game/game.component";
+import { RouteRoomGuardService } from "./route-room-guard.service";
+import { RouteGameGuardService } from "./route-game-guard.service";
 
 export interface IRoute extends Route {
   name?: string
@@ -16,7 +18,12 @@ export interface IRoute extends Route {
 
 export const RootRoutes: IRoute[] = [
   { path: '', redirectTo: '/lobby', pathMatch: 'full' },
-  { path: 'lobby', component: LobbyComponent, name: "大廳" },
+  {
+    path: 'lobby',
+    component: LobbyComponent,
+    canActivate: [RouteRoomGuardService, RouteGameGuardService],
+    name: "大廳"
+  },
   {
     path: 'login',
     component: LoginComponent,
@@ -36,7 +43,7 @@ export const RootRoutes: IRoute[] = [
     name: "用戶資料"
   },
   {
-    path: '', 
+    path: 'lobby', 
     component: LobbyComponent,
     canActivate: [AuthService], 
     name: "登出"
@@ -44,20 +51,20 @@ export const RootRoutes: IRoute[] = [
   {
     path: 'createroom',
     component: RoomCreateComponent,
-    canActivate: [AuthService],
+    canActivate: [AuthService, RouteGameGuardService],
     name: "navHide"
   },
   {
     path: 'gameroom',
     component: RoomRoomComponent,
-    canActivate: [AuthService],
+    canActivate: [AuthService, RouteGameGuardService],
     name: "navHide"
   },
   {
     path: 'game',
     component: GameMainComponent,
-    canActivate: [AuthService],
+    canActivate: [AuthService, RouteRoomGuardService],
     name: "navHide"
   },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'lobby' },
 ];

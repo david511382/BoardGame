@@ -28,13 +28,6 @@ export class RoomListComponent implements OnInit{
     signalService: RoomSignalREventService) {
     this.isClickRoom = false;
 
-    if (this.service.GetRoomData !== null)
-      this.router.navigate([this.RoomPath]);
-    service.RoomDataChanged.subscribe((roomData) => {
-      if (roomData !== null)
-        this.router.navigate([this.RoomPath]);
-    });
-
     signalService.RoomOpened.subscribe(() => this.load());
   }
 
@@ -99,6 +92,7 @@ export class RoomListComponent implements OnInit{
         }
 
         if (resp.isSuccess) {
+          this.service.isInRoom = true;
           this.router.navigate([this.RoomPath]);
         }
         else

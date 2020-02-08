@@ -5,7 +5,8 @@ import { GameRoomInfoComponent } from './game-room-info/game-room-info.component
 import { RoomPlayerComponent } from './player/player.component';
 import { Router } from '@angular/router';
 import { RoomSignalREventService } from '../signalr-event.service';
-import { CommonDataService } from '../../../share/services/common-data/common-data.service';
+import { AuthService } from '../../../auth/auth.service';
+import { RoomModel } from '../../../domain/user-status-model.const';
 
 @Component({
   selector: 'app-lobby-room-room',
@@ -17,7 +18,6 @@ export class RoomRoomComponent implements OnInit{
   @ViewChild(GameRoomInfoComponent, { static: true }) roomInfo: GameRoomInfoComponent;
 
   public readonly LobbyPath: string = this.service.ListPath;
-  private readonly GamePath: string = "game";
 
   public get isHost() {
     return true;
@@ -25,12 +25,17 @@ export class RoomRoomComponent implements OnInit{
   
   constructor(private service: RoomService,
     private router: Router,
-    signalService: RoomSignalREventService,
-    dataService: CommonDataService) {
-    service.RoomDataChanged.subscribe(() => this.load());
+    authService: AuthService,
+    signalService: RoomSignalREventService) {
+    signalService.RoomPlayerChanged.subscribe((roomData: RoomModel) => this.show(roomData));
+    signalService.RoomClose.subscribe(() => {
+      this.service.isInRoom = false;
+      //alert("房主關閉房間");
+      this.goLobby();
+    });
     signalService.RoomStarted.subscribe((gameId) => {
-      dataService.Set("gameId", gameId);
-      this.goGame();
+      authService.getUserStatus()//get game info
+        .then(() => this.goGame());
     });
   }
 
@@ -39,12 +44,16 @@ export class RoomRoomComponent implements OnInit{
   }
 
   private load() {
-    let roomData = this.service.GetRoomData;
-    if (!roomData) {
-      this.router.navigate([this.LobbyPath]);
+    if (!this.service.isInRoom) {
+      this.goLobby();
       return;
     }
 
+    var roomData = this.service.roomData;
+    this.show(roomData)
+  }
+
+  private show(roomData: RoomModel) {
     this.roomInfo.Show(roomData);
 
     this.teamSet.Clear();
@@ -88,6 +97,6 @@ export class RoomRoomComponent implements OnInit{
   }
 
   private goGame() {
-    this.router.navigate([this.GamePath]);
+    this.router.navigate(["game"]);
   }
 }

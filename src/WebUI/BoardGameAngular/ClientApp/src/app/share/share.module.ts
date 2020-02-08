@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TextBoxComponent } from './text-box/text-box.component';
 import { SetComponent } from './set/set.component';
 import { ViewContainerDirective } from './view-container/view-container.directive';
-import { CommonDataService } from './services/common-data/common-data.service';
 
 @NgModule({
   declarations: [
@@ -22,7 +21,6 @@ import { CommonDataService } from './services/common-data/common-data.service';
     FormsModule
   ],
   providers: [
-    CommonDataService
   ],
   entryComponents: [
     TextBoxComponent,

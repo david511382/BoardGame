@@ -13,6 +13,8 @@ import { GameModule } from './game/game.module';
 import { LobbyModule } from './lobby/lobby.module';
 import { AuthService } from './auth/auth.service';
 import { SignalRModule } from './signalR/signalR.module';
+import { RouteRoomGuardService } from './nav-menu/route-room-guard.service';
+import { RouteGameGuardService } from './nav-menu/route-game-guard.service';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { SignalRModule } from './signalR/signalR.module';
   providers: [
     GuestService,
     AuthService,
+    RouteRoomGuardService,
+    RouteGameGuardService,
     {
       provide: APP_INITIALIZER,
       useFactory: (authService: AuthService) => () => authService.getUserStatus(),

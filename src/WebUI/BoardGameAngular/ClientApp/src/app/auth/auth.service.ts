@@ -91,23 +91,7 @@ export class AuthService implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (!this.isLogin())
       return false;
-    if (!state)
-      return true;
-
-    switch (state.url) {
-      case "/gameroom":
-        if (this.userDataBuffer.isInGame)
-          return this.router.parseUrl('/game');
-        else if (!this.userDataBuffer.isInRoom)
-          return this.router.parseUrl('/lobby');
-      case "/lobby":
-        if (this.userDataBuffer.isInGame)
-          return this.router.parseUrl('/game');
-        else if (this.userDataBuffer.isInRoom)
-          return this.router.parseUrl('/gameroom');
-      default:
-        return true;
-    }
+    return true;
   }
 
   isNavShow(navName : string) :boolean {
@@ -125,7 +109,7 @@ export class AuthService implements CanActivate {
     }
   }
 
-  private isLogin() {
+  public isLogin() {
     if (!this.token || this.token === "") {
       return false;
     }

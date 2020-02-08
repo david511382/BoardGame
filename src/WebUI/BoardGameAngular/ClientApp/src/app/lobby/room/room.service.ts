@@ -5,7 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { GeneralResponse, HandleErrorFun, SuccessResponse } from '../../domain/response.const';
 import { UrlConfigService, RoomUrl } from '../../config/config.service';
 import { RoomSignalREventService } from './signalr-event.service';
-import { AuthService } from '../../auth/auth.service';
+import { AuthService, UserStatusData } from '../../auth/auth.service';
 import { RoomModel } from '../../domain/user-status-model.const';
 
 interface ListResponse extends GeneralResponse {
@@ -29,15 +29,20 @@ export class RoomService {
   public readonly ListPath: string = "";
   public readonly CreatePath: string = "createroom";
 
-  public RoomDataChanged = new EventEmitter<RoomModel>();
+  public get isInRoom(): boolean {
+    return this.authService.userDataBuffer.isInRoom ;
+  }
 
-  public get GetRoomData(): RoomModel {
+  public set isInRoom(data: boolean) {
+    this.authService.userDataBuffer.isInRoom = data;
+  }
+
+  public get roomData(): RoomModel {
     return this.authService.userDataBuffer.room;
   }
 
-  private setRoomData(data: RoomModel) {
+  public set roomData(data: RoomModel) {
     this.authService.userDataBuffer.room = data;
-    this.RoomDataChanged.emit(data);
   }
 
   private readonly backendUrl: RoomUrl;
@@ -49,17 +54,6 @@ export class RoomService {
     config: UrlConfigService) {
     this.backendUrl = config.roomBackendUrl;
 
-    authService.userStatusDataChanged.subscribe((data) => this.SetRoomData(data.room));
-    if (authService.userDataBuffer) {
-      this.SetRoomData(this.authService.userDataBuffer.room);
-    }
-
-    signalService.RoomPlayerChanged.subscribe((roomData: RoomModel) => this.setRoomData(roomData));
-    signalService.RoomClose.subscribe(() => this.setRoomData(null));
-  }
-
-  public SetRoomData(roomData: RoomModel) {
-    this.setRoomData(roomData);
   }
 
   public List(): Observable<ListResponse> {    
@@ -86,8 +80,10 @@ export class RoomService {
           return;
         }
 
-        if (resp.isSuccess)
-          this.setRoomData(resp.room);
+        if (resp.isSuccess) {
+          this.roomData = resp.room;
+          this.isInRoom = true;
+        }
       }));
   }
 
@@ -111,7 +107,7 @@ export class RoomService {
         }
 
         if (resp.isSuccess)
-          this.setRoomData(resp.room);
+          this.roomData = resp.room;
       }));
   }
 
@@ -129,7 +125,7 @@ export class RoomService {
           }
 
           if (resp.isSuccess)
-            this.setRoomData(null);
+            this.isInRoom = false;
         }));
   }
 
@@ -138,11 +134,9 @@ export class RoomService {
       .pipe(catchError(HandleErrorFun()),
         tap(resp => {
           if (resp.isError) {
+            alert(resp.errorMessage);
             return;
           }
-
-          if (resp.isSuccess)
-            this.setRoomData(null);
         }));
   }
 }
