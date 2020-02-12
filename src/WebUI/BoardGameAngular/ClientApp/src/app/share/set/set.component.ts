@@ -7,7 +7,7 @@ import { SetItemComponent } from './set-item.component';
   template: `<ng-template view-container></ng-template>`,
 })
 export class SetComponent implements AfterViewInit{
-  @ViewChild(ViewContainerDirective, { static: false }) setHost: ViewContainerDirective;
+  @ViewChild(ViewContainerDirective) setHost: ViewContainerDirective;
 
   @Output() ItemClickedEvent = new EventEmitter();
   @Output() ItemDoubleClickedEvent = new EventEmitter();

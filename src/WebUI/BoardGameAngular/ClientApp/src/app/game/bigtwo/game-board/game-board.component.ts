@@ -16,7 +16,7 @@ export enum BorderColor {
 })
 export class GameBoardComponent implements AfterViewInit{
   @ViewChild("gameBoard", { static: true }) public board: ElementRef;
-  @ViewChild("lastCards", { static: false }) private lastCardsView: HandCardsComponent;
+  @ViewChild("lastCards") private lastCardsView: HandCardsComponent;
 
   public isMouseOnTable: boolean = false;
 

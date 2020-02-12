@@ -8,7 +8,7 @@ import { UserInfoComponent } from '../info/info.component';
   styleUrls: ['./update.component.css'],
 })
 export class UpdateComponent implements AfterViewInit {
-  @ViewChild(UserInfoComponent, { static: false }) userInfo: UserInfoComponent;
+  @ViewChild(UserInfoComponent) userInfo: UserInfoComponent;
 
   constructor(private service: UserService) {}
 

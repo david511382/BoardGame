@@ -9,7 +9,7 @@ import { UserInfoComponent } from '../info/info.component';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent  {
-  @ViewChild(UserInfoComponent, { static: false }) info: UserInfoComponent;
+  @ViewChild(UserInfoComponent) info: UserInfoComponent;
 
   constructor(private service: UserService, private location: Location) {}
 
