@@ -1,4 +1,7 @@
 # 專案介紹
+## 專案功能
+	線上桌遊平台，提供玩家登入，線上開局遊玩。
+
 ## 架構說明
 	專案架構: 微服務架構
 	前端: Angular
@@ -7,22 +10,22 @@
 	後端Api業務: Auth(用戶語認證授權)、Lobby(大廳遊戲房間)、Game(遊戲邏輯)
 	資料庫: MSSQL資料庫，Game(遊戲)、Member(用戶)
 	Redis:儲存遊戲房間跟遊戲狀態的3主3從叢集Redis，還有附加哨兵模式
-	Log: 使用NLog發送至ELK(Elasticsearch、Kibana)。
+	日誌: 使用NLog發送至ELK(Elasticsearch、Kibana)。
 ![avatar](系統架構圖.png)
 
 ## 檔案結構
 	src┬ApiGateways-OcelotApiGateway
 	   ├Services┬Game-GameWebService
-	   │		├AuthWebService
-	   │		└LobbyWebService
+	   │		 ├AuthWebService
+	   │		 └LobbyWebService
 	   ├WebUI-BoardGameAngular
 	   ├Respositories
 	   └Common
 
 # Getting started
 ## Docker Compose
-完整全部執行 docker-compose up --build -d
-部分執行 docker-compose -f redis.yml -f elk.yml up --build -d
+完整全部執行: docker-compose up --build -d
+部分執行: docker-compose -f redis.yml -f elk.yml up -f db.yml up -f api.yml up --build -d
 
 ## EF 資料庫 Migrations
 board-game-member-db
@@ -36,19 +39,19 @@ board-game-member-db
 ### 套件
 Microsoft.EntityFrameworkCore
 Microsoft.EntityFrameworkCore.SqlServer
-https://dotblogs.com.tw/abc12207/2018/03/24/entity-framework-core-migrations-at-separate-class-library-project
+參考資料:https://dotblogs.com.tw/abc12207/2018/03/24/entity-framework-core-migrations-at-separate-class-library-project
 
 ### 需要資料庫權限
-刪除
-改變任何結構描述
-更新
-建立資料表
-參考
-插入
-選取
+1. 刪除
+2. 改變任何結構描述
+3. 更新
+4. 建立資料表
+5. 參考
+6. 插入
+7. 選取
 
 ### 指令
-啟用
+啟用指令
 Enable-migrations
 
 [變更名稱] 為資料庫變更的命名，自訂
@@ -68,4 +71,4 @@ Update-Database -Context [資料庫]
 Remove-Migration -Context [資料庫]
 
 # Swagger
-package Swashbuckle.AspNetCore
+nuget package Swashbuckle.AspNetCore
