@@ -11,16 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{E7D8BAB1-3A3
 		系統架構圖.png = 系統架構圖.png
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}"
-	ProjectSection(SolutionItems) = preProject
-		.env = .env
-		api.yml = api.yml
-		db.yml = db.yml
-		docker-compose.yml = docker-compose.yml
-		elk.yml = elk.yml
-		redis.yml = redis.yml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{0F656E10-65A1-45DA-A97A-7B14FF83405E}"
@@ -51,47 +41,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpHelper", "src\Common\Ut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Common\Domain\Domain.csproj", "{997B427D-C0E7-4881-BAD4-9D5F3FEB6490}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ELK", "ELK", "{66DDD5F1-300F-4248-B246-9B587AAA0BCF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kibana", "Kibana", "{DEF3E967-F7B4-491E-A10D-6CA9DFA36D08}"
-	ProjectSection(SolutionItems) = preProject
-		ELK\Kibana\Dockerfile = ELK\Kibana\Dockerfile
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elasticsearch", "Elasticsearch", "{BACB6EAF-6508-4088-9104-4A6968F5C577}"
-	ProjectSection(SolutionItems) = preProject
-		ELK\Elasticsearch\Dockerfile = ELK\Elasticsearch\Dockerfile
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{A259886A-A32F-45F5-AB5A-CD0BA9BD2C85}"
-	ProjectSection(SolutionItems) = preProject
-		ELK\Elasticsearch\config\elasticsearch.yml = ELK\Elasticsearch\config\elasticsearch.yml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{32AB56B1-9C00-41BB-91FE-16B0B5383993}"
-	ProjectSection(SolutionItems) = preProject
-		ELK\Kibana\config\kibana.yml = ELK\Kibana\config\kibana.yml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redis", "Redis", "{369694BC-2749-443A-858C-1FBAE3343258}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "createnode", "createnode", "{508447DF-CBAC-4723-9BD5-7D6D629EEA50}"
-	ProjectSection(SolutionItems) = preProject
-		redis\createnode\dockerfile = redis\createnode\dockerfile
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node", "node", "{6BDA9E7D-3794-4BF0-AF98-9DA0563FCB64}"
-	ProjectSection(SolutionItems) = preProject
-		redis\node\dockerfile = redis\node\dockerfile
-		redis\node\rediscluster.conf = redis\node\rediscluster.conf
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sentinel", "sentinel", "{92E419BE-941A-41E2-9D21-82CA2047006B}"
-	ProjectSection(SolutionItems) = preProject
-		redis\sentinel\dockerfile = redis\sentinel\dockerfile
-		redis\sentinel\sentinel.conf = redis\sentinel\sentinel.conf
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobbyWebService", "src\Services\Lobby\LobbyWebService.csproj", "{5F2D3897-AEC3-452F-A3C0-5B584DB9C207}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{9D5B19D4-07B0-40A9-8734-344AF871E7D4}"
@@ -105,6 +54,59 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionHelper", "src\Common\Util\TransactionHelper\TransactionHelper.csproj", "{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameWebService", "src\Services\Game\GameWebService\GameWebService.csproj", "{97CB3A9E-7B57-43C5-A16F-CDA1B3991E7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", "{8DF79C33-5D72-4CFA-A3EF-5DEE717EDF72}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{ECDEE8AB-1BD2-45CF-BFC2-2DCFB19DCD94}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\.env = deployment\docker\.env
+		deployment\docker\api.yml = deployment\docker\api.yml
+		deployment\docker\db.yml = deployment\docker\db.yml
+		deployment\docker\docker-compose.yml = deployment\docker\docker-compose.yml
+		deployment\docker\elk.yml = deployment\docker\elk.yml
+		deployment\docker\redis.yml = deployment\docker\redis.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "elk", "elk", "{1494C0F1-7DA9-4B4F-9594-B03074868CDA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "elasticsearch", "elasticsearch", "{4D33688A-30FF-4BF4-B1BE-7C53DA38D583}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\elk\elasticsearch\Dockerfile = deployment\docker\elk\elasticsearch\Dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{0F3E3E71-A118-481B-A1C8-EC50465A3B89}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\elk\elasticsearch\config\elasticsearch.yml = deployment\docker\elk\elasticsearch\config\elasticsearch.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kibana", "kibana", "{2C1B1119-0227-4FE5-8121-70FB25C1AC69}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\elk\kibana\Dockerfile = deployment\docker\elk\kibana\Dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{B5F124C6-EDF1-4926-8999-D47DEA2DD318}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\elk\kibana\config\kibana.yml = deployment\docker\elk\kibana\config\kibana.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "redis", "redis", "{7ED03819-C55F-48B7-B6D2-EDCE47CB0FFE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "createnode", "createnode", "{0FEC0AB4-3C25-447B-B250-C12E20DBD04E}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\redis\createnode\dockerfile = deployment\docker\redis\createnode\dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node", "node", "{E0D55571-2101-4642-B48F-F0999114E958}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\redis\node\dockerfile = deployment\docker\redis\node\dockerfile
+		deployment\docker\redis\node\rediscluster.conf = deployment\docker\redis\node\rediscluster.conf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sentinel", "sentinel", "{F3855CCF-B844-477D-8BF2-5151C75AA03E}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\redis\sentinel\dockerfile = deployment\docker\redis\sentinel\dockerfile
+		deployment\docker\redis\sentinel\sentinel.conf = deployment\docker\redis\sentinel\sentinel.conf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -192,15 +194,6 @@ Global
 		{EE7BF5D1-075F-4AC7-A26B-BD3F94839129} = {5641DD69-A039-4D9B-BD45-8A861F7F8E7D}
 		{2BC6528D-8232-4571-B1B3-171B24155037} = {5641DD69-A039-4D9B-BD45-8A861F7F8E7D}
 		{997B427D-C0E7-4881-BAD4-9D5F3FEB6490} = {A2839155-7408-478B-90A1-7FADB88D33B2}
-		{66DDD5F1-300F-4248-B246-9B587AAA0BCF} = {BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}
-		{DEF3E967-F7B4-491E-A10D-6CA9DFA36D08} = {66DDD5F1-300F-4248-B246-9B587AAA0BCF}
-		{BACB6EAF-6508-4088-9104-4A6968F5C577} = {66DDD5F1-300F-4248-B246-9B587AAA0BCF}
-		{A259886A-A32F-45F5-AB5A-CD0BA9BD2C85} = {BACB6EAF-6508-4088-9104-4A6968F5C577}
-		{32AB56B1-9C00-41BB-91FE-16B0B5383993} = {DEF3E967-F7B4-491E-A10D-6CA9DFA36D08}
-		{369694BC-2749-443A-858C-1FBAE3343258} = {BE85CF8B-E4F0-4470-934C-62E6DB98DD3F}
-		{508447DF-CBAC-4723-9BD5-7D6D629EEA50} = {369694BC-2749-443A-858C-1FBAE3343258}
-		{6BDA9E7D-3794-4BF0-AF98-9DA0563FCB64} = {369694BC-2749-443A-858C-1FBAE3343258}
-		{92E419BE-941A-41E2-9D21-82CA2047006B} = {369694BC-2749-443A-858C-1FBAE3343258}
 		{5F2D3897-AEC3-452F-A3C0-5B584DB9C207} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
 		{9D5B19D4-07B0-40A9-8734-344AF871E7D4} = {B9CC07A2-D1E3-4636-B8E5-C94D7FBB4835}
 		{C292D016-3535-4C27-A3CC-29033C5A1AC1} = {9D5B19D4-07B0-40A9-8734-344AF871E7D4}
@@ -208,6 +201,16 @@ Global
 		{23EBE1A2-7AA8-4FF4-81A7-FDA7E1A2358D} = {9D5B19D4-07B0-40A9-8734-344AF871E7D4}
 		{CF4FFAE3-79A3-4963-BA5D-42BF44B353B6} = {5641DD69-A039-4D9B-BD45-8A861F7F8E7D}
 		{97CB3A9E-7B57-43C5-A16F-CDA1B3991E7B} = {253D0585-9100-41CC-8FFB-8062B6701A9F}
+		{ECDEE8AB-1BD2-45CF-BFC2-2DCFB19DCD94} = {8DF79C33-5D72-4CFA-A3EF-5DEE717EDF72}
+		{1494C0F1-7DA9-4B4F-9594-B03074868CDA} = {ECDEE8AB-1BD2-45CF-BFC2-2DCFB19DCD94}
+		{4D33688A-30FF-4BF4-B1BE-7C53DA38D583} = {1494C0F1-7DA9-4B4F-9594-B03074868CDA}
+		{0F3E3E71-A118-481B-A1C8-EC50465A3B89} = {4D33688A-30FF-4BF4-B1BE-7C53DA38D583}
+		{2C1B1119-0227-4FE5-8121-70FB25C1AC69} = {1494C0F1-7DA9-4B4F-9594-B03074868CDA}
+		{B5F124C6-EDF1-4926-8999-D47DEA2DD318} = {2C1B1119-0227-4FE5-8121-70FB25C1AC69}
+		{7ED03819-C55F-48B7-B6D2-EDCE47CB0FFE} = {ECDEE8AB-1BD2-45CF-BFC2-2DCFB19DCD94}
+		{0FEC0AB4-3C25-447B-B250-C12E20DBD04E} = {7ED03819-C55F-48B7-B6D2-EDCE47CB0FFE}
+		{E0D55571-2101-4642-B48F-F0999114E958} = {7ED03819-C55F-48B7-B6D2-EDCE47CB0FFE}
+		{F3855CCF-B844-477D-8BF2-5151C75AA03E} = {7ED03819-C55F-48B7-B6D2-EDCE47CB0FFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0449C612-F29B-409C-8211-5B0D75F4F3B5}

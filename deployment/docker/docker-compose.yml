@@ -166,7 +166,7 @@ services:
   es01:
     container_name: es01
     build:
-      context: ELK/Elasticsearch/
+      context: elk/elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
     environment:
@@ -191,7 +191,7 @@ services:
   es02:
     container_name: es02
     build:
-      context: ELK/Elasticsearch/
+      context: elk/elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
     environment:
@@ -213,7 +213,7 @@ services:
              
   kibana:
     build:
-      context: ELK/Kibana/
+      context: elk/kibana/
       args:
         ELK_VERSION: $ELK_VERSION
     depends_on:
@@ -227,7 +227,7 @@ services:
   auth.api:
     container_name: board-game-auth-api
     build:
-      context: .
+      context: ../../.
       dockerfile: src/Services/Auth/AuthWebService/Dockerfile
     depends_on:
       - member.db
@@ -239,7 +239,7 @@ services:
   api.lobby:  
     container_name: api-lobby
     build:
-      context: .
+      context: ../../.
       dockerfile: src/Services/Lobby/Dockerfile
     depends_on:
       - redis.master1
@@ -254,7 +254,7 @@ services:
   api.game:  
     container_name: api-game
     build:
-      context: .
+      context: ../../.
       dockerfile: src/Services/Game/GameWebService/Dockerfile
     depends_on:
       - redis.master1
@@ -268,7 +268,7 @@ services:
   boardgame.gw:
     container_name: board-game-gw
     build:
-      context: .
+      context: ../../.
       dockerfile: src/ApiGateways/OcelotApiGateway/Dockerfile
     depends_on:
       - auth.api
@@ -282,7 +282,7 @@ services:
   angular.ui:
     container_name: board-game-angular-ui
     build:
-      context: .
+      context: ../../.
       dockerfile: src/WebUI/BoardGameAngular/dockerfile
     ports:
       - "9487:80"

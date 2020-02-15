@@ -3,56 +3,56 @@ services:
   auth.api:
     container_name: board-game-auth-api
     build:
-      context: .
+      context: ../../.
       dockerfile: src/Services/Auth/AuthWebService/Dockerfile
     networks:
-         boardgame_board-game-network:
+         docker_board-game-network:
             ipv4_address: 172.54.87.54
   
   api.lobby:  
     container_name: api-lobby
     build:
-      context: .
+      context: ../../.
       dockerfile: src/Services/Lobby/Dockerfile
     networks:
-         boardgame_board-game-network:
+         docker_board-game-network:
             ipv4_address: 172.54.87.154
 
   api.game:  
     container_name: api-game
     build:
-      context: .
+      context: ../../.
       dockerfile: src/Services/Game/GameWebService/Dockerfile
     networks:
-         boardgame_board-game-network:
+         docker_board-game-network:
             ipv4_address: 172.54.87.178
             
   boardgame.gw:
     container_name: board-game-gw
     build:
-      context: .
+      context: ../../.
       dockerfile: src/ApiGateways/OcelotApiGateway/Dockerfile
     depends_on:
       - auth.api
       - api.lobby
       - api.game
     networks:
-         boardgame_board-game-network:
+         docker_board-game-network:
             ipv4_address: 172.54.87.88
 
   angular.ui:
     container_name: board-game-angular-ui
     build:
-      context: .
+      context: ../../.
       dockerfile: src/WebUI/BoardGameAngular/dockerfile
     ports:
       - "9487:80"
     depends_on:
       - boardgame.gw
     networks:
-         boardgame_board-game-network:
+         docker_board-game-network:
             ipv4_address: 172.54.87.94
 
 networks:
-   boardgame_board-game-network:
+   docker_board-game-network:
      external: true

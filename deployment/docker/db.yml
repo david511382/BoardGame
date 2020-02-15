@@ -11,7 +11,7 @@ services:
     volumes:
       - member-db-volume:/var/opt/mssql
     networks:
-        boardgame_board-game-network:
+        docker_board-game-network:
             ipv4_address: 172.54.87.10
 
   db.game:
@@ -25,7 +25,7 @@ services:
     volumes:
       - game-db-volume:/var/opt/mssql
     networks:
-        boardgame_board-game-network:
+        docker_board-game-network:
             ipv4_address: 172.54.87.11
 
 volumes:
@@ -33,5 +33,5 @@ volumes:
   game-db-volume:
 
 networks:
-   boardgame_board-game-network:
+   docker_board-game-network:
      external: true

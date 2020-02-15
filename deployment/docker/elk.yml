@@ -3,7 +3,7 @@ services:
   es01:
     container_name: es01
     build:
-      context: ELK/Elasticsearch/
+      context: elk/elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
     environment:
@@ -23,12 +23,12 @@ services:
       - "9200:9200"
       - "9300:9300"
     networks:
-      boardgame_board-game-network:
+      docker_board-game-network:
          ipv4_address: 172.54.87.92
   es02:
     container_name: es02
     build:
-      context: ELK/Elasticsearch/
+      context: elk/elasticsearch/
       args:
         ELK_VERSION: $ELK_VERSION
     environment:
@@ -45,12 +45,13 @@ services:
         soft: -1
         hard: -1
     networks:
-      boardgame_board-game-network:
+      docker_board-game-network:
         ipv4_address: 172.54.87.93
              
   kibana:
+    container_name: kibana
     build:
-      context: ELK/Kibana/
+      context: elk/kibana/
       args:
         ELK_VERSION: $ELK_VERSION
     depends_on:
@@ -58,7 +59,7 @@ services:
     ports:
       - 5601:5601
     networks:
-       boardgame_board-game-network:
+       docker_board-game-network:
             ipv4_address: 172.54.87.50
 
 volumes:
@@ -66,5 +67,5 @@ volumes:
   elasticsearch02:
 
 networks:
-   boardgame_board-game-network:
+   docker_board-game-network:
      external: true
