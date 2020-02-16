@@ -1,19 +1,19 @@
 import { Component, OnInit, ViewChild, Input, AfterViewInit } from '@angular/core';
 import { CardModel } from '../share/poker/poker-card/poker-card.component';
-import { BigTwoService, CardIndexesRequest, ICardResponseModel } from './bigtwo.service';
+import { BigTwoService, CardIndexesRequest } from './bigtwo.service';
 import { HandCardsComponent} from '../share/poker/hand-cards/hand-cards.component';
 import { GameBoardComponent, BorderColor } from './game-board/game-board.component';
-import { BigtwoSignalREventService } from './bigtwo-signalr-event.service';
+import { BigtwoSignalREventService, ICardResponseModel, IConditionModel, IGameBoardModel } from './bigtwo-signalr-event.service';
 import { IGameData } from '../game.service';
 
+export interface IBigtwoData extends IGameData {
+  tableData: ICardResponseModel[][];
+  playerData: IPlayerModel[];
+  condition: IConditionModel;
+}
 interface IPlayerModel {
   id: number;
   handCards: ICardResponseModel[];
-}
-
-export interface IBigtwoData extends IGameData{
-  tableData: ICardResponseModel[][];
-  playerData: IPlayerModel[];
 }
 
 @Component({
@@ -28,12 +28,22 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
   
   public cards: CardModel[];
 
+  private currentPlayerIndex: number;
+  private get currentPlayer(): IPlayerModel {
+    return this.gameData.playerData[this.currentPlayerIndex];
+  }
+
   constructor(private service: BigTwoService,
     private signalService: BigtwoSignalREventService,) { }
 
   ngOnInit(): void {
     this.signalService.gameBoardUpdateEvent
-      .subscribe((data) => this.gameBoard.putCards(data));
+      .subscribe((data: IGameBoardModel) => {
+        this.gameBoard.putCards(data.cards);
+        this.gameData.condition = data.condition;
+
+        this.setTurn();
+      });
     this.load();
   }
 
@@ -42,16 +52,24 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
       this.gameData.tableData.forEach((cards) => {
         this.gameBoard.putCards(cards);
       });
+
+      this.setTurn();
     }, 0);
 
     this.getHandCards();
   }
 
+  private setTurn() {
+    var turnId = this.gameData.condition.turnId;
+    if (turnId < this.currentPlayerIndex)
+      turnId += this.gameData.playerData.length;
+    turnId -= this.currentPlayerIndex;
+    this.gameBoard.setTurn(turnId);
+  }
+
   private getHandCards() {
     var handCards = [];
-    this.gameData.playerData.find((v, i) => {
-      return v.id === this.gameData.playerId;
-    }).handCards.forEach((v) => {
+    this.currentPlayer.handCards.forEach((v) => {
       handCards.push(new CardModel(v.number, v.suit));
     });
 
@@ -59,6 +77,13 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
   }
 
   private load() {
+    this.gameData.playerData.find((v, i) => {
+      if (v.id === this.gameData.playerId) {
+        this.currentPlayerIndex = i;
+        return true;
+      }
+    });
+
     this.cards = [];
     this.handCardView.selectCardEvent.subscribe((is) => this.selectCard(is));
     this.handCardView.dragStartedEvent.subscribe(() => {

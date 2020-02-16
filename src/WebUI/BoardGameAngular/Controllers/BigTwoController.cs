@@ -91,7 +91,7 @@ namespace BoardGameAngular.Controllers
                     {
                         StatusResponse statusResponse = await statusResponseTask;
                         string groupName = statusResponse.Room.HostID.ToString();
-                        await _hubContext.Clients.Group(groupName).GameBoardUpdate(response.Cards);
+                        await _hubContext.Clients.Group(groupName).GameBoardUpdate(new GameBoardModel(response.Cards, response.Condition));
                     }
 
                     return new BoolResponseModel(response);

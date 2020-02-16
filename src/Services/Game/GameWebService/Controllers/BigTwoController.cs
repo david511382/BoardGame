@@ -1,5 +1,6 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Game.PokerGame;
+using Domain.Api.Models.Base.Game.PokerGame.BigTwo;
 using Domain.Api.Models.Request.Game;
 using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
 using GameLogic.PokerGame;
@@ -126,6 +127,7 @@ namespace GameWebService.Controllers
                                     Number = c.Number
 
                                 }).ToArray();
+                            result.Condition = new ConditionModel(game.GetCondition());
                         }
                     }
 
@@ -170,6 +172,7 @@ namespace GameWebService.Controllers
                                   Number = c.Number
                               }).ToArray()
                           )).ToArray();
+                  result.Condition = new ConditionModel(game.GetCondition());
                   return result;
 
               });

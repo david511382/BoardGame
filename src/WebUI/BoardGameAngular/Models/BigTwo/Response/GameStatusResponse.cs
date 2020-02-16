@@ -15,9 +15,18 @@ namespace BoardGameAngular.Models.BigTwo.Response
                 HandCards = handCards;
             }
         }
+        public struct ConditionData
+        {
+            public int TurnId { get; set; }
+
+            public ConditionData(int turnId)
+            {
+                TurnId = turnId;
+            }
+        }
 
         public PockerCardModel[][] TableCards { get; set; }
         public PlayerData[] PlayerCards { get; set; }
-
+        public ConditionData Condition { get; set; }
     }
 }

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AuthService, UserStatusData } from '../auth/auth.service';
+import { AuthService, IStatusResponse } from '../auth/auth.service';
 
 export interface IGameData {
   playerId: number
 }
 export class GameData implements IGameData {
-  constructor(public playerId: number, public tableData: any, public playerData: any) { }
+  constructor(public playerId: number, public tableData: any, public playerData: any, public condition: any) { }
 }
 
 @Injectable({
@@ -21,10 +21,10 @@ export class GameService {
     this.setData(data);
   }
 
-  private setData(data: UserStatusData) {
+  private setData(data: IStatusResponse) {
     if (data && data.isInGame) {
       this.gameId = data.room.game.id;
-      this.data = new GameData(data.id, data.tableCards, data.playerCards);
+      this.data = new GameData(data.id, data.tableCards, data.playerCards, data.condition);
     }
   }
 }

@@ -10,10 +10,6 @@ export class CardIndexesRequest {
   Indexes :number[]
 }
 
-export interface ICardResponseModel{
-  number: number;
-  suit: number;
-}
 interface ICardIndexesResponse extends GeneralResponse {
   cardIndexes: number[]
 }

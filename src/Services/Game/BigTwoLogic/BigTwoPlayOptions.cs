@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace BigTwoLogic
 {
-    public partial class BigTwo : PokerGame
+    public partial class BigTwo : PokerGame<int>
     {
         private int _lastPlayTurnId;
 
@@ -191,7 +191,7 @@ namespace BigTwoLogic
             if (!IsFreeType)
             {
                 //check previous type
-                PokerCardGroup lastGroup = (PokerCardGroup)GetTable().GetLastItem();
+                PokerCardGroup lastGroup = GetTable().GetLastItem();
                 PokerGroupType lastGroupType = lastGroup.GetGroupType();
 
                 bool isSameType = cardGroupType == lastGroupType;

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GameLogic.Game
 {
-    public abstract partial class BoardGame<TBoardItem> : IBoardGame where TBoardItem : GameObj
+    public abstract partial class BoardGame<TBoardItem, TCondition> : IBoardGame where TBoardItem : GameObj
     {
         protected readonly int MAX_GAME_PLAYERS = 4;
         protected readonly int MIN_GAME_PLAYERS = 2;
@@ -50,6 +50,8 @@ namespace GameLogic.Game
             return Table;
         }
 
+        public abstract TCondition GetCondition();
+
         public virtual PlayerResource GetResource(int playerId)
         {
             IEnumerable<PlayerResource> target = _playerResources.Where(d => d.PlayerId == playerId).Take(1);
@@ -58,7 +60,7 @@ namespace GameLogic.Game
 
             return target.First();
         }
-        
+
         protected virtual PlayerResource GetResourceAt(int i)
         {
             return _playerResources[i];

@@ -1,16 +1,12 @@
 ﻿using GameLogic.PokerGame.CardGroup;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace GameLogic.PokerGame.Game
 {
-    public abstract class PokerGame : GameLogic.Game.BoardGame<PokerCardGroup>
+    public abstract class PokerGame<TCondition> : GameLogic.Game.BoardGame<PokerCardGroup, TCondition>
     {
         protected Poker _poker;
 
-        public PokerGame(int MIN_PLAYERS, int MAX_PLAYERS) 
+        public PokerGame(int MIN_PLAYERS, int MAX_PLAYERS)
           : base(MAX_PLAYERS, MIN_PLAYERS)
         {
             _poker = new Poker();

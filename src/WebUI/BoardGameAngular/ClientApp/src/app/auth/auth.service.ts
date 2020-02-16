@@ -8,7 +8,23 @@ import { GeneralResponse, HandleErrorFun } from '../domain/response.const';
 import { catchError, tap } from 'rxjs/operators';
 import { RoomModel } from '../domain/user-status-model.const';
 
-export class UserStatusData {
+export interface IStatusResponse extends GeneralResponse {
+  id: number,
+  name: string,
+  username: string,
+  room: RoomModel,
+  isInRoom: boolean,
+  isInGame: boolean,
+
+  tableCards: any;
+  playerCards: any;
+  condition: any;
+}
+
+class UserStatusData implements IStatusResponse{
+  message: string;
+  errorMessage: string;
+  isError: boolean;
   id: number;
   name: string;
   username: string;
@@ -18,22 +34,11 @@ export class UserStatusData {
 
   tableCards: any;
   playerCards: any;
+  condition: any;
 
   constructor() {
     this.room = null;
   }
-}
-
-interface IStatusResponse extends GeneralResponse {
-  id: number,
-  name: string,
-  username: string,
-  room: RoomModel,
-  isInRoom: boolean,
-  isInGame: boolean,
-  
-  tableCards: any;
-  playerCards: any;
 }
 
 @Injectable({
@@ -41,9 +46,9 @@ interface IStatusResponse extends GeneralResponse {
 })
 export class AuthService implements CanActivate {
   public authChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  public userStatusDataChanged = new EventEmitter<UserStatusData>();
+  public userStatusDataChanged = new EventEmitter<IStatusResponse>();
 
-  public userDataBuffer = new UserStatusData();
+  public userDataBuffer: IStatusResponse;
 
   private readonly backendUrl: StatusUrl;
 
@@ -74,15 +79,7 @@ export class AuthService implements CanActivate {
           if (resp.isError) {
             return;
           }
-          this.userDataBuffer.name = resp.name;
-          this.userDataBuffer.username = resp.username;
-          this.userDataBuffer.room= resp.room;
-          this.userDataBuffer.id= resp.id;
-          this.userDataBuffer.isInGame= resp.isInGame;
-          this.userDataBuffer.isInRoom= resp.isInRoom;
-
-          this.userDataBuffer.tableCards = resp.tableCards;
-          this.userDataBuffer.playerCards = resp.playerCards;
+          this.userDataBuffer = resp;
 
           this.userStatusDataChanged.emit(this.userDataBuffer);
         })).toPromise();

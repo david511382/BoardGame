@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { HandCardsComponent } from '../../share/poker/hand-cards/hand-cards.component';
 import { CardModel } from '../../share/poker/poker-card/poker-card.component';
-import { ICardResponseModel } from '../bigtwo.service';
+import { ICardResponseModel } from '../bigtwo-signalr-event.service';
 
 export enum BorderColor {
   InitColor = "gray",
@@ -19,6 +19,7 @@ export class GameBoardComponent implements AfterViewInit{
   @ViewChild("lastCards") private lastCardsView: HandCardsComponent;
 
   public isMouseOnTable: boolean = false;
+  public arrowClass: string;
 
   private allCards: CardModel[][]=[];
 
@@ -26,6 +27,23 @@ export class GameBoardComponent implements AfterViewInit{
 
   ngAfterViewInit(): void {
     this.setBoarderColor(BorderColor.InitColor);
+  }
+
+  public setTurn(id: number) {
+    switch (id) {
+      case 0:
+        this.arrowClass = "arrow bottom";
+        break;
+      case 1:
+        this.arrowClass = "arrow right";
+        break;
+      case 2:
+        this.arrowClass = "arrow top";
+        break;
+      case 3:
+        this.arrowClass = "arrow left";
+        break;
+    }
   }
 
   public putCards(data:ICardResponseModel[]) {

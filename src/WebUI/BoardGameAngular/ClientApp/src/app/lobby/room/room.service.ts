@@ -1,11 +1,11 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable  } from "rxjs";
 import { catchError, tap } from 'rxjs/operators';
 import { GeneralResponse, HandleErrorFun, SuccessResponse } from '../../domain/response.const';
 import { UrlConfigService, RoomUrl } from '../../config/config.service';
 import { RoomSignalREventService } from './signalr-event.service';
-import { AuthService, UserStatusData } from '../../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { RoomModel } from '../../domain/user-status-model.const';
 
 interface ListResponse extends GeneralResponse {

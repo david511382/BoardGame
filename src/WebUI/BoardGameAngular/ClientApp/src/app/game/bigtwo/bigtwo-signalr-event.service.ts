@@ -1,12 +1,23 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { ICardResponseModel } from './bigtwo.service';
 import { RoomSignalRService } from '../../signalR/room-signalr.service';
+
+export interface ICardResponseModel {
+  number: number;
+  suit: number;
+}
+export interface IConditionModel {
+  turnId: number;
+}
+export interface IGameBoardModel {
+  cards: ICardResponseModel[];
+  condition: IConditionModel;
+}
 
 @Injectable()
 export class BigtwoSignalREventService {
   public connectionId: string;
 
-  gameBoardUpdateEvent = new EventEmitter<ICardResponseModel[]>();
+  gameBoardUpdateEvent = new EventEmitter<IGameBoardModel>();
   
   constructor(private signalRService: RoomSignalRService) {
     this.connectionId = this.signalRService.connectionId;

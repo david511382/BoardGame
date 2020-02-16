@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace GameLogic.Game
 {
-    public abstract partial class BoardGame<TBoardItem> : IBoardGame where TBoardItem : GameObj
+    public abstract partial class BoardGame<TBoardItem, TCondition> : IBoardGame where TBoardItem : GameObj
     {
         public abstract void Load(string json);
 

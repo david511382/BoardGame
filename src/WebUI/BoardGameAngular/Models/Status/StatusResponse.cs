@@ -35,9 +35,11 @@ namespace BoardGameAngular.Models.Status
         public void LoadGameStatus(GameStatusResponse data)
         {
             PlayerCards = data.PlayerCards;
+            TableCards = data.TableCards;
+            Condition = data.Condition;
+
             ErrorMessage = data.ErrorMessage;
             IsError = data.IsError;
-            TableCards = data.TableCards;
             Message = data.Message;
         }
     }
