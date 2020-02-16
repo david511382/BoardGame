@@ -1,10 +1,6 @@
 import { Component, ViewChild, TemplateRef } from '@angular/core';
 import { GameService } from './game.service';
 
-export class GameData {
-  constructor(public tableData: any, public playerData: any) {}
-}
-
 enum gameEnum {
   BigTwo=2
 }
@@ -28,7 +24,7 @@ export class GameMainComponent{
   }
 
   private init() {
-    this.contextData.gameData = new GameData(this.service.tableData, this.service.playerData);
+    this.contextData.gameData = this.service.data;
     this.showGame();
   }
 

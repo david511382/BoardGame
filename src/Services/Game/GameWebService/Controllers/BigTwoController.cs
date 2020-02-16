@@ -1,7 +1,6 @@
 ﻿using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Game.PokerGame;
 using Domain.Api.Models.Request.Game;
-using Domain.Api.Models.Response.Game.PokerGame;
 using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
 using GameLogic.PokerGame;
 using GameWebService.Domain;
@@ -32,42 +31,6 @@ namespace GameWebService.Controllers
             _gameService = gameService;
             _responseService = responseService;
             _logger = logger;
-        }
-
-        /// <summary>
-        /// 取得手牌
-        /// </summary>
-        /// <returns></returns>
-        [Route("HandCards")]
-        [HttpGet]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(PokerCardsResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(PokerCardsResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCards()
-        {
-            return await _responseService.Init<PokerCardsResponse>(this, _logger)
-                .ValidateToken((user) => { })
-                .Do<PokerCardsResponse>(async (result, user) =>
-                  {
-                      BigTwoLogic.BigTwo game;
-                      using (RedisContext redis = new RedisContext(_redisConnectString))
-                      {
-                          game = await vaildUserGame(redis, user.Id);
-                      }
-
-                      PokerCard[] cards = game.GetResource(user.Id).GetHandCards();
-                      result.Cards = cards.Select((c) => new PockerCardModel
-                      {
-                          Suit = (int)c.Suit,
-                          Number = c.Number
-                      })
-                      .OrderBy(d => d.Number)
-                      .ThenBy(d => d.Suit)
-                      .ToArray();
-
-                      return result;
-                  });
         }
 
         /// <summary>

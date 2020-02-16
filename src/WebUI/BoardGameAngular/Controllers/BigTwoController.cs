@@ -1,4 +1,3 @@
-using BoardGameAngular.Models.BigTwo.Response;
 using BoardGameAngular.Models.SignalR;
 using BoardGameAngular.Services.Config;
 using BoardGameAngular.Services.SignalRHub;
@@ -36,24 +35,6 @@ namespace BoardGameAngular.Controllers
             _responseService = responseService;
             _hubContext = hubContext;
             _logger = logger;
-        }
-
-        [HttpGet("HandCards")]
-        [ProducesResponseType(typeof(HandCardsResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(HandCardsResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> HandCards()
-        {
-            return await _responseService.Init<HandCardsResponse>(this, _logger)
-                .Do<HandCardsResponse>(async (result, user, logger) =>
-                {
-                    result = await HttpHelper.HttpRequest.New()
-                        .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
-                        .To(_urlConfig.HandCards)
-                        .Get<HandCardsResponse>();
-
-                    return result;
-                });
         }
 
         [HttpPost("SelectCards")]

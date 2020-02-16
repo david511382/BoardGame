@@ -14,9 +14,6 @@ export interface ICardResponseModel{
   number: number;
   suit: number;
 }
-interface IHandCardsResponse extends GeneralResponse {
-  cards: ICardResponseModel[]
-}
 interface ICardIndexesResponse extends GeneralResponse {
   cardIndexes: number[]
 }
@@ -31,11 +28,6 @@ export class BigTwoService {
     private signalService: BigtwoSignalREventService,
     config: UrlConfigService) {
     this.bigTwoBackendUrl = config.bigTwoBackendUrl;
-  }
-
-  public GetHandCards(): Observable<IHandCardsResponse> {
-    return this.http.get<IHandCardsResponse>(this.bigTwoBackendUrl.HandCards)
-      .pipe(catchError(HandleErrorFun()));
   }
 
   public SelectCards(request: CardIndexesRequest): Observable<ICardIndexesResponse> {

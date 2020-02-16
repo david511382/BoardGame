@@ -81,7 +81,17 @@ namespace BigTwoLogic
             PokerCard club3 = new PokerCard(PokerSuit.Club, 3);
             for (int i = 0; i < _playerResources.Count; i++)
             {
-                if (base.GetResourceAt(i).GetHandCards().Where(d => d.Suit == club3.Suit && d.Number == club3.Number).Count() > 0)
+                PokerResource playerResource = GetResourceAt(i);
+
+                // order hand cards
+                PokerCard[] handcards = playerResource.GetHandCards();
+                handcards = handcards
+                    .OrderBy(d => d.Number)
+                    .ThenBy(d => d.Suit)
+                    .ToArray();
+                playerResource.SetHandCard(handcards);
+
+                if (handcards.Where(d => d.Suit == club3.Suit && d.Number == club3.Number).Count() > 0)
                 {
                     currentTurn = i;
                     _lastPlayTurnId = ((currentTurn == 0) ?

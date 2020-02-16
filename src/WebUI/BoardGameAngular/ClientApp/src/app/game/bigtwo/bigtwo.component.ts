@@ -1,16 +1,17 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, AfterViewInit } from '@angular/core';
 import { CardModel } from '../share/poker/poker-card/poker-card.component';
 import { BigTwoService, CardIndexesRequest, ICardResponseModel } from './bigtwo.service';
 import { HandCardsComponent} from '../share/poker/hand-cards/hand-cards.component';
 import { GameBoardComponent, BorderColor } from './game-board/game-board.component';
 import { BigtwoSignalREventService } from './bigtwo-signalr-event.service';
+import { IGameData } from '../game.service';
 
 interface IPlayerModel {
   id: number;
   handCards: ICardResponseModel[];
 }
 
-interface IBigtwoData{
+export interface IBigtwoData extends IGameData{
   tableData: ICardResponseModel[][];
   playerData: IPlayerModel[];
 }
@@ -42,27 +43,23 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
         this.gameBoard.putCards(cards);
       });
     }, 0);
+
+    this.getHandCards();
   }
 
   private getHandCards() {
-    var ob = this.service.GetHandCards();
-    if (ob)
-      ob.subscribe(resp => {
-        if (resp.isError) {
-          return;
-        }
+    var handCards = [];
+    this.gameData.playerData.find((v, i) => {
+      return v.id === this.gameData.playerId;
+    }).handCards.forEach((v) => {
+      handCards.push(new CardModel(v.number, v.suit));
+    });
 
-        var cards = [];
-        resp.cards.forEach((v) => {
-          cards.push(new CardModel(v.number, v.suit));
-        });
-        this.handCardView.showCards(cards);
-      });
+    this.handCardView.showCards(handCards);
   }
 
   private load() {
     this.cards = [];
-    this.getHandCards();
     this.handCardView.selectCardEvent.subscribe((is) => this.selectCard(is));
     this.handCardView.dragStartedEvent.subscribe(() => {
       this.gameBoard.setBoarderColor(BorderColor.OutColor);
