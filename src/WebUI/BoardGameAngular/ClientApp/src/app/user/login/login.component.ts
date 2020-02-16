@@ -24,7 +24,11 @@ export class LoginComponent {
         }
 
         this.location.back();
-        alert(`${resp.name}登入成功\n${resp.message}`);
+
+        let loginMsg = `${resp.name}登入成功`;
+        if (resp.message)
+          loginMsg += `\n${resp.message}`;
+        alert(loginMsg );
       });
   }
 }
