@@ -5,6 +5,7 @@ import { HandCardsComponent} from '../share/poker/hand-cards/hand-cards.componen
 import { GameBoardComponent, BorderColor } from './game-board/game-board.component';
 import { BigtwoSignalREventService, ICardResponseModel, IConditionModel, IGameBoardModel } from './bigtwo-signalr-event.service';
 import { IGameData } from '../game.service';
+import { ToggleButtonComponent } from '../../share/toggle-button/toggle-button.component';
 
 export interface IBigtwoData extends IGameData {
   tableData: ICardResponseModel[][];
@@ -25,12 +26,16 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
   @Input() gameData: IBigtwoData;
   @ViewChild(HandCardsComponent, { static: true }) private handCardView: HandCardsComponent;
   @ViewChild("gameBoard", { static: true }) private gameBoard: GameBoardComponent;
+  @ViewChild("passButton", { static: true }) private passButton: ToggleButtonComponent;
   
   public cards: CardModel[];
 
   private currentPlayerIndex: number;
   private get currentPlayer(): IPlayerModel {
     return this.gameData.playerData[this.currentPlayerIndex];
+  }
+  private get isTurn(): boolean {
+    return this.gameData.condition.turnId === this.currentPlayerIndex;
   }
 
   constructor(private service: BigTwoService,
@@ -43,6 +48,10 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
         this.gameData.condition = data.condition;
 
         this.setTurn();
+
+        if (this.isTurn &&
+          this.passButton.isActive)
+          this.pass();
       });
     this.load();
   }
@@ -57,6 +66,14 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
     }, 0);
 
     this.getHandCards();
+
+    this.passButton.valueChange.subscribe((isActive: boolean) => {
+      if (this.isTurn && isActive) {
+        // close toggle
+        this.passButton.setToggle(false);
+        this.pass();
+      }
+    });
   }
 
   private setTurn() {
@@ -100,7 +117,7 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
         this.handCardView.dragCardsCancel();
     });
   }
-
+  
   private selectCard(cardIndexes: number[]) {
     var request: CardIndexesRequest = new CardIndexesRequest();
     request.Indexes = cardIndexes;
@@ -117,6 +134,10 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
 
         this.handCardView.selectCards(cardIndexes);
       });
+  }
+  
+  private pass() {
+    this.playCards(null);
   }
 
   private playCards(cardIndexes: number[]) {

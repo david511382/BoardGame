@@ -129,6 +129,10 @@ namespace GameWebService.Controllers
                                 }).ToArray();
                             result.Condition = new ConditionModel(game.GetCondition());
                         }
+                        else
+                        {
+                            result.Message = "不能Pass";
+                        }
                     }
 
                     return result;

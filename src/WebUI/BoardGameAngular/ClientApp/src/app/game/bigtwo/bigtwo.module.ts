@@ -8,6 +8,7 @@ import { GameBoardComponent } from './game-board/game-board.component';
 import { BigTwoService } from './bigtwo.service';
 import { BigtwoSignalREventService } from './bigtwo-signalr-event.service';
 import { SignalRModule } from '../../signalR/signalR.module';
+import { ShareModule } from '../../share/share.module';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { SignalRModule } from '../../signalR/signalR.module';
     FormsModule,
     ReactiveFormsModule,
     GameShareModule,
-    SignalRModule
+    SignalRModule,
+    ShareModule
   ],
   entryComponents: [
   ]
