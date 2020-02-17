@@ -1,0 +1,62 @@
+.non:hover .content,
+.toggle .content {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: pink;
+}
+
+button {
+  width: 120px;
+  height: 60px;
+  box-sizing: border-box;
+  padding: 5px;
+  position: relative;
+  overflow: hidden;
+  outline: 0;
+}
+
+.non:hover::before,
+.toggle::before {
+  content: "";
+  position: absolute;
+  transform: translateX(-50%) translateY(-50%) rotate(-45deg);
+  animation: animate 20s linear infinite;
+  width: 200px;
+  height: 200px;
+}
+.non:hover::before {
+  background: repeating-linear-gradient( white 0%, white 7.5px, lightgreen 7.5px, lightgreen 15px, white 15px, white 22.5px, lightgreen 22.5px, lightgreen 30px );
+}
+.toggle::before  {
+  background: repeating-linear-gradient( white 0%, white 7.5px, hotpink 7.5px, hotpink 15px, white 15px, white 22.5px, hotpink 22.5px, hotpink 30px );
+}
+
+.non:hover .content,
+.toggle .content {
+  position: relative;
+  background-color: white;
+  flex-direction: column;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: sans-serif;
+  z-index: 2;
+}
+
+button,
+.non:hover .content,
+.toggle .content {
+  box-shadow: 0 0 2px deeppink, 0 0 5px rgba(0, 0, 0, 1), inset 0 0 5px rgba(0, 0, 0, 1);
+  border-radius: 10px;
+}
+
+@keyframes animate {
+  from {
+    background-position: 0;
+  }
+
+  to {
+    background-position: 0 200px;
+  }
+}

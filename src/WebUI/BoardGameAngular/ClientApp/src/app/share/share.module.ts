@@ -4,14 +4,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TextBoxComponent } from './text-box/text-box.component';
 import { SetComponent } from './set/set.component';
 import { ViewContainerDirective } from './view-container/view-container.directive';
+import { ToggleButtonComponent } from './toggle-button/toggle-button.component';
 
 @NgModule({
   declarations: [
+    ToggleButtonComponent,
     TextBoxComponent,
     SetComponent,
     ViewContainerDirective,
   ],
   exports: [
+    ToggleButtonComponent,
     TextBoxComponent,
     SetComponent,
     ViewContainerDirective,
