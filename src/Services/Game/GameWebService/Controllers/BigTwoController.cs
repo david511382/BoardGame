@@ -3,6 +3,7 @@ using Domain.Api.Models.Base.Game.PokerGame;
 using Domain.Api.Models.Base.Game.PokerGame.BigTwo;
 using Domain.Api.Models.Request.Game;
 using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
+using Domain.Api.Services;
 using GameLogic.PokerGame;
 using GameWebService.Domain;
 using GameWebService.Services;
@@ -10,7 +11,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RedisRepository;
+using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,6 +28,9 @@ namespace GameWebService.Controllers
         private readonly ILogger _logger;
 
         private readonly string _redisConnectString;
+
+        private const int TRY_LOCK_TIMES = 3;
+        private const int WAIT_LOCK_MS = 50;
 
         public BigTwoController(ConfigService configService, IGameService gameService, IResponseService responseService, ILogger<BigTwoController> logger)
         {
@@ -96,17 +102,17 @@ namespace GameWebService.Controllers
                     using (RedisContext redis = new RedisContext(_redisConnectString))
                     {
                         RedisRepository.Models.UserModel redisUser = await redis.User.Get(user.Id);
-                        bool isNotInGame = redisUser.GameRoomID.Value >= 0;
+                        int gameRoomId = redisUser.GameRoomID.Value;
+                        bool isNotInGame = gameRoomId >= 0;
                         if (isNotInGame)
                             throw new Exception("不在遊戲中");
 
-                        int roomID = -redisUser.GameRoomID.Value;
+                        int roomID = -gameRoomId;
                         RedisRepository.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
                         if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
                             throw new Exception("錯誤遊戲");
 
                         BigTwoLogic.BigTwo game = _gameService.LoadGame(redisGameStatus) as BigTwoLogic.BigTwo;
-
 
                         if (!game.IsTurn(user.Id))
                         {
@@ -127,7 +133,25 @@ namespace GameWebService.Controllers
                                     Number = c.Number
 
                                 }).ToArray();
-                            result.Condition = new ConditionModel(game.GetCondition());
+
+                            GameLogic.Game.GameStatus gameState = game.GetCondition();
+                            bool isGameOver = gameState.WinPlayerIds != null && gameState.WinPlayerIds.Length > 0;
+                            if (isGameOver)
+                            {
+                                if (!await gameOver(
+                                    redis,
+                                    game.GetResource().Select((s) => s.PlayerId),
+                                    roomID))
+                                {
+                                    result.Fail("遊戲結束失敗");
+                                    return result;
+                                }
+                                result.Condition = new ConditionModel(gameState.TurnId, gameState.WinPlayerIds.First());
+                            }
+                            else
+                            {
+                                result.Condition = new ConditionModel(gameState.TurnId, 0);
+                            }
                         }
                         else
                         {
@@ -176,7 +200,10 @@ namespace GameWebService.Controllers
                                   Number = c.Number
                               }).ToArray()
                           )).ToArray();
-                  result.Condition = new ConditionModel(game.GetCondition());
+                  GameLogic.Game.GameStatus gameState = game.GetCondition();
+                  result.Condition = new ConditionModel(
+                      gameState.TurnId,
+                      (gameState.WinPlayerIds == null || gameState.WinPlayerIds.Length == 0) ? 0 : gameState.WinPlayerIds.First());
                   return result;
 
               });
@@ -195,6 +222,43 @@ namespace GameWebService.Controllers
                 throw new Exception("錯誤遊戲");
 
             return _gameService.LoadGame(redisGameStatus) as BigTwoLogic.BigTwo;
+        }
+
+        private async Task<bool> gameOver(RedisContext redis, IEnumerable<int> playerIds, int roomId)
+        {
+            try
+            {
+                foreach (int id in playerIds)
+                    if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redis.User.Lock(id), WAIT_LOCK_MS))
+                        return false;
+
+                ITransaction tran = redis.Begin();
+
+                Task<RedisRepository.Models.UserModel>[] getUsers = playerIds.Select((id) => redis.User.Get(id))
+                      .Select(async (t) =>
+                      {
+                          RedisRepository.Models.UserModel u = await t;
+                          u.GameRoomID = null;
+                          return u;
+                      }).ToArray();
+                foreach (Task<RedisRepository.Models.UserModel> getUser in getUsers)
+                {
+                    RedisRepository.Models.UserModel u = await getUser;
+                    _ = redis.User.Set(u, tran);
+                }
+
+                if (!await tran.ExecuteAsync())
+                    return false;
+
+                //刪除gamestatus
+                await redis.GameStatus.Delete(roomId);
+                return true;
+            }
+            finally
+            {
+                foreach (int id in playerIds)
+                    await redis.User.Release(id);
+            }
         }
     }
 }

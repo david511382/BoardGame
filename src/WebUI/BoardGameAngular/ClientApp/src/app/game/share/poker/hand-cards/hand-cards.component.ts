@@ -46,6 +46,8 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
   @Output() playCardsEvent = new EventEmitter<number[]>();
   @Output() selectCardEvent = new EventEmitter<number[]>();
 
+  public enable: boolean;
+
   public viewCards: ViewCard[];
 
   public dragData: DragData;
@@ -79,6 +81,7 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
     private changeDetector: ChangeDetectorRef
   ) {
     this.dragData = new DragData();
+    this.enable = true;
   }
 
   ngOnInit(): void {
@@ -104,6 +107,9 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
   }
 
   selectCards(cardIndexes: number[]) {
+    if (!this.enable)
+      return;
+
     this.selectingIndexes = [];
 
     this.viewCards.forEach((v,index) => {
@@ -154,6 +160,9 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
   }
 
   private onMouseClick(index: number) {
+    if (!this.enable)
+      return;
+
     if (this.selectedIndexes.length > 0) {
       let lastSelectedIndex = this.selectedIndexes[this.selectedIndexes.length - 1];
       if (lastSelectedIndex === index)
@@ -249,7 +258,8 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
 
     this.dragData.endDrag();
   }
-  private dragSelectingCardsReleaseEvent(e: CdkDragRelease<CardModel>) {
+
+  public dragSelectingCardsReleaseEvent(e: CdkDragRelease<CardModel>) {
     var cards = [];
     this.viewCards.forEach((card, index) => {
       if (!card.isSelecting)
@@ -260,5 +270,4 @@ export class HandCardsComponent implements OnInit, AfterViewInit{
 
     this.playCardsEvent.emit(cards);
   }
- 
 }

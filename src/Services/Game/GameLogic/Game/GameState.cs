@@ -7,12 +7,14 @@ namespace GameLogic.Game
         public GameState State { get; set; }
         public int[] WinPlayerIds { get; set; }
         public int CurrentPlayerId { get; set; }
+        public int TurnId { get; set; }
 
         public GameStatus(GameState state)
         {
             State = state;
             WinPlayerIds = null;
             CurrentPlayerId = -1;
+            TurnId = 0;
         }
     }
 }

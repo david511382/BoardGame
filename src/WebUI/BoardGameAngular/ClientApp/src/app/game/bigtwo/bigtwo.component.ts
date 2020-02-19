@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { CardModel } from '../share/poker/poker-card/poker-card.component';
 import { BigTwoService, CardIndexesRequest } from './bigtwo.service';
 import { HandCardsComponent} from '../share/poker/hand-cards/hand-cards.component';
@@ -24,6 +24,9 @@ interface IPlayerModel {
 })
 export class BigtwoComponent implements OnInit, AfterViewInit {
   @Input() gameData: IBigtwoData;
+
+  @Output() onGameOver = new EventEmitter();
+
   @ViewChild(HandCardsComponent, { static: true }) private handCardView: HandCardsComponent;
   @ViewChild("gameBoard", { static: true }) private gameBoard: GameBoardComponent;
   @ViewChild("passButton", { static: true }) private passButton: ToggleButtonComponent;
@@ -46,12 +49,26 @@ export class BigtwoComponent implements OnInit, AfterViewInit {
       .subscribe((data: IGameBoardModel) => {
         this.gameBoard.putCards(data.cards);
         this.gameData.condition = data.condition;
+        let isGameOver = this.gameData.condition.winPlayerId > 0;
+        if (isGameOver) {
+          this.passButton.setEnable(false);
+          this.handCardView.enable = false;
 
-        this.setTurn();
+          let player = this.gameData.playerData.find((v) => {
+            if (v.id === this.gameData.condition.winPlayerId)
+              return true;
+            return false;
+          }).id;
+          setTimeout(() => this.onGameOver.emit(), 3000);          
+          alert(`${player}獲勝\n3秒後關閉`);
+        }
+        else {
+          this.setTurn();
 
-        if (this.isTurn &&
-          this.passButton.isActive)
-          this.pass();
+          if (this.isTurn &&
+            this.passButton.isActive)
+            this.pass();
+        }
       });
     this.load();
   }

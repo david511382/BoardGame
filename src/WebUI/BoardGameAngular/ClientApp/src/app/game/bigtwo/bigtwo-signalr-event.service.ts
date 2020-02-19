@@ -7,6 +7,7 @@ export interface ICardResponseModel {
 }
 export interface IConditionModel {
   turnId: number;
+  winPlayerId: number;
 }
 export interface IGameBoardModel {
   cards: ICardResponseModel[];

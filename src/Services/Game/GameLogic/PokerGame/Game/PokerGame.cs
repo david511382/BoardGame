@@ -1,8 +1,9 @@
-﻿using GameLogic.PokerGame.CardGroup;
+﻿using GameLogic.Game;
+using GameLogic.PokerGame.CardGroup;
 
 namespace GameLogic.PokerGame.Game
 {
-    public abstract class PokerGame<TCondition> : GameLogic.Game.BoardGame<PokerCardGroup, TCondition>
+    public abstract class PokerGame<TCondition> : BoardGame<PokerCardGroup, TCondition> where TCondition : GameStatus
     {
         protected Poker _poker;
 
@@ -30,5 +31,12 @@ namespace GameLogic.PokerGame.Game
             for (int i = 0; i < base.playerNum; i++)
                 GetResourceAt(i).SetHandCard(dealResult[i]);
         }
+    }
+
+    public abstract class PokerGame : PokerGame<GameStatus>
+    {
+        public PokerGame(int MIN_PLAYERS, int MAX_PLAYERS)
+          : base(MAX_PLAYERS, MIN_PLAYERS)
+        { }
     }
 }

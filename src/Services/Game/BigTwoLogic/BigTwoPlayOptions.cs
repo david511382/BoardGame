@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace BigTwoLogic
 {
-    public partial class BigTwo : PokerGame<int>
+    public partial class BigTwo : PokerGame
     {
         private int _lastPlayTurnId;
 
@@ -19,7 +19,6 @@ namespace BigTwoLogic
             _lastPlayTurnId = data.LastPlayTurnId;
             _gameStaus = data.GameStatus;
             _playerResources = data.PlayerResources.Select((p) => p as PlayerResource).ToList();
-            base.currentTurn = data.CurrentTurn;
             IsFreeType = data.IsFreeType;
             IsRequiredClub3 = data.IsRequiredClub3;
             Table = data.Table;
@@ -29,7 +28,6 @@ namespace BigTwoLogic
         {
             LoadModel data = new LoadModel
             {
-                CurrentTurn = base.currentTurn,
                 IsFreeType = IsFreeType,
                 IsRequiredClub3 = IsRequiredClub3,
                 GameStatus = _gameStaus,

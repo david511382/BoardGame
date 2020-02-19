@@ -8,11 +8,10 @@ using System.Linq;
 
 namespace BigTwoLogic
 {
-    public partial class BigTwo : PokerGame<int>
+    public partial class BigTwo : PokerGame
     {
         private struct LoadModel
         {
-            public int CurrentTurn;
             public bool IsFreeType;
             public bool IsRequiredClub3;
             public GameStatus GameStatus;
@@ -62,11 +61,6 @@ namespace BigTwoLogic
         {
             IsFreeType = true;
             IsRequiredClub3 = true;
-        }
-
-        public override int GetCondition()
-        {
-            return currentTurn;
         }
 
         public IEnumerable<PokerResource> GetResource()

@@ -5,27 +5,26 @@ using System.Linq;
 
 namespace GameLogic.Game
 {
-    public abstract partial class BoardGame<TBoardItem, TCondition> : IBoardGame where TBoardItem : GameObj
+    public abstract partial class BoardGame<TBoardItem, TCondition> : IBoardGame where TBoardItem : GameObj where TCondition : GameStatus
     {
         protected readonly int MAX_GAME_PLAYERS = 4;
         protected readonly int MIN_GAME_PLAYERS = 2;
 
         protected int currentTurn
         {
-            get { return _currentTurn; }
+            get { return _gameStaus.TurnId; }
             set
             {
-                _currentTurn = (value >= _playerResources.Count) ?
+                _gameStaus.TurnId = (value >= _playerResources.Count) ?
                     0 :
                     value;
 
-                _gameStaus.CurrentPlayerId = GetResourceAt(_currentTurn).PlayerId;
+                _gameStaus.CurrentPlayerId = GetResourceAt(_gameStaus.TurnId).PlayerId;
             }
         }
 
         protected List<PlayerResource> _playerResources;
         protected GameBoard<TBoardItem> Table;
-        private int _currentTurn;
         protected GameStatus _gameStaus;
 
         private Action GameOverNotifier;
@@ -50,7 +49,10 @@ namespace GameLogic.Game
             return Table;
         }
 
-        public abstract TCondition GetCondition();
+        public virtual GameStatus GetCondition()
+        {
+            return _gameStaus;
+        }
 
         public virtual PlayerResource GetResource(int playerId)
         {

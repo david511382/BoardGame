@@ -3,7 +3,7 @@
 </ng-template>
 
 <ng-template #BigTwo let-game="gameData">
-  <app-game-bigtwo [gameData]="game"></app-game-bigtwo>
+  <app-game-bigtwo [gameData]="game" (onGameOver)="gameOver()"></app-game-bigtwo>
 </ng-template>
 
 <ng-container [ngTemplateOutlet]="displayPage" [ngTemplateOutletContext]="contextData"></ng-container>
