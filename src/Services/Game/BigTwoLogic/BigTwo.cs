@@ -61,6 +61,7 @@ namespace BigTwoLogic
         {
             IsFreeType = true;
             IsRequiredClub3 = true;
+            _lastPlayTurnId = -1;
         }
 
         public IEnumerable<PokerResource> GetResource()
@@ -90,14 +91,13 @@ namespace BigTwoLogic
                     .ToArray();
                 playerResource.SetHandCard(handcards);
 
-                if (handcards.Where(d => d.Suit == club3.Suit && d.Number == club3.Number).Count() > 0)
+                if (_lastPlayTurnId == -1 &&
+                    handcards.Where(d => d.Suit == club3.Suit && d.Number == club3.Number).Any())
                 {
                     currentTurn = i;
-                    _lastPlayTurnId = ((currentTurn == 0) ?
-                        _playerResources.Count :
-                        currentTurn)
-                        - 1;
-                    break;
+                    _lastPlayTurnId = (currentTurn == 0) ?
+                        _playerResources.Count - 1 :
+                        currentTurn - 1;
                 }
             }
         }
