@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B9CC07A2-D1E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{E7D8BAB1-3A3E-44AE-AB9D-8D79341383DD}"
 	ProjectSection(SolutionItems) = preProject
+		Makefile = Makefile
 		README.md = README.md
 		系統架構圖.png = 系統架構圖.png
 	EndProjectSection
