@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace Convert
+namespace Util
 {
     public static class DataConvert
     {

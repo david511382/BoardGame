@@ -13,7 +13,7 @@ COPY src/Services/Game/GameWebService/GameWebService.csproj  ./Services/Game/Gam
 COPY src/Services/Game/BigTwoLogic/BigTwoLogic.csproj  ./Services/Game/BigTwoLogic/
 COPY src/Services/Game/GameLogic/GameLogic.csproj  ./Services/Game/GameLogic/
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
-COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
+COPY src/Common/Util/Util.csproj ./Common/Util/
 
 RUN dotnet restore  ./Services/Game/GameWebService/GameWebService.csproj
 
@@ -23,7 +23,7 @@ COPY src/Services/Game/GameWebService/. ./Services/Game/GameWebService/
 COPY src/Services/Game/BigTwoLogic/. ./Services/Game/BigTwoLogic/
 COPY src/Services/Game/GameLogic/. ./Services/Game/GameLogic/
 COPY src/Common/Domain/. ./Common/Domain/
-COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
+COPY src/Common/Util/. ./Common/Util/
 WORKDIR /src/Services/Game/GameWebService
 RUN dotnet publish -c Release -o /app
 

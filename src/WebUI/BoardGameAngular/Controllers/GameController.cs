@@ -31,7 +31,7 @@ namespace BoardGameAngular.Controllers
             return await _responseService.Init<GameListResponse>(this, _logger)
                   .Do<GameListResponse>(async (result, user, logger) =>
                   {
-                      result = await HttpHelper.HttpRequest.New()
+                      result = await Util.Http.HttpRequest.New()
                          .To(_urlConfig.ListGame)
                          .Get<GameListResponse>();
 

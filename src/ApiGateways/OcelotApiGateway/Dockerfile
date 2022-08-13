@@ -11,8 +11,7 @@ COPY src/ApiGateways/OcelotApiGateway/OcelotApiGateway.csproj  ./ApiGateways/Oce
 COPY src/Services/Auth/AuthWebService/AuthWebService.csproj  ./Services/Auth/AuthWebService/
 COPY src/Repositories/Member/MemberRepository.csproj  ./Repositories/Member/
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
-COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
-COPY src/Common/Util/HttpHelper/HttpHelper.csproj ./Common/Util/HttpHelper/
+COPY src/Common/Util/Util.csproj ./Common/Util/
 
 RUN dotnet restore ./ApiGateways/OcelotApiGateway/OcelotApiGateway.csproj
 
@@ -20,8 +19,7 @@ COPY src/ApiGateways/OcelotApiGateway/. ./ApiGateways/OcelotApiGateway/
 COPY src/Services/Auth/AuthWebService/. ./Services/Auth/AuthWebService/
 COPY src/Repositories/Member/. ./Repositories/Member/
 COPY src/Common/Domain/. ./Common/Domain/
-COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
-COPY src/Common/Util/HttpHelper/. ./Common/Util/HttpHelper/
+COPY src/Common/Util/. ./Common/Util/
 WORKDIR /src/ApiGateways/OcelotApiGateway/
 RUN dotnet publish -c Release -o /app
 

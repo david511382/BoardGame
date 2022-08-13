@@ -10,14 +10,14 @@ WORKDIR /src
 COPY src/Repositories/Redis/RedisRepository.csproj  ./Repositories/Redis/
 COPY src/Services/Lobby/LobbyWebService.csproj  ./Services/Lobby/
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
-COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
+COPY src/Common/Util/Util.csproj ./Common/Util/
 
 RUN dotnet restore  ./Services/Lobby/LobbyWebService.csproj
 
 COPY src/Repositories/Redis/. ./Repositories/Redis/
 COPY src/Services/Lobby/. ./Services/Lobby/
 COPY src/Common/Domain/. ./Common/Domain/
-COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
+COPY src/Common/Util/. ./Common/Util/
 WORKDIR /src/Services/Lobby
 RUN dotnet publish -c Release -o /app
 

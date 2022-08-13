@@ -36,7 +36,7 @@ namespace BoardGameAngular.Controllers
                .Do<StatusResponse>(async (result, user) =>
                {
                    KeyValuePair<string, string> header = new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}");
-                   Domain.Api.Models.Response.Lobby.StatusResponse userStatusResponse = await HttpHelper.HttpRequest.New()
+                   Domain.Api.Models.Response.Lobby.StatusResponse userStatusResponse = await Util.Http.HttpRequest.New()
                          .AddHeader(header)
                          .To(_urlConfig.UserStatus)
                          .Get<Domain.Api.Models.Response.Lobby.StatusResponse>();
@@ -44,7 +44,7 @@ namespace BoardGameAngular.Controllers
                    result.LoadUserStatus(userStatusResponse);
                    if (userStatusResponse.IsInGame)
                    {
-                       GameStatusResponse gameStatusResponse = await HttpHelper.HttpRequest.New()
+                       GameStatusResponse gameStatusResponse = await Util.Http.HttpRequest.New()
                            .AddHeader(header)
                            .To(_urlConfig.GameStatus)
                            .Get<GameStatusResponse>();

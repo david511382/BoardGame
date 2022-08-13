@@ -1,4 +1,4 @@
-﻿using Convert;
+﻿using Util;
 using Domain.JWTUser;
 using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,7 +35,7 @@ namespace OcelotApiGateway
             {
                 try
                 {
-                    HttpHelper.Domain.Model.ResponseModel resp = await HttpHelper.HttpRequest.New()
+                    Util.Http.ResponseModel resp = await Util.Http.HttpRequest.New()
                         .AddHeader(new KeyValuePair<string, string>(TOKEN_HEADER, token))
                         .To(AUTH_URL, true)
                         .Get();

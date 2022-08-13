@@ -1,8 +1,7 @@
-﻿using HttpHelper.Domain.Model;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace HttpHelper.Domain.Interface
+namespace Util.Http
 {
     public interface IRequest
     {

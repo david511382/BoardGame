@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Util\HttpHelper\HttpHelper.csproj" />
     <ProjectReference Include="..\..\Services\Auth\AuthWebService\AuthWebService.csproj" />
   </ItemGroup>
 

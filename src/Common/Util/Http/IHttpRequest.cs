@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
-namespace HttpHelper.Domain.Interface
+namespace Util.Http
 {
     public interface IHttpRequest
     {

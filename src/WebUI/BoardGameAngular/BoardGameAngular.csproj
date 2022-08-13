@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Domain\Domain.csproj" />
-    <ProjectReference Include="..\..\Common\Util\HttpHelper\HttpHelper.csproj" />
     <ProjectReference Include="..\..\Repositories\Redis\RedisRepository.csproj" />
   </ItemGroup>
 

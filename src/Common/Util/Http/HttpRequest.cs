@@ -1,6 +1,4 @@
-﻿using HttpHelper.Domain.Interface;
-using HttpHelper.Domain.Model;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HttpHelper
+namespace Util.Http
 {
     public sealed class HttpRequest : IRequest, IHttpRequest
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace TransactionHelper
+namespace Util.Transaction
 {
     public class TransactionTask
     {

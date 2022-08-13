@@ -45,7 +45,7 @@ namespace BoardGameAngular.Controllers
             return await _responseService.Init<RoomListResponse>(this, _logger)
                   .Do<RoomListResponse>(async (result, user, logger) =>
                   {
-                      result = await HttpHelper.HttpRequest.New()
+                      result = await Util.Http.HttpRequest.New()
                          .To(_urlConfig.ListRoom)
                          .Get<RoomListResponse>();
 
@@ -75,7 +75,7 @@ namespace BoardGameAngular.Controllers
                 })
                 .Do<RoomResponse>(async (result, user, logger) =>
                 {
-                    result = await HttpHelper.HttpRequest.New()
+                    result = await Util.Http.HttpRequest.New()
                         .SetForm(new Dictionary<string, string>
                         {
                             { "gameID",gameID.ToString() },
@@ -118,7 +118,7 @@ namespace BoardGameAngular.Controllers
                 })
                 .Do<RoomResponse>(async (result, user, logger) =>
                 {
-                    result = await HttpHelper.HttpRequest.New()
+                    result = await Util.Http.HttpRequest.New()
                         .SetForm(new Dictionary<string, string>
                         {
                             { "hostID",hostID.ToString() },
@@ -161,7 +161,7 @@ namespace BoardGameAngular.Controllers
                 })
                 .Do<BoolResponseModel>(async (result, user, logger) =>
                 {
-                    RoomResponse response = await HttpHelper.HttpRequest.New()
+                    RoomResponse response = await Util.Http.HttpRequest.New()
                         .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                         .To(_urlConfig.LeaveRoom)
                         .Delete<RoomResponse>();
@@ -202,7 +202,7 @@ namespace BoardGameAngular.Controllers
                 {
                     KeyValuePair<string, string> header =
                         new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}");
-                    BoolResponseModel startGameResponse = await HttpHelper.HttpRequest.New()
+                    BoolResponseModel startGameResponse = await Util.Http.HttpRequest.New()
                      .AddHeader(header)
                      .To(_urlConfig.StartGame)
                      .Post<BoolResponseModel>();
@@ -213,7 +213,7 @@ namespace BoardGameAngular.Controllers
                         return result;
                     }
 
-                    result = await HttpHelper.HttpRequest.New()
+                    result = await Util.Http.HttpRequest.New()
                         .AddHeader(header)
                         .To(_urlConfig.RoomStart)
                         .Delete<StartRoomResponse>();

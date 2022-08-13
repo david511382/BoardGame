@@ -43,7 +43,7 @@ namespace BoardGameAngular.Controllers
                   })
                   .Do<LoginResponse>(async (result, user, logger) =>
                   {
-                      HttpHelper.Domain.Model.ResponseModel response = await login(username, password);
+                      Util.Http.ResponseModel response = await login(username, password);
                       if (response.StatusCode != HttpStatusCode.OK)
                           throw new Exception(response.Content);
 
@@ -74,7 +74,7 @@ namespace BoardGameAngular.Controllers
                   .Do<LoginResponse>(async (result, user, logger) =>
                   {
                       // register
-                      BoolResponseModel registerResponse = await HttpHelper.HttpRequest.New()
+                      BoolResponseModel registerResponse = await Util.Http.HttpRequest.New()
                         .SetJson(userInfo)
                         .To(_urlConfig.UserRegister)
                         .Post<BoolResponseModel>();
@@ -90,7 +90,7 @@ namespace BoardGameAngular.Controllers
                       }
 
                       // login
-                      HttpHelper.Domain.Model.ResponseModel response = await login(userInfo.Username, userInfo.Password);
+                      Util.Http.ResponseModel response = await login(userInfo.Username, userInfo.Password);
                       if (response.StatusCode != HttpStatusCode.OK)
                           throw new Exception(response.Content);
 
@@ -117,7 +117,7 @@ namespace BoardGameAngular.Controllers
                  })
                  .Do<BoolResponseModel>(async (result, user) =>
                  {
-                     BoolResponseModel response = await HttpHelper.HttpRequest.New()
+                     BoolResponseModel response = await Util.Http.HttpRequest.New()
                           .SetJson(request)
                           .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                           .To(_urlConfig.UserUpdate)
@@ -135,9 +135,9 @@ namespace BoardGameAngular.Controllers
                  });
         }
 
-        private async Task<HttpHelper.Domain.Model.ResponseModel> login(string username, string password)
+        private async Task<Util.Http.ResponseModel> login(string username, string password)
         {
-            return await HttpHelper.HttpRequest.New()
+            return await Util.Http.HttpRequest.New()
                 .SetForm(new Dictionary<string, string>
                 {
                     { "username",username },

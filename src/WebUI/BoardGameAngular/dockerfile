@@ -9,18 +9,16 @@ FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 COPY src/Repositories/Redis/RedisRepository.csproj  ./Repositories/Redis/
 COPY src/WebUI/BoardGameAngular/BoardGameAngular.csproj ./WebUI/BoardGameAngular/
-COPY src/Common/Util/CommonUtil/Convert.csproj ./Common/Util/CommonUtil/
+COPY src/Common/Util/Util.csproj ./Common/Util/Util/
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
-COPY src/Common/Util/HttpHelper/HttpHelper.csproj ./Common/Util/HttpHelper/
 
 RUN dotnet restore ./WebUI/BoardGameAngular/BoardGameAngular.csproj
 
 WORKDIR /src
 COPY src/Repositories/Redis/. ./Repositories/Redis/
 COPY src/WebUI/BoardGameAngular/. ./WebUI/BoardGameAngular/
-COPY src/Common/Util/CommonUtil/. ./Common/Util/CommonUtil/
+COPY src/Common/Util/. ./Common/Util/
 COPY src/Common/Domain/. ./Common/Domain/
-COPY src/Common/Util/HttpHelper/. ./Common/Util/HttpHelper/
 
 WORKDIR /src/WebUI/BoardGameAngular
 # Setup NodeJs

@@ -46,7 +46,7 @@ namespace BoardGameAngular.Controllers
             return await _responseService.Init<SelectCardResponse>(this, _logger)
                 .Do<SelectCardResponse>(async (result, user, logger) =>
                 {
-                    result = await HttpHelper.HttpRequest.New()
+                    result = await Util.Http.HttpRequest.New()
                         .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                         .SetJson(request)
                         .To(_urlConfig.SelectCards)
@@ -76,12 +76,12 @@ namespace BoardGameAngular.Controllers
                 })
                 .Do<BoolResponseModel>(async (result, user, logger) =>
                 {
-                    Task<StatusResponse> statusResponseTask = HttpHelper.HttpRequest.New()
+                    Task<StatusResponse> statusResponseTask = Util.Http.HttpRequest.New()
                         .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                         .To(_urlConfig.UserStatus)
                         .Get<StatusResponse>();
 
-                    PlayCardResponse response = await HttpHelper.HttpRequest.New()
+                    PlayCardResponse response = await Util.Http.HttpRequest.New()
                         .AddHeader(new KeyValuePair<string, string>("Authorization", $"Bearer {Request.Cookies["token"]}"))
                         .SetJson(request)
                         .To(_urlConfig.PlayCards)

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 
-namespace HttpHelper.Domain.Model
+namespace Util.Http
 {
     public struct ResponseModel
     {
