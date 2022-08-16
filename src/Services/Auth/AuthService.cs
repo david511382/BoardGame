@@ -1,14 +1,14 @@
 ﻿using BoardGameWebService.Models;
 using MemberRepository;
 using System;
-using Util;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Util;
 
 namespace Services.Auth
 {
-    class AuthService : IAuthService
+    public class AuthService : IAuthService
     {
         private readonly IUserInfoDAL _db;
 

@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Services.Auth
 {
-    class JWTService : IJWTService
+    public class JWTService : IJWTService
     {
         private readonly SymmetricSecurityKey _securityKey;
         private JWTConfigModel _config { get; }

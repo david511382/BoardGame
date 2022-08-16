@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Services.Auth
 {
-    class JWTEvent : JwtBearerEvents
+    public class JWTEvent : JwtBearerEvents
     {
         private ILogger<JWTEvent> _logger;
 
