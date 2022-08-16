@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\Common\Util\Util.csproj" />
+    <ProjectReference Include="..\..\Repositories\Member\MemberRepository.csproj" />
+  </ItemGroup>
+
+</Project>
