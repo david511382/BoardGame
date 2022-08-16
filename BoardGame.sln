@@ -109,6 +109,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "src\Services\Auth\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LobbyWebService", "src\Services\LobbyWebService\LobbyWebService.csproj", "{5052EDD6-566C-460E-8327-9E160F533241}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lobby", "src\Services\Lobby\Lobby.csproj", "{50FD3DFE-B0AC-4FA0-AC76-5A66B9F4D201}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -175,6 +177,10 @@ Global
 		{5052EDD6-566C-460E-8327-9E160F533241}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5052EDD6-566C-460E-8327-9E160F533241}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5052EDD6-566C-460E-8327-9E160F533241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50FD3DFE-B0AC-4FA0-AC76-5A66B9F4D201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50FD3DFE-B0AC-4FA0-AC76-5A66B9F4D201}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50FD3DFE-B0AC-4FA0-AC76-5A66B9F4D201}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50FD3DFE-B0AC-4FA0-AC76-5A66B9F4D201}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -212,6 +218,7 @@ Global
 		{18B76014-0195-4296-BD9F-FCEC21E74AB7} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
 		{6B305D29-F580-481F-9C62-9166D2D367E2} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
 		{5052EDD6-566C-460E-8327-9E160F533241} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
+		{50FD3DFE-B0AC-4FA0-AC76-5A66B9F4D201} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0449C612-F29B-409C-8211-5B0D75F4F3B5}
