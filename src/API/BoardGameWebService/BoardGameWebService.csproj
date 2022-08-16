@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\Common\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\Common\Util\Util.csproj" />
     <ProjectReference Include="..\..\Services\Auth\Auth.csproj" />
+    <ProjectReference Include="..\..\Services\Game\Game.csproj" />
     <ProjectReference Include="..\..\Services\Lobby\Lobby.csproj" />
   </ItemGroup>
 

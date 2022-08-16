@@ -2,6 +2,7 @@ using BoardGameWebService.Models;
 using Domain.Api.Interfaces;
 using Domain.Api.Services;
 using Domain.Logger;
+using GameRespository;
 using MemberRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
 using Services.Auth;
+using Services.Game;
 using Services.Lobby;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -68,6 +70,16 @@ namespace BoardGameWebService
             #endregion
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            #region Game
+            services.AddSingleton<ConfigService>();
+            services.AddSingleton<IGameService, GameService>();
+            services.AddDbContext<GameContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("GameDb"));
+            });
+            services.AddScoped<IGameInfoDAL, GameInfoDAL>();
+            #endregion
 
             #region Lobby
             string redisConnStr = Configuration.GetConnectionString("Redis");
@@ -140,7 +152,7 @@ namespace BoardGameWebService
             }
 
             app.UseMiddleware<HttpLoggerMiddleware>();
-            
+
             #region Auth
             app.UseAuthentication();
             #endregion
