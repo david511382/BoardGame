@@ -8,11 +8,11 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 COPY src/Repositories/Redis/RedisRepository.csproj  ./Repositories/Redis/
-COPY src/Services/Lobby/LobbyWebService.csproj  ./Services/Lobby/
+COPY src/Services/LobbyWebService/LobbyWebService.csproj  ./Services/Lobby/
 COPY src/Common/Domain/Domain.csproj ./Common/Domain/
 COPY src/Common/Util/Util.csproj ./Common/Util/
 
-RUN dotnet restore  ./Services/Lobby/LobbyWebService.csproj
+RUN dotnet restore  ./Services/LobbyWebService/LobbyWebService.csproj
 
 COPY src/Repositories/Redis/. ./Repositories/Redis/
 COPY src/Services/Lobby/. ./Services/Lobby/
