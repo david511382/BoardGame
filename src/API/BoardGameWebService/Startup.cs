@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
 using Services.Auth;
+using Services.Lobby;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ namespace BoardGameWebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Auth
             // jwt config
             IConfigurationSection jwtC = Configuration.GetSection("JWTTokens");
             JWTConfigModel jwtConfig = new JWTConfigModel();
@@ -63,9 +65,16 @@ namespace BoardGameWebService
                   };
                   options.EventsType = typeof(JWTEvent);
               });
+            #endregion
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            #region Lobby
+            string redisConnStr = Configuration.GetConnectionString("Redis");
+            services.AddSingleton<IRedisService>(new RedisService(redisConnStr));
+            #endregion
+
+            #region Auth
             services.AddDbContext<MemberContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("MemberDb"));
@@ -75,6 +84,7 @@ namespace BoardGameWebService
             services.AddScoped<IAuthService, AuthService>();
 
             services.AddSingleton<IJWTService, JWTService>();
+            #endregion
 
             services.AddScoped<IResponseService, ResponseService>();
 
@@ -130,8 +140,10 @@ namespace BoardGameWebService
             }
 
             app.UseMiddleware<HttpLoggerMiddleware>();
-
+            
+            #region Auth
             app.UseAuthentication();
+            #endregion
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
