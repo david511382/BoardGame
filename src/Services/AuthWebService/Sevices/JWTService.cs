@@ -37,7 +37,7 @@ namespace AuthWebService.Sevices
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        
+
         private SigningCredentials signCredentiial()
         {
             return new SigningCredentials(

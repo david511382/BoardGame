@@ -228,7 +228,7 @@ services:
     container_name: board-game-auth-api
     build:
       context: ../../.
-      dockerfile: src/Services/Auth/AuthWebService/Dockerfile
+      dockerfile: src/Services/AuthWebService/Dockerfile
     depends_on:
       - member.db
       - es01
