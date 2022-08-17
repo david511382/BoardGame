@@ -37,68 +37,75 @@ namespace BoardGameWebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string serviceArg = getServiceArg();
+            var isAllService = serviceArg == "";
+
             #region Auth
-            // jwt config
-            IConfigurationSection jwtC = Configuration.GetSection("JWTTokens");
-            JWTConfigModel jwtConfig = new JWTConfigModel();
-            jwtC.Bind(jwtConfig);
+            if (isAllService || serviceArg == "auth"){
+                // jwt config
+                IConfigurationSection jwtC = Configuration.GetSection("JWTTokens");
+                JWTConfigModel jwtConfig = new JWTConfigModel();
+                jwtC.Bind(jwtConfig);
+                services
+                    .Configure<JWTConfigModel>((c) => { jwtC.Bind(c); })
+                    .AddSingleton((sp) =>
+                    {
+                        ILogger<JWTEvent> logger = sp.GetService<ILogger<JWTEvent>>();
+                        return new JWTEvent(logger);
+                    })
+                    .AddScoped<IUserInfoDAL, UserInfoDAL>()
+                    .AddScoped<IAuthService, AuthService>()
+                    .AddSingleton<IJWTService, JWTService>()
+                    .AddDbContext<MemberContext>(options =>
+                    {
+                        options.UseSqlServer(Configuration.GetConnectionString("MemberDb"));
+                    });
 
-            services.Configure<JWTConfigModel>((c) => { jwtC.Bind(c); });
-
-            services.AddSingleton((sp) =>
-            {
-                ILogger<JWTEvent> logger = sp.GetService<ILogger<JWTEvent>>();
-                return new JWTEvent(logger);
-            });
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-              .AddJwtBearer(options =>
-              {
-                  options.TokenValidationParameters = new TokenValidationParameters
-                  {
-                      ValidateIssuer = true,
-                      ValidateAudience = true,
-                      ValidateLifetime = true,
-                      ValidateIssuerSigningKey = true,
-                      ValidIssuer = jwtConfig.ValidIssuer,
-                      ValidAudience = jwtConfig.ValidAudience,
-                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.IssuerSigningKey)),
-                      RequireExpirationTime = true,
-                  };
-                  options.EventsType = typeof(JWTEvent);
-              });
+                services
+                    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = jwtConfig.ValidIssuer,
+                            ValidAudience = jwtConfig.ValidAudience,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.IssuerSigningKey)),
+                            RequireExpirationTime = true,
+                        };
+                        options.EventsType = typeof(JWTEvent);
+                    });
+            }
             #endregion
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
             #region Game
-            services.AddSingleton<ConfigService>();
-            services.AddSingleton<IGameService, GameService>();
-            services.AddDbContext<GameContext>(options =>
+            if (isAllService || serviceArg == "game")
             {
-                options.UseSqlServer(Configuration.GetConnectionString("GameDb"));
-            });
-            services.AddScoped<IGameInfoDAL, GameInfoDAL>();
+                services
+                    .AddSingleton<ConfigService>()
+                    .AddSingleton<IGameService, GameService>()
+                    .AddDbContext<GameContext>(options =>
+                    {
+                        options.UseSqlServer(Configuration.GetConnectionString("GameDb"));
+                    })
+                    .AddScoped<IGameInfoDAL, GameInfoDAL>();
+            }
             #endregion
 
             #region Lobby
-            string redisConnStr = Configuration.GetConnectionString("Redis");
-            services.AddSingleton<IRedisService>(new RedisService(redisConnStr));
-            #endregion
-
-            #region Auth
-            services.AddDbContext<MemberContext>(options =>
+            if (isAllService || serviceArg == "lobby")
             {
-                options.UseSqlServer(Configuration.GetConnectionString("MemberDb"));
-            });
-            services.AddScoped<IUserInfoDAL, UserInfoDAL>();
-
-            services.AddScoped<IAuthService, AuthService>();
-
-            services.AddSingleton<IJWTService, JWTService>();
+                services.AddSingleton<IRedisService>(new RedisService(Configuration.GetConnectionString("Redis")));
+            }   
             #endregion
+
 
             services.AddScoped<IResponseService, ResponseService>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>
             {
@@ -170,5 +177,7 @@ namespace BoardGameWebService
 
             app.UseMvc();
         }
+
+        private string getServiceArg() => Configuration.GetValue<string>("service");
     }
 }
