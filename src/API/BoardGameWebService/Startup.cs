@@ -38,7 +38,7 @@ namespace BoardGameWebService
         public void ConfigureServices(IServiceCollection services)
         {
             string serviceArg = getServiceArg();
-            var isAllService = serviceArg == "";
+            var isAllService = serviceArg == null;
 
             #region Auth
             if (isAllService || serviceArg == "auth"){
