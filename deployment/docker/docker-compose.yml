@@ -4,178 +4,56 @@ services:
     container_name: board-game-member-db
     image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
     environment:
-     - ACCEPT_EULA=Y
-     - SA_PASSWORD="f#JF39F3jds"
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD="f#JF39F3jds"
     ports:
       - "1487:1433"
     volumes:
       - member-db-volume:/var/opt/mssql
     networks:
-        board-game-network:
-            ipv4_address: 172.54.87.10
+      board-game-network:
+        ipv4_address: 172.54.87.10
 
   db.game:
     container_name: db-game
     image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
     environment:
-     - ACCEPT_EULA=Y
-     - SA_PASSWORD="f#JF39F3jds"
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD="f#JF39F3jds"
     ports:
       - "1488:1433"
     volumes:
       - game-db-volume:/var/opt/mssql
     networks:
-        board-game-network:
-            ipv4_address: 172.54.87.11
+      board-game-network:
+        ipv4_address: 172.54.87.11
 
-  redis.master1:
-    container_name: redis-master1
-    build:
-      context: redis/node/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
+  redis.master:
+    container_name: redis-master
+    image: redis
+    command: /config/redis.conf
     ports:
       - "6380:6379"
+    volumes:
+      - ./redis/node:/config
     networks:
-         board-game-network:
-            ipv4_address: 172.54.87.12
-  redis.master2:
-    container_name: redis-master2
-    build:
-      context: redis/node/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    networks:
-         board-game-network:
-            ipv4_address: 172.54.87.13
-  redis.master3:
-    container_name: redis-master3
-    build:
-      context: redis/node/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    networks:
-         board-game-network:
-            ipv4_address: 172.54.87.14
-  redis.slave1:
-    container_name: redis-slave1
-    build:
-      context: redis/node/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    command: redis-server --slaveof redis-master1 6379
-    depends_on:
-      - redis.master1
-    networks:
-         board-game-network:
-            ipv4_address: 172.54.87.15
-  redis.slave2:
-    container_name: redis-slave2
-    build:
-      context: redis/node/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    command: redis-server --slaveof redis-master2 6379
-    depends_on:
-      - redis.master2
-    networks:
-         board-game-network:
-            ipv4_address: 172.54.87.16
-  redis.slave3:
-    container_name: redis-slave3
-    build:
-      context: redis/node/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    command: redis-server --slaveof redis-master3 6379
-    depends_on:
-      - redis.master3
-    networks:
-         board-game-network:
-            ipv4_address: 172.54.87.17
+      board-game-network:
 
-  redis.cluster-creator:
-    container_name: redis-cluster-creator
-    build:
-      context: redis/createnode/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    environment:
-     - REDIS_DOMAIN1=172.54.87.12:6379
-     - REDIS_DOMAIN2=172.54.87.13:6379
-     - REDIS_DOMAIN3=172.54.87.14:6379
-     - REDIS_SLAVE_DOMAIN1=172.54.87.15:6379
-     - REDIS_SLAVE_DOMAIN2=172.54.87.16:6379
-     - REDIS_SLAVE_DOMAIN3=172.54.87.17:6379
-    networks:
-         board-game-network:
-    depends_on:
-      - redis.master1
-      - redis.master2
-      - redis.master3
-      - redis.slave1
-      - redis.slave2
-      - redis.slave3
-
-  redis.sentinel1:
-    container_name: redis-sentinel1
-    build:
-      context: redis/sentinel/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    networks:
-         board-game-network:
-    depends_on: 
-      - redis.master1
-      - redis.master2
-      - redis.master3
-      - redis.slave1
-      - redis.slave2
-      - redis.slave3
-  redis.sentinel2:
-    container_name: redis-sentinel2
-    build:
-      context: redis/sentinel/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    networks:
-         board-game-network:
-    depends_on: 
-      - redis.master1
-      - redis.master2
-      - redis.master3
-      - redis.slave1
-      - redis.slave2
-      - redis.slave3
-  redis.sentinel3:
-    container_name: redis-sentinel3
-    build:
-      context: redis/sentinel/
-      args:
-        REDIS_VERSION: $REDIS_VERSION
-    networks:
-         board-game-network:
-    depends_on:
-      - redis.master1
-      - redis.master2
-      - redis.master3
-      - redis.slave1
-      - redis.slave2
-      - redis.slave3
 
   redis-commander:
     image: rediscommander/redis-commander:latest
     restart: always
     environment:
-      - REDIS_HOSTS=local:redis.master1:6379
+      - REDIS_HOSTS=local:redis.master:6379
       # - HTTP_USER=root
       # - HTTP_PASSWORD=root
     ports:
       - "8081:8081"
     depends_on:
-      - redis.master1
+      - redis.master
     networks:
-         board-game-network:
+      board-game-network:
+
 
   es01:
     container_name: es01
@@ -201,7 +79,7 @@ services:
       - "9300:9300"
     networks:
       board-game-network:
-         ipv4_address: 172.54.87.92
+        ipv4_address: 172.54.87.92
   es02:
     container_name: es02
     build:
@@ -224,7 +102,7 @@ services:
     networks:
       board-game-network:
         ipv4_address: 172.54.87.93
-             
+
   kibana:
     build:
       context: elk/kibana/
@@ -235,8 +113,8 @@ services:
     ports:
       - 5601:5601
     networks:
-       board-game-network:
-            ipv4_address: 172.54.87.50
+      board-game-network:
+        ipv4_address: 172.54.87.50
 
   auth.api:
     container_name: board-game-auth-api
@@ -247,38 +125,34 @@ services:
       - member.db
       - es01
     networks:
-         board-game-network:
-            ipv4_address: 172.54.87.54
-  
-  api.lobby:  
+      board-game-network:
+        ipv4_address: 172.54.87.54
+
+  api.lobby:
     container_name: api-lobby
     build:
       context: ../../.
       dockerfile: src/Services/Lobby/Dockerfile
     depends_on:
-      - redis.master1
-      - redis.master2
-      - redis.master3
+      - redis.master
       - db.game
       - es01
     networks:
-         board-game-network:
-            ipv4_address: 172.54.87.154
+      board-game-network:
+        ipv4_address: 172.54.87.154
 
-  api.game:  
+  api.game:
     container_name: api-game
     build:
       context: ../../.
       dockerfile: src/Services/Game/GameWebService/Dockerfile
     depends_on:
-      - redis.master1
-      - redis.master2
-      - redis.master3
+      - redis.master
       - es01
     networks:
-         board-game-network:
-            ipv4_address: 172.54.87.178
-            
+      board-game-network:
+        ipv4_address: 172.54.87.178
+
   boardgame.gw:
     container_name: board-game-gw
     build:
@@ -290,9 +164,9 @@ services:
       - api.game
       - es01
     networks:
-         board-game-network:
-            ipv4_address: 172.54.87.88
-            
+      board-game-network:
+        ipv4_address: 172.54.87.88
+
   angular.ui:
     container_name: board-game-angular-ui
     build:
@@ -304,8 +178,8 @@ services:
       - boardgame.gw
       - es01
     networks:
-         board-game-network:
-            ipv4_address: 172.54.87.94
+      board-game-network:
+        ipv4_address: 172.54.87.94
 
 volumes:
   member-db-volume:
@@ -313,8 +187,9 @@ volumes:
   elasticsearch01:
   elasticsearch02:
 
+
 networks:
-   board-game-network:
-      ipam:
-         config:
-         - subnet: 172.54.87.0/24
+  board-game-network:
+    ipam:
+      config:
+        - subnet: 172.54.87.0/24

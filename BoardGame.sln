@@ -40,10 +40,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{ECDEE8
 	ProjectSection(SolutionItems) = preProject
 		deployment\docker\.env = deployment\docker\.env
 		deployment\docker\api.yml = deployment\docker\api.yml
+		deployment\docker\cluster-redis.yml = deployment\docker\cluster-redis.yml
 		deployment\docker\db.yml = deployment\docker\db.yml
 		deployment\docker\docker-compose.yml = deployment\docker\docker-compose.yml
 		deployment\docker\elk.yml = deployment\docker\elk.yml
-		deployment\docker\redis.yml = deployment\docker\redis.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "elk", "elk", "{1494C0F1-7DA9-4B4F-9594-B03074868CDA}"
@@ -78,6 +78,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node", "node", "{E0D55571-2101-4642-B48F-F0999114E958}"
 	ProjectSection(SolutionItems) = preProject
 		deployment\docker\redis\node\dockerfile = deployment\docker\redis\node\dockerfile
+		deployment\docker\redis\node\redis.conf = deployment\docker\redis\node\redis.conf
 		deployment\docker\redis\node\rediscluster.conf = deployment\docker\redis\node\rediscluster.conf
 	EndProjectSection
 EndProject
