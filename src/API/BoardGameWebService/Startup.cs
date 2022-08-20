@@ -38,10 +38,11 @@ namespace BoardGameWebService
         public void ConfigureServices(IServiceCollection services)
         {
             string serviceArg = getServiceArg();
-            var isAllService = serviceArg == null;
+            bool isAllService = serviceArg == null;
 
             #region Auth
-            if (isAllService || serviceArg == "auth"){
+            if (isAllService || serviceArg == "auth")
+            {
                 // jwt config
                 IConfigurationSection jwtC = Configuration.GetSection("JWTTokens");
                 JWTConfigModel jwtConfig = new JWTConfigModel();
@@ -99,7 +100,7 @@ namespace BoardGameWebService
             if (isAllService || serviceArg == "lobby")
             {
                 services.AddSingleton<IRedisService>(new RedisService(Configuration.GetConnectionString("Redis")));
-            }   
+            }
             #endregion
 
 
@@ -152,6 +153,10 @@ namespace BoardGameWebService
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();
+
+            string serviceArg = getServiceArg();
+            loggerFactory.CreateLogger<Startup>()
+                .LogInformation("serve {0}", (serviceArg == null) ? "all" : serviceArg);
 
             if (env.IsDevelopment())
             {
