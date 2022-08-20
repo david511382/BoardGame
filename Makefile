@@ -7,7 +7,6 @@ up: # debug 全開
 	docker-compose -f ./deployment/docker/docker-compose.yml up -d
 
 debug: # 只啟動開發需要的服務
-	docker-compose -f ./deployment/docker/docker-compose.yml stop redis-commander
 	docker-compose -f ./deployment/docker/docker-compose.yml up -d \
 	member.db db.game redis.master redis-commander es01 es02 kibana
 

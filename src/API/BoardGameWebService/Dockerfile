@@ -6,10 +6,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
-COPY ["src/Services/BoardGameWebService/BoardGameWebService.csproj", "src/Services/BoardGameWebService/"]
-RUN dotnet restore "src/Services/BoardGameWebService/BoardGameWebService.csproj"
+COPY ["src/API/BoardGameWebService/BoardGameWebService.csproj", "src/API/BoardGameWebService/"]
+RUN dotnet restore "src/API/BoardGameWebService/BoardGameWebService.csproj"
 COPY . .
-WORKDIR "/src/src/Services/BoardGameWebService"
+WORKDIR "/src/src/API/BoardGameWebService"
 RUN dotnet build "BoardGameWebService.csproj" -c Release -o /app/build
 
 FROM build AS publish

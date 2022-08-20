@@ -5,7 +5,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD="f#JF39F3jds"
+      - SA_PASSWORD=f#JF39F3jds
     ports:
       - "1487:1433"
     volumes:
@@ -19,7 +19,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD="f#JF39F3jds"
+      - SA_PASSWORD=f#JF39F3jds
     ports:
       - "1488:1433"
     volumes:

@@ -24,17 +24,22 @@
 
 # Getting started
 ## Docker Compose
-完整全部執行: docker-compose up --build -d
-部分執行: docker-compose -f redis.yml -f elk.yml up -f db.yml up -f api.yml up --build -d
+完整全部執行: make up
 
-## EF 資料庫 Migrations
-board-game-member-db
-1. 在啟動docker-compose後，連上資料庫localhost,1487，以SA帳號登入
-2. 接著新增資料庫Member
-3. 新增登入User ID=AuthWebService Password=auth$WebService 對應Member 預設資料庫Member 不強制執行密碼過期
-4. 資料庫Member設置AuthWebService權限，參考 需要資料庫權限
-5. 在VS起始專案設為AuthWebService，套件管理器主控台預設專案設為MemberRepository
-6. 在套件管理器主控台輸入 Update-Database -Context MemberContext
+## 資料庫初始化
+使用 EF 資料庫 Migrations  
+在VS起始專案設為 BoardGameWebService
+
+在套件管理器主控台輸入
+啟用
+```
+ Enable-migrations
+```
+更新
+```
+ Update-Database -Context MemberContext
+ Update-Database -Context GameContext
+```
 
 ### 套件
 Microsoft.EntityFrameworkCore
@@ -51,9 +56,6 @@ Microsoft.EntityFrameworkCore.SqlServer
 7. 選取
 
 ### 指令
-啟用指令
-Enable-migrations
-
 [變更名稱] 為資料庫變更的命名，自訂
 [資料庫] 使用的DbContext，自訂，此範例是MemberContext
 [輸出路徑] 應用程式專案下輸出Migrations的相對路徑，例如 Out/Migrations
