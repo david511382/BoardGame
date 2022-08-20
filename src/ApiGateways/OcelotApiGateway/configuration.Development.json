@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 53694
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/User/Login",
@@ -18,7 +18,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 53694
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/User/Register",
@@ -30,7 +30,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 53694
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/User/Update",
@@ -47,7 +47,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 53695
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Game",
@@ -59,7 +59,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 53695
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Game/StartGame",
@@ -76,7 +76,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 53695
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/boardgame/{game}/{method}",
@@ -93,7 +93,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 51136
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Room",
@@ -105,7 +105,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 51136
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Room",
@@ -121,7 +121,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 51136
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Room",
@@ -137,7 +137,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 51136
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Room",
@@ -153,7 +153,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 51136
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Room/Start",
@@ -169,7 +169,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 51136
+          "Port": 54282
         }
       ],
       "UpstreamPathTemplate": "/api/Room/User",

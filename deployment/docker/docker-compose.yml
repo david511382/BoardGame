@@ -120,6 +120,8 @@ services:
     container_name: board-game-auth-api
     build:
       context: ../../.
+      dockerfile: src/API/BoardGameWebService/Dockerfile
+    command: auth
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
     depends_on:
@@ -133,6 +135,8 @@ services:
     container_name: api-lobby
     build:
       context: ../../.
+      dockerfile: src/API/BoardGameWebService/Dockerfile
+    command: lobby
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
     depends_on:
@@ -147,6 +151,8 @@ services:
     container_name: api-game
     build:
       context: ../../.
+      dockerfile: src/API/BoardGameWebService/Dockerfile
+    command: game
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
     depends_on:
