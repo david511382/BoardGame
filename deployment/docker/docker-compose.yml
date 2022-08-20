@@ -163,6 +163,20 @@ services:
       - redis.slave2
       - redis.slave3
 
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis.master1:6379
+      # - HTTP_USER=root
+      # - HTTP_PASSWORD=root
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis.master1
+    networks:
+         board-game-network:
+
   es01:
     container_name: es01
     build:
@@ -278,7 +292,7 @@ services:
     networks:
          board-game-network:
             ipv4_address: 172.54.87.88
-
+            
   angular.ui:
     container_name: board-game-angular-ui
     build:
