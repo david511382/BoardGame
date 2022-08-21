@@ -12,7 +12,7 @@ services:
       - member-db-volume:/var/opt/mssql
     networks:
       board-game-network:
-        ipv4_address: 172.54.87.10
+
 
   db.game:
     container_name: db-game
@@ -26,7 +26,7 @@ services:
       - game-db-volume:/var/opt/mssql
     networks:
       board-game-network:
-        ipv4_address: 172.54.87.11
+
 
   redis.master:
     container_name: redis-master
@@ -79,7 +79,6 @@ services:
       - "9300:9300"
     networks:
       board-game-network:
-        ipv4_address: 172.54.87.92
   es02:
     container_name: es02
     build:
@@ -123,7 +122,7 @@ services:
       dockerfile: src/API/BoardGameWebService/Dockerfile
     command: auth
     environment:
-      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - member.db
       - es01
@@ -138,7 +137,7 @@ services:
       dockerfile: src/API/BoardGameWebService/Dockerfile
     command: lobby
     environment:
-      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - redis.master
       - db.game
@@ -154,7 +153,7 @@ services:
       dockerfile: src/API/BoardGameWebService/Dockerfile
     command: game
     environment:
-      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - redis.master
       - es01
@@ -168,7 +167,7 @@ services:
       context: ../../.
       dockerfile: src/ApiGateways/OcelotApiGateway/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - auth.api
       - api.lobby
@@ -184,7 +183,7 @@ services:
       context: ../../.
       dockerfile: src/WebUI/BoardGameAngular/dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_ENVIRONMENT=Docker
     ports:
       - "9487:80"
     depends_on:

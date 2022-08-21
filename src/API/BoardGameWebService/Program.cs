@@ -22,9 +22,7 @@ namespace BoardGameWebService
                 .ConfigureLogging((hostContext, logging) =>
                 {
                     IHostingEnvironment env = hostContext.HostingEnvironment;
-                    string configFileName = (env.EnvironmentName.Equals("Release")) ?
-                    $"appsettings.json" :
-                    $"appsettings.{env.EnvironmentName}.json";
+                    string configFileName = $"appsettings.{env.EnvironmentName}.json";
                     IConfigurationRoot configuration = new ConfigurationBuilder()
                         .SetBasePath(Path.Combine(env.ContentRootPath, "."))
                         .AddJsonFile(path: configFileName, optional: true, reloadOnChange: true)
