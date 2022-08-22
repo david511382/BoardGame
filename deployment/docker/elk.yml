@@ -1,4 +1,4 @@
-version: '3.2'
+version: "3.2"
 services:
   es01:
     container_name: es01
@@ -24,7 +24,6 @@ services:
       - "9300:9300"
     networks:
       docker_board-game-network:
-         ipv4_address: 172.54.87.92
   es02:
     container_name: es02
     build:
@@ -47,7 +46,7 @@ services:
     networks:
       docker_board-game-network:
         ipv4_address: 172.54.87.93
-             
+
   kibana:
     container_name: kibana
     build:
@@ -59,13 +58,13 @@ services:
     ports:
       - 5601:5601
     networks:
-       docker_board-game-network:
-            ipv4_address: 172.54.87.50
+      docker_board-game-network:
+        ipv4_address: 172.54.87.50
 
 volumes:
   elasticsearch01:
   elasticsearch02:
 
 networks:
-   docker_board-game-network:
-     external: true
+  docker_board-game-network:
+    external: true
