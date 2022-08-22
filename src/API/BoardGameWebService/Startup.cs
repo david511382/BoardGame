@@ -163,12 +163,6 @@ namespace BoardGameWebService
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMiddleware<HttpLoggerMiddleware>();
-
-            #region Auth
-            app.UseAuthentication();
-            #endregion
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -179,6 +173,12 @@ namespace BoardGameWebService
                     name: "development"
                 );
             });
+
+            app.UseMiddleware<HttpLoggerMiddleware>();
+
+            #region Auth
+            app.UseAuthentication();
+            #endregion
 
             app.UseMvc();
         }
