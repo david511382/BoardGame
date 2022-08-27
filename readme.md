@@ -1,76 +1,84 @@
-# ±M®×¤¶²Ğ
-## ±M®×¥\¯à
-	½u¤W®à¹C¥­¥x¡A´£¨Ñª±®aµn¤J¡A½u¤W¶}§½¹Cª±¡C
+ï»¿# å°ˆæ¡ˆä»‹ç´¹
+## å°ˆæ¡ˆåŠŸèƒ½
+	ç·šä¸Šæ¡ŒéŠå¹³å°ï¼Œæä¾›ç©å®¶ç™»å…¥ï¼Œç·šä¸Šé–‹å±€éŠç©ã€‚
 
-## ¬[ºc»¡©ú
-	±M®×¬[ºc: ·LªA°È¬[ºc
-	«eºİ: Angular
+## æ¶æ§‹èªªæ˜
+	å°ˆæ¡ˆæ¶æ§‹: å¾®æœå‹™æ¶æ§‹
+	å‰ç«¯: Angular
 	Gateway: Ocelot
-	«áºİ: .Net Core
-	«áºİApi·~°È: Auth(¥Î¤á»y»{ÃÒ±ÂÅv)¡BLobby(¤jÆU¹CÀ¸©Ğ¶¡)¡BGame(¹CÀ¸ÅŞ¿è)
-	¸ê®Æ®w: MSSQL¸ê®Æ®w¡AGame(¹CÀ¸)¡BMember(¥Î¤á)
-	Redis:Àx¦s¹CÀ¸©Ğ¶¡¸ò¹CÀ¸ª¬ºAªº3¥D3±qÂO¶°Redis¡AÁÙ¦³ªş¥[­ï§L¼Ò¦¡
-	¤é»x: ¨Ï¥ÎNLogµo°e¦ÜELK(Elasticsearch¡BKibana)¡C
-![avatar](¨t²Î¬[ºc¹Ï.png)
+	å¾Œç«¯: .Net Core
+	å¾Œç«¯Apiæ¥­å‹™: Auth(ç”¨æˆ¶èªèªè­‰æˆæ¬Š)ã€Lobby(å¤§å»³éŠæˆ²æˆ¿é–“)ã€Game(éŠæˆ²é‚è¼¯)
+	è³‡æ–™åº«: MSSQLè³‡æ–™åº«ï¼ŒGame(éŠæˆ²)ã€Member(ç”¨æˆ¶)
+	Redis:å„²å­˜éŠæˆ²æˆ¿é–“è·ŸéŠæˆ²ç‹€æ…‹çš„3ä¸»3å¾å¢é›†Redisï¼Œé‚„æœ‰é™„åŠ å“¨å…µæ¨¡å¼
+	æ—¥èªŒ: ä½¿ç”¨NLogç™¼é€è‡³ELK(Elasticsearchã€Kibana)ã€‚
+![avatar](ç³»çµ±æ¶æ§‹åœ–.png)
 
-## ÀÉ®×µ²ºc
-	src¢sApiGateways-OcelotApiGateway
-	   ¢uServices¢sGame-GameWebService
-	   ¢x		 ¢uAuthWebService
-	   ¢x		 ¢|LobbyWebService
-	   ¢uWebUI-BoardGameAngular
-	   ¢uRespositories
-	   ¢|Common
+## æª”æ¡ˆçµæ§‹
+	srcâ”¬ApiGateways-OcelotApiGateway
+	   â”œServicesâ”¬Game-GameWebService
+	   â”‚		 â”œAuthWebService
+	   â”‚		 â””LobbyWebService
+	   â”œWebUI-BoardGameAngular
+	   â”œRespositories
+	   â””Common
 
 # Getting started
 ## Docker Compose
-§¹¾ã¥ş³¡°õ¦æ: make up
+å®Œæ•´å…¨éƒ¨åŸ·è¡Œ: make up  
 
-## ¸ê®Æ®wªì©l¤Æ
-¨Ï¥Î EF ¸ê®Æ®w Migrations  
-¦bVS°_©l±M®×³]¬° BoardGameWebService
+elk éœ€è¦è¨­å®š vm.max_map_count=262144  
+Windows with Docker Desktop WSL 2 backend  
+```
+wsl -d docker-desktop
+sysctl -w vm.max_map_count=262144
+```
+[åƒè€ƒè³‡æ–™](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#_set_vm_max_map_count_to_at_least_262144)  
 
-¦b®M¥óºŞ²z¾¹¥D±±¥x¿é¤J
-±Ò¥Î
+## è³‡æ–™åº«åˆå§‹åŒ–
+ä½¿ç”¨ EF è³‡æ–™åº« Migrations  
+åœ¨VSèµ·å§‹å°ˆæ¡ˆè¨­ç‚º BoardGameWebService
+
+åœ¨å¥—ä»¶ç®¡ç†å™¨ä¸»æ§å°è¼¸å…¥
+å•Ÿç”¨
 ```
  Enable-migrations
 ```
-§ó·s
+æ›´æ–°
 ```
  Update-Database -Context MemberContext
  Update-Database -Context GameContext
 ```
 
-### ®M¥ó
+### å¥—ä»¶
 Microsoft.EntityFrameworkCore
 Microsoft.EntityFrameworkCore.SqlServer
-°Ñ¦Ò¸ê®Æ:https://dotblogs.com.tw/abc12207/2018/03/24/entity-framework-core-migrations-at-separate-class-library-project
+åƒè€ƒè³‡æ–™:https://dotblogs.com.tw/abc12207/2018/03/24/entity-framework-core-migrations-at-separate-class-library-project
 
-### »İ­n¸ê®Æ®wÅv­­
-1. §R°£
-2. §ïÅÜ¥ô¦óµ²ºc´y­z
-3. §ó·s
-4. «Ø¥ß¸ê®Æªí
-5. °Ñ¦Ò
-6. ´¡¤J
-7. ¿ï¨ú
+### éœ€è¦è³‡æ–™åº«æ¬Šé™
+1. åˆªé™¤
+2. æ”¹è®Šä»»ä½•çµæ§‹æè¿°
+3. æ›´æ–°
+4. å»ºç«‹è³‡æ–™è¡¨
+5. åƒè€ƒ
+6. æ’å…¥
+7. é¸å–
 
-### «ü¥O
-[ÅÜ§ó¦WºÙ] ¬°¸ê®Æ®wÅÜ§óªº©R¦W¡A¦Û­q
-[¸ê®Æ®w] ¨Ï¥ÎªºDbContext¡A¦Û­q¡A¦¹½d¨Ò¬OMemberContext
-[¿é¥X¸ô®|] À³¥Îµ{¦¡±M®×¤U¿é¥XMigrationsªº¬Û¹ï¸ô®|¡A¨Ò¦p Out/Migrations
+### æŒ‡ä»¤
+[è®Šæ›´åç¨±] ç‚ºè³‡æ–™åº«è®Šæ›´çš„å‘½åï¼Œè‡ªè¨‚
+[è³‡æ–™åº«] ä½¿ç”¨çš„DbContextï¼Œè‡ªè¨‚ï¼Œæ­¤ç¯„ä¾‹æ˜¯MemberContext
+[è¼¸å‡ºè·¯å¾‘] æ‡‰ç”¨ç¨‹å¼å°ˆæ¡ˆä¸‹è¼¸å‡ºMigrationsçš„ç›¸å°è·¯å¾‘ï¼Œä¾‹å¦‚ Out/Migrations
 
-¥[¤JÅÜ§ó
-Add-Migration [ÅÜ§ó¦WºÙ] -Context [¸ê®Æ®w]
-Add-Migration [ÅÜ§ó¦WºÙ] -Context [¸ê®Æ®w] -OutputDir [¿é¥X¸ô®|]
+åŠ å…¥è®Šæ›´
+Add-Migration [è®Šæ›´åç¨±] -Context [è³‡æ–™åº«]
+Add-Migration [è®Šæ›´åç¨±] -Context [è³‡æ–™åº«] -OutputDir [è¼¸å‡ºè·¯å¾‘]
 
-§ó·sÅÜ§ó
-Update-Database [ÅÜ§ó¦WºÙ] -Context [¸ê®Æ®w]
-Update-Database -Context [¸ê®Æ®w]
+æ›´æ–°è®Šæ›´
+Update-Database [è®Šæ›´åç¨±] -Context [è³‡æ–™åº«]
+Update-Database -Context [è³‡æ–™åº«]
 -Verbose
 
-²¾°£ÅÜ§ó
-Remove-Migration -Context [¸ê®Æ®w]
+ç§»é™¤è®Šæ›´
+Remove-Migration -Context [è³‡æ–™åº«]
 
 # Swagger
 nuget package Swashbuckle.AspNetCore
