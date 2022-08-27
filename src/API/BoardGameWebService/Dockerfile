@@ -10,12 +10,11 @@ COPY ["src/API/BoardGameWebService/BoardGameWebService.csproj", "src/API/BoardGa
 RUN dotnet restore "src/API/BoardGameWebService/BoardGameWebService.csproj"
 COPY . .
 WORKDIR "/src/src/API/BoardGameWebService"
-RUN dotnet build "BoardGameWebService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BoardGameWebService.csproj" -c Release -o /app/publish
+RUN dotnet publish "BoardGameWebService.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "BoardGameWebService.dll"]

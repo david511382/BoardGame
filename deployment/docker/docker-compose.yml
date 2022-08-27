@@ -116,46 +116,17 @@ services:
       board-game-network:
         ipv4_address: 172.54.87.50
 
-  auth.api:
-    container_name: board-game-auth-api
+  api:
     build:
       context: ../../.
       dockerfile: src/API/BoardGameWebService/Dockerfile
-    command: service=auth
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
+    ports:
+      - 5283:80
     depends_on:
       - member.db
-      - es01
-    networks:
-      board-game-network:
-
-
-  api.lobby:
-    container_name: api-lobby
-    build:
-      context: ../../.
-      dockerfile: src/API/BoardGameWebService/Dockerfile
-    command: service=lobby
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-    depends_on:
-      - redis.master
       - db.game
-      - es01
-    networks:
-      board-game-network:
-
-
-  api.game:
-    container_name: api-game
-    build:
-      context: ../../.
-      dockerfile: src/API/BoardGameWebService/Dockerfile
-    command: service=game
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-    depends_on:
       - redis.master
       - es01
     networks:
@@ -170,9 +141,7 @@ services:
     ports:
       - 5282:80
     depends_on:
-      - auth.api
-      - api.lobby
-      - api.game
+      - api
     networks:
       board-game-network:
 
