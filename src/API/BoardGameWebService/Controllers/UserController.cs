@@ -3,6 +3,8 @@ using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.User;
 using Domain.Db;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -147,6 +149,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] UserInfo info)
         {
             return await _responseService.Init<BoolResponseModel>(this, _logger)

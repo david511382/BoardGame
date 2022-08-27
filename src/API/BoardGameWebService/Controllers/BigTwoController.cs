@@ -6,6 +6,7 @@ using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
 using Domain.Api.Services;
 using GameLogic.PokerGame;
 using GameWebService.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace BoardGameWebService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/boardgame/[controller]")]
     [ApiController]
     public class BigTwoController : ControllerBase
     {
@@ -51,6 +52,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(SelectCardResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(SelectCardResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> SelectCards([FromBody] IndexesRequest request)
         {
             return await _responseService.Init<SelectCardResponse>(this, _logger)
@@ -93,6 +95,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(PlayCardResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(PlayCardResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> PlayCards([FromBody] IndexesRequest request)
         {
             return await _responseService.Init<PlayCardResponse>(this, _logger)
@@ -169,6 +172,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(GameStatusResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(GameStatusResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> GameStatus()
         {
             return await _responseService.Init<GameStatusResponse>(this, _logger)

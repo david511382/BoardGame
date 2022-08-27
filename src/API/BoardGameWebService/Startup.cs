@@ -18,7 +18,7 @@ using Services.Auth;
 using Services.Game;
 using Services.Lobby;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -27,12 +27,14 @@ namespace BoardGameWebService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+        private IHostingEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -108,45 +110,7 @@ namespace BoardGameWebService
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc(
-                    // name: §ñÃö SwaggerDocument ªº URL ¦ì¸m¡C
-                    name: "development",
-                    // info: ¬O¥Î©ó SwaggerDocument ª©¥»¸ê°TªºÅã¥Ü(¤º®e«D¥²¶ñ)¡C
-                    info: new Info
-                    {
-                        Title = "Auth API",
-                        Version = "1.0.0",
-                        Description = "»{ÃÒ»P±ÂÅv",
-                        TermsOfService = "https://github.com/david511382/BoardGame",
-                        Contact = new Contact
-                        {
-                            Name = "David",
-                            Url = "https://github.com/david511382/BoardGame"
-                        }
-                    }
-                );
-
-                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
-                    new ApiKeyScheme
-                    {
-                        In = "header",
-                        Description = "¦bJWT«e­±¥[¤WUser Json",
-                        Name = "Authorization",
-                        Type = "apiKey"
-                    });
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
-                    {
-                        JwtBearerDefaults.AuthenticationScheme,
-                        new string[]{ }
-                    },
-                });
-
-                string xmlFile = "Api.xml";
-                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
+            services.AddSwaggerGen(initSwagger);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -167,9 +131,9 @@ namespace BoardGameWebService
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint(
-                    // url: »İ°t¦X SwaggerDoc ªº name¡C "/swagger/{SwaggerDoc name}/swagger.json"
+                    // url: éœ€é…åˆ SwaggerDoc çš„ nameã€‚ "/swagger/{SwaggerDoc name}/swagger.json"
                     url: "/swagger/development/swagger.json",
-                    // name: ¥Î©ó Swagger UI ¥k¤W¨¤¿ï¾Ü¤£¦Pª©¥»ªº SwaggerDocument Åã¥Ü¦WºÙ¨Ï¥Î¡C
+                    // name: ç”¨æ–¼ Swagger UI å³ä¸Šè§’é¸æ“‡ä¸åŒç‰ˆæœ¬çš„ SwaggerDocument é¡¯ç¤ºåç¨±ä½¿ç”¨ã€‚
                     name: "development"
                 );
             });
@@ -181,6 +145,46 @@ namespace BoardGameWebService
             #endregion
 
             app.UseMvc();
+        }
+
+        private void initSwagger(SwaggerGenOptions c)
+        {
+            c.SwaggerDoc(
+                        // name: æ”¸é—œ SwaggerDocument çš„ URL ä½ç½®ã€‚
+                        name: "development",
+                        // info: æ˜¯ç”¨æ–¼ SwaggerDocument ç‰ˆæœ¬è³‡è¨Šçš„é¡¯ç¤º(å…§å®¹éå¿…å¡«)ã€‚
+                        info: new Info
+                        {
+                            Title = "Auth API",
+                            Version = "1.0.0",
+                            Description = "èªè­‰èˆ‡æˆæ¬Š",
+                            TermsOfService = "https://github.com/david511382/BoardGame",
+                            Contact = new Contact
+                            {
+                                Name = "David",
+                                Url = "https://github.com/david511382/BoardGame"
+                            }
+                        }
+                    );
+
+            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
+                new ApiKeyScheme
+                {
+                    In = "header",
+                    Description = "åœ¨JWTå‰é¢åŠ ä¸ŠUser Json",
+                    Name = "Authorization",
+                    Type = "apiKey"
+                });
+            c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+                    {
+                        JwtBearerDefaults.AuthenticationScheme,
+                        new string[]{ }
+                    },
+                });
+
+            string xmlFile = "Api.xml";
+            string xmlPath = Path.Combine(_env.ContentRootPath, xmlFile);
+            c.IncludeXmlComments(xmlPath);
         }
 
         private string getServiceArg() => Configuration.GetValue<string>("service");

@@ -2,6 +2,7 @@
 using Domain.Api.Models.Base.Lobby;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Lobby;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +50,7 @@ namespace BoardGameWebService.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("List")]
+        [Route("")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(GameListResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(GameListResponse), StatusCodes.Status400BadRequest)]
@@ -103,6 +104,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BoolResponseModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> StartGame()
         {
             return await _responseService.Init<BoolResponseModel>(this, _logger)

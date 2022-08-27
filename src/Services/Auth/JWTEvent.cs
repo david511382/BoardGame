@@ -3,6 +3,8 @@ using Domain.JWTUser;
 using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -10,38 +12,72 @@ namespace Services.Auth
 {
     public class JWTEvent : JwtBearerEvents
     {
+        private const string TOKEN_HEADER = "Authorization";
         private ILogger<JWTEvent> _logger;
 
         public JWTEvent(ILogger<JWTEvent> logger)
+            : base()
         {
             _logger = logger;
         }
 
+        // 如果要求處理期間擲回例外狀況，則叫用。 此事件之後會重新擲回例外狀況，除非受到抑制。
         public override Task AuthenticationFailed(AuthenticationFailedContext context)
         {
-            string failMsg = context.Exception.Message;
+            Exception exception = context.Exception;
             AuthLogModel logData = new AuthLogModel
             {
-                Message = failMsg,
+                Message = exception.Message,
                 IsAuth = false
             };
-            _logger.Info(logData);
+            if (context.Exception as UnauthorizedAccessException != null)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            }
+            else
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            }
 
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            context.Fail(failMsg);
+            context.Fail(exception);
+            _logger.Info(logData);
 
             return Task.CompletedTask;
         }
 
-        public override async Task TokenValidated(TokenValidatedContext context)
+        public override Task MessageReceived(MessageReceivedContext context)
         {
-            AuthLogModel logData = new AuthLogModel
+            string token = context.Request.Headers[TOKEN_HEADER].ToString();
+            if (string.IsNullOrEmpty(token))
             {
-                IsAuth = true,
-                User = context.Principal.Parse(),
-                SecurityToken = context.SecurityToken
-            };
-            _logger.Info(logData);
+                throw new UnauthorizedAccessException("沒有Token");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public override Task TokenValidated(TokenValidatedContext context)
+        {
+            try
+            {
+                UserClaimModel user = context.Principal.Parse();
+                string userJson = JsonConvert.SerializeObject(user);
+                context.Request.Headers[TOKEN_HEADER] = userJson;
+
+                AuthLogModel logData = new AuthLogModel
+                {
+                    IsAuth = true,
+                    User = user,
+                    SecurityToken = context.SecurityToken
+                };
+                _logger.Info(logData);
+            }
+            catch (Exception e)
+            {
+                throw new UnauthorizedAccessException(e.Message);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

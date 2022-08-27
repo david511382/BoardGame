@@ -2,6 +2,7 @@
 using Domain.Api.Models.Response.Lobby;
 using Domain.Api.Services;
 using Domain.JWTUser;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -90,6 +91,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> CreateRoom([FromForm] int gameID)
         {
             return await _responseService.Init<RoomResponse>(this, _logger)
@@ -132,6 +134,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> JoinRoom([FromForm] int hostID)
         {
             return await _responseService.Init<RoomResponse>(this, _logger)
@@ -173,6 +176,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(RoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> LeaveRoom()
         {
             return await _responseService.Init<RoomResponse>(this, _logger)
@@ -237,6 +241,7 @@ namespace BoardGameWebService.Controllers
         [ProducesResponseType(typeof(StartRoomResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(StartRoomResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<IActionResult> StartGame()
         {
             return await _responseService.Init<StartRoomResponse>(this, _logger)
@@ -298,6 +303,67 @@ namespace BoardGameWebService.Controllers
                 }, async (result, e, logger) =>
                 {
                     result.Error("無法開始遊戲");
+                    return result;
+                });
+        }
+
+        /// <summary>
+        /// 取得用戶大廳狀態
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("User")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [Authorize]
+        public async Task<IActionResult> UserStatus()
+        {
+            return await _responseService.Init<StatusResponse>(this, _logger)
+                .ValidateToken((user) => { })
+                .Do<StatusResponse>(async (result, user, logger) =>
+                {
+                    result.Id = user.Id;
+                    result.Name = user.Name;
+                    result.Username = user.Username;
+
+                    UserModel userStatus;
+                    try
+                    {
+                        userStatus = await _redisService.User(user.Id);
+                        if (userStatus.GameRoomID == null)
+                            throw new Exception();
+                    }
+                    catch
+                    {
+                        result.Room = null;
+                        return result;
+                    }
+
+                    bool isInGame = userStatus.GameRoomID.Value < 0;
+                    bool isInRoom = userStatus.GameRoomID.Value > 0;
+                    int roomId = Math.Abs(userStatus.GameRoomID.Value);
+
+                    RoomModel room;
+                    if (isInRoom)
+                        room = await _redisService.Room(roomId);
+                    else if (isInGame)
+                    {
+                        GameStatusModel gameStatus = await _redisService.GameStatus(roomId);
+                        room = gameStatus.Room;
+                    }
+                    else
+                        throw new Exception("資料錯誤");
+
+                    result.IsInGame = isInGame;
+                    result.IsInRoom = isInRoom;
+                    result.Room = room.ToApiRoom();
+
+                    return result;
+                }, async (result, e, logger) =>
+                {
+                    result.Error(e.Message);
                     return result;
                 });
         }

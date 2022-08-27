@@ -79,6 +79,7 @@ services:
       - "9300:9300"
     networks:
       board-game-network:
+        ipv4_address: 172.54.87.92
   es02:
     container_name: es02
     build:
@@ -120,7 +121,7 @@ services:
     build:
       context: ../../.
       dockerfile: src/API/BoardGameWebService/Dockerfile
-    command: auth
+    command: service=auth
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
@@ -128,14 +129,14 @@ services:
       - es01
     networks:
       board-game-network:
-        ipv4_address: 172.54.87.54
+
 
   api.lobby:
     container_name: api-lobby
     build:
       context: ../../.
       dockerfile: src/API/BoardGameWebService/Dockerfile
-    command: lobby
+    command: service=lobby
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
@@ -144,14 +145,14 @@ services:
       - es01
     networks:
       board-game-network:
-        ipv4_address: 172.54.87.154
+
 
   api.game:
     container_name: api-game
     build:
       context: ../../.
       dockerfile: src/API/BoardGameWebService/Dockerfile
-    command: game
+    command: service=game
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
@@ -159,23 +160,22 @@ services:
       - es01
     networks:
       board-game-network:
-        ipv4_address: 172.54.87.178
 
-  boardgame.gw:
-    container_name: board-game-gw
+
+  nginx:
     build:
-      context: ../../.
-      dockerfile: src/ApiGateways/OcelotApiGateway/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+      context: nginx/
+      args:
+        VERSION: 1.23
+    ports:
+      - 5282:80
     depends_on:
       - auth.api
       - api.lobby
       - api.game
-      - es01
     networks:
       board-game-network:
-        ipv4_address: 172.54.87.88
+
 
   angular.ui:
     container_name: board-game-angular-ui
@@ -187,7 +187,7 @@ services:
     ports:
       - "9487:80"
     depends_on:
-      - boardgame.gw
+      - nginx
       - es01
     networks:
       board-game-network:

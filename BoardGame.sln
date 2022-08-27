@@ -108,6 +108,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGame.GameLogicTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game", "src\Services\Game\Game.csproj", "{5E7BBD27-FFFC-49F9-8746-457416A6C091}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nginx", "nginx", "{60821BF0-F048-4D59-97F7-48FCB352292E}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker\nginx\Dockerfile = deployment\docker\nginx\Dockerfile
+		deployment\docker\nginx\nginx.conf = deployment\docker\nginx\nginx.conf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -210,6 +216,7 @@ Global
 		{75DFF5C4-01B6-46BF-B993-31836525BEE2} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
 		{5F0D4A33-61FA-4B4E-96FF-FE9297808780} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
 		{5E7BBD27-FFFC-49F9-8746-457416A6C091} = {C5FCBE4B-25BB-45F1-A3FF-9E2218F8B3C2}
+		{60821BF0-F048-4D59-97F7-48FCB352292E} = {ECDEE8AB-1BD2-45CF-BFC2-2DCFB19DCD94}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0449C612-F29B-409C-8211-5B0D75F4F3B5}
