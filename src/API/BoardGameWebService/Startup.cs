@@ -182,7 +182,7 @@ namespace BoardGameWebService
                     },
                 });
 
-            string xmlFile = "Api.xml";
+            string xmlFile = "docs.xml";
             string xmlPath = Path.Combine(_env.ContentRootPath, xmlFile);
             c.IncludeXmlComments(xmlPath);
         }
