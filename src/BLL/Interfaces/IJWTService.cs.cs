@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Services.Auth
+namespace BLL.Interfaces
 {
     public interface IJWTService
     {

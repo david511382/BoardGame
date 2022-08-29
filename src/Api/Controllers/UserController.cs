@@ -1,15 +1,14 @@
-﻿using BoardGameWebService.Models;
+﻿using BLL;
+using BLL.Interfaces;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.User;
 using Domain.Db;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Services.Auth;
 using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;

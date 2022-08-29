@@ -1,4 +1,6 @@
-﻿using DAL;
+﻿using BLL;
+using BLL.Interfaces;
+using DAL;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Game.PokerGame;
 using Domain.Api.Models.Base.Game.PokerGame.BigTwo;
@@ -11,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Services.Game;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;

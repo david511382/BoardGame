@@ -1,4 +1,4 @@
-﻿namespace BoardGameWebService.Models
+﻿namespace BLL
 {
     public class UserInfoWithID : UserInfo
     {

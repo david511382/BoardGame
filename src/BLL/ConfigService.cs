@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Services.Game
+namespace BLL
 {
     public class ConfigService
     {

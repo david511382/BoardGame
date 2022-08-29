@@ -1,4 +1,5 @@
-﻿using BoardGameWebService.Models;
+﻿using BLL.Interfaces;
+using Domain.Boot;
 using Domain.JWTUser;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -7,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Services.Auth
+namespace BLL
 {
     public class JWTService : IJWTService
     {

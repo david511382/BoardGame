@@ -1,4 +1,4 @@
-﻿using BoardGameWebService.Models;
+﻿using BLL.Interfaces;
 using DAL.Interfaces;
 using System;
 using System.Security.Cryptography;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Util;
 
-namespace Services.Auth
+namespace BLL
 {
     public class AuthService : IAuthService
     {

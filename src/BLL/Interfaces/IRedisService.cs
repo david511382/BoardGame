@@ -1,7 +1,7 @@
 ﻿using DAL.Structs;
 using System.Threading.Tasks;
 
-namespace Services.Lobby
+namespace BLL.Interfaces
 {
     public interface IRedisService
     {

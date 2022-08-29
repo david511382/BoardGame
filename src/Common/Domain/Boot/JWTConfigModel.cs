@@ -1,4 +1,4 @@
-﻿namespace BoardGameWebService.Models
+﻿namespace Domain.Boot
 {
     public class JWTConfigModel
     {

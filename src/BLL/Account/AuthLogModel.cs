@@ -3,7 +3,7 @@ using Domain.Logger;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
-namespace BoardGameWebService.Models.Log
+namespace BLL
 {
     public class AuthLogModel : StructLoggerEvent
     {

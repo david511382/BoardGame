@@ -1,4 +1,5 @@
-﻿using DAL;
+﻿using BLL.Interfaces;
+using DAL;
 using DAL.Interfaces;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Lobby;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Services.Game;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

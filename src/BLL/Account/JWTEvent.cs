@@ -1,5 +1,4 @@
-﻿using BoardGameWebService.Models.Log;
-using Domain.JWTUser;
+﻿using Domain.JWTUser;
 using Domain.Logger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
@@ -8,7 +7,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Services.Auth
+namespace BLL
 {
     public class JWTEvent : JwtBearerEvents
     {

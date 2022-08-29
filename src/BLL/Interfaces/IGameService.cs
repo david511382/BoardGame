@@ -1,7 +1,7 @@
 ﻿using DAL.Structs;
 using GameLogic.Game;
 
-namespace Services.Game
+namespace BLL.Interfaces
 {
     public interface IGameService
     {

@@ -1,11 +1,12 @@
 ﻿using BigTwoLogic;
+using BLL.Interfaces;
 using DAL.Structs;
 using GameLogic.Game;
 using GameWebService.Domain;
 using System;
 using System.Linq;
 
-namespace Services.Game
+namespace BLL
 {
     public class GameService : IGameService
     {

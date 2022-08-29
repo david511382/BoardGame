@@ -1,7 +1,6 @@
-﻿using BoardGameWebService.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Services.Auth
+namespace BLL.Interfaces
 {
     public interface IAuthService
     {

@@ -1,4 +1,5 @@
-﻿using DAL;
+﻿using BLL.Interfaces;
+using DAL;
 using DAL.Structs;
 using StackExchange.Redis;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Services.Lobby
+namespace BLL
 {
     public class RedisService : IRedisService
     {
