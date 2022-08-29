@@ -1,8 +1,8 @@
-﻿using RedisRepository.Models;
+﻿using DAL.Models;
 using StackExchange.Redis;
 using System.Threading.Tasks;
 
-namespace RedisRepository
+namespace DAL
 {
     public class GameStatusKey : RedisKey<GameStatusModel>
     {

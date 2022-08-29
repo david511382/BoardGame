@@ -3,7 +3,7 @@ using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
 
-namespace RedisRepository
+namespace DAL
 {
     public class RedisContext : IDisposable
     {

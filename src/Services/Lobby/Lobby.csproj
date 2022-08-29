@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Repositories\Redis\RedisRepository.csproj" />
+    <ProjectReference Include="..\..\DAL\DAL.csproj" />
   </ItemGroup>
 
 </Project>

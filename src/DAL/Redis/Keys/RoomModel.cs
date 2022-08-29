@@ -1,4 +1,4 @@
-﻿namespace RedisRepository.Models
+﻿namespace DAL.Models
 {
     public class RoomModel
     {

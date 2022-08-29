@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace RedisRepository
+namespace DAL
 {
     public static class LockUtil
     {

@@ -1,7 +1,7 @@
 ﻿using BigTwoLogic;
+using DAL.Models;
 using GameLogic.Game;
 using GameWebService.Domain;
-using RedisRepository.Models;
 using System;
 using System.Linq;
 

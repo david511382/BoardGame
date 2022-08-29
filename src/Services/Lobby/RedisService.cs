@@ -1,5 +1,5 @@
-﻿using RedisRepository;
-using RedisRepository.Models;
+﻿using DAL;
+using DAL.Models;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;

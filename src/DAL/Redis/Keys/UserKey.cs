@@ -1,7 +1,7 @@
-﻿using RedisRepository.Models;
+﻿using DAL.Models;
 using StackExchange.Redis;
 
-namespace RedisRepository
+namespace DAL
 {
     public class UserKey : RedisKey<UserModel>
     {

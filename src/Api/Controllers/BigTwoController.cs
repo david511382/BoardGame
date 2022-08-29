@@ -1,4 +1,5 @@
-﻿using Domain.Api.Interfaces;
+﻿using DAL;
+using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Game.PokerGame;
 using Domain.Api.Models.Base.Game.PokerGame.BigTwo;
 using Domain.Api.Models.Request.Game;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RedisRepository;
 using Services.Game;
 using StackExchange.Redis;
 using System;
@@ -104,14 +104,14 @@ namespace BoardGameWebService.Controllers
                 {
                     using (RedisContext redis = new RedisContext(_redisConnectString))
                     {
-                        RedisRepository.Models.UserModel redisUser = await redis.User.Get(user.Id);
+                        DAL.Models.UserModel redisUser = await redis.User.Get(user.Id);
                         int gameRoomId = redisUser.GameRoomID.Value;
                         bool isNotInGame = gameRoomId >= 0;
                         if (isNotInGame)
                             throw new Exception("不在遊戲中");
 
                         int roomID = -gameRoomId;
-                        RedisRepository.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
+                        DAL.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
                         if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
                             throw new Exception("錯誤遊戲");
 
@@ -215,13 +215,13 @@ namespace BoardGameWebService.Controllers
 
         private async Task<BigTwoLogic.BigTwo> vaildUserGame(RedisContext redis, int userId)
         {
-            RedisRepository.Models.UserModel redisUser = await redis.User.Get(userId);
+            DAL.Models.UserModel redisUser = await redis.User.Get(userId);
             bool isNotInGame = redisUser.GameRoomID.Value >= 0;
             if (isNotInGame)
                 throw new Exception("不在遊戲中");
 
             int roomID = -redisUser.GameRoomID.Value;
-            RedisRepository.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
+            DAL.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
             if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
                 throw new Exception("錯誤遊戲");
 
@@ -238,16 +238,16 @@ namespace BoardGameWebService.Controllers
 
                 ITransaction tran = redis.Begin();
 
-                Task<RedisRepository.Models.UserModel>[] getUsers = playerIds.Select((id) => redis.User.Get(id))
+                Task<DAL.Models.UserModel>[] getUsers = playerIds.Select((id) => redis.User.Get(id))
                       .Select(async (t) =>
                       {
-                          RedisRepository.Models.UserModel u = await t;
+                          DAL.Models.UserModel u = await t;
                           u.GameRoomID = null;
                           return u;
                       }).ToArray();
-                foreach (Task<RedisRepository.Models.UserModel> getUser in getUsers)
+                foreach (Task<DAL.Models.UserModel> getUser in getUsers)
                 {
-                    RedisRepository.Models.UserModel u = await getUser;
+                    DAL.Models.UserModel u = await getUser;
                     _ = redis.User.Set(u, tran);
                 }
 

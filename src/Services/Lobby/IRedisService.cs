@@ -1,4 +1,4 @@
-﻿using RedisRepository.Models;
+﻿using DAL.Models;
 using System.Threading.Tasks;
 
 namespace Services.Lobby

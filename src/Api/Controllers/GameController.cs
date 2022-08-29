@@ -1,4 +1,5 @@
-﻿using Domain.Api.Interfaces;
+﻿using DAL;
+using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Lobby;
 using Domain.Api.Models.Response;
 using Domain.Api.Models.Response.Lobby;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using RedisRepository;
 using Services.Game;
 using System;
 using System.Linq;
@@ -60,12 +60,12 @@ namespace BoardGameWebService.Controllers
             return await _responseService.Init<GameListResponse>(this, _logger)
                 .Do<GameListResponse>(async (result, user, logger) =>
                 {
-                    RedisRepository.Models.GameModel[] list = await rdsCtx.Game.ListGames();
+                    DAL.Models.GameModel[] list = await rdsCtx.Game.ListGames();
 
                     if (list.Length == 0)
                     {
                         list = (await _db.List())
-                        .Select((g) => new RedisRepository.Models.GameModel
+                        .Select((g) => new DAL.Models.GameModel
                         {
                             ID = g.ID,
                             Description = g.Description,
@@ -113,7 +113,7 @@ namespace BoardGameWebService.Controllers
                 {
                     int hostID = user.Id;
 
-                    RedisRepository.Models.UserModel userInfo = null;
+                    DAL.Models.UserModel userInfo = null;
                     try
                     {
                         userInfo = await rdsCtx.User.Get(hostID);
@@ -138,12 +138,12 @@ namespace BoardGameWebService.Controllers
                         return result;
                     }
 
-                    RedisRepository.Models.RoomModel oriRoom = await rdsCtx.Room.Get(hostID);
+                    DAL.Models.RoomModel oriRoom = await rdsCtx.Room.Get(hostID);
 
                     try
                     {
-                        RedisRepository.Models.GameStatusModel gameStatus = new RedisRepository.Models.GameStatusModel { Room = oriRoom };
-                        RedisRepository.Models.GameStatusModel newGameStatus = _gameService.InitGame(gameStatus);
+                        DAL.Models.GameStatusModel gameStatus = new DAL.Models.GameStatusModel { Room = oriRoom };
+                        DAL.Models.GameStatusModel newGameStatus = _gameService.InitGame(gameStatus);
 
                         await rdsCtx.GameStatus.Set(newGameStatus);
                     }

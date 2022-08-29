@@ -1,5 +1,5 @@
-﻿using GameLogic.Game;
-using RedisRepository.Models;
+﻿using DAL.Models;
+using GameLogic.Game;
 
 namespace Services.Game
 {

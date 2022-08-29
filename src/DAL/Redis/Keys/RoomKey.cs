@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
-using RedisRepository.Models;
+using DAL.Models;
 using StackExchange.Redis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RedisRepository
+namespace DAL
 {
     public class RoomKey : RedisKey<RoomModel>
     {

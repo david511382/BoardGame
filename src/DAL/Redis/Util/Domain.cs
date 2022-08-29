@@ -1,4 +1,4 @@
-﻿namespace RedisRepository
+﻿namespace DAL
 {
     internal sealed class Key
     {

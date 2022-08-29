@@ -2,7 +2,7 @@
 using StackExchange.Redis;
 using System.Threading.Tasks;
 
-namespace RedisRepository
+namespace DAL
 {
     public abstract class RedisKey<T> where T : new()
     {

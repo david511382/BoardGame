@@ -1,4 +1,6 @@
-﻿using Domain.Api.Interfaces;
+﻿using DAL;
+using DAL.Models;
+using Domain.Api.Interfaces;
 using Domain.Api.Models.Response.Lobby;
 using Domain.Api.Services;
 using Domain.JWTUser;
@@ -7,8 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using RedisRepository;
-using RedisRepository.Models;
 using Services.Lobby;
 using StackExchange.Redis;
 using System;
