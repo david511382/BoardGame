@@ -1,5 +1,5 @@
 ﻿using DAL;
-using DAL.Models;
+using DAL.Structs;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Response.Lobby;
 using Domain.Api.Services;

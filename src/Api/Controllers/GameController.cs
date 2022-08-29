@@ -1,4 +1,5 @@
 ﻿using DAL;
+using DAL.Interfaces;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Lobby;
 using Domain.Api.Models.Response;
@@ -60,12 +61,12 @@ namespace BoardGameWebService.Controllers
             return await _responseService.Init<GameListResponse>(this, _logger)
                 .Do<GameListResponse>(async (result, user, logger) =>
                 {
-                    DAL.Models.GameModel[] list = await rdsCtx.Game.ListGames();
+                    DAL.Structs.GameModel[] list = await rdsCtx.Game.ListGames();
 
                     if (list.Length == 0)
                     {
                         list = (await _db.List())
-                        .Select((g) => new DAL.Models.GameModel
+                        .Select((g) => new DAL.Structs.GameModel
                         {
                             ID = g.ID,
                             Description = g.Description,
@@ -113,7 +114,7 @@ namespace BoardGameWebService.Controllers
                 {
                     int hostID = user.Id;
 
-                    DAL.Models.UserModel userInfo = null;
+                    DAL.Structs.UserModel userInfo = null;
                     try
                     {
                         userInfo = await rdsCtx.User.Get(hostID);
@@ -138,12 +139,12 @@ namespace BoardGameWebService.Controllers
                         return result;
                     }
 
-                    DAL.Models.RoomModel oriRoom = await rdsCtx.Room.Get(hostID);
+                    DAL.Structs.RoomModel oriRoom = await rdsCtx.Room.Get(hostID);
 
                     try
                     {
-                        DAL.Models.GameStatusModel gameStatus = new DAL.Models.GameStatusModel { Room = oriRoom };
-                        DAL.Models.GameStatusModel newGameStatus = _gameService.InitGame(gameStatus);
+                        DAL.Structs.GameStatusModel gameStatus = new DAL.Structs.GameStatusModel { Room = oriRoom };
+                        DAL.Structs.GameStatusModel newGameStatus = _gameService.InitGame(gameStatus);
 
                         await rdsCtx.GameStatus.Set(newGameStatus);
                     }

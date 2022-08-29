@@ -1,4 +1,4 @@
-﻿namespace DAL.Models
+﻿namespace DAL.Structs
 {
     public class RoomModel
     {

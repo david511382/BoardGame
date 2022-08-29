@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace DAL
+namespace DAL.Utils
 {
     public static class LockUtil
     {

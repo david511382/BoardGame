@@ -1,11 +1,13 @@
 ﻿using DAL;
-using DAL.Models;
+using DAL.Interfaces;
+using DAL.Structs;
+using DAL.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Services.Game
+namespace DAL
 {
     public class GameInfoDAL : IGameInfoDAL
     {

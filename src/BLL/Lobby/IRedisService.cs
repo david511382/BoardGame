@@ -1,4 +1,4 @@
-﻿using DAL.Models;
+﻿using DAL.Structs;
 using System.Threading.Tasks;
 
 namespace Services.Lobby

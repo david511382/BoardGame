@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using DAL.Structs;
+using DAL.Utils;
 using StackExchange.Redis;
 
 namespace DAL

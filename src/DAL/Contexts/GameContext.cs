@@ -1,5 +1,5 @@
 ﻿
-using DAL.Models;
+using DAL.Structs;
 using Microsoft.EntityFrameworkCore;
 using System;
 

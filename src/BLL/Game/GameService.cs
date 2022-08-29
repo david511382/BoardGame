@@ -1,5 +1,5 @@
 ﻿using BigTwoLogic;
-using DAL.Models;
+using DAL.Structs;
 using GameLogic.Game;
 using GameWebService.Domain;
 using System;

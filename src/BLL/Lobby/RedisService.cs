@@ -1,5 +1,5 @@
 ﻿using DAL;
-using DAL.Models;
+using DAL.Structs;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;

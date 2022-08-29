@@ -1,5 +1,5 @@
 ﻿using BoardGameWebService.Models;
-using DAL;
+using DAL.Interfaces;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -20,7 +20,7 @@ namespace Services.Auth
         public async Task RegisterPlayer(UserInfo info)
         {
             string password = encodePassword(info.Password);
-            await _db.Add(new DAL.Models.UserInfo
+            await _db.Add(new DAL.Structs.UserInfo
             {
                 Name = info.Name,
                 Username = info.Username,
@@ -34,7 +34,7 @@ namespace Services.Auth
             try
             {
                 string password = encodePassword(identity.Password);
-                DAL.Models.UserInfo dbInfo = await _db.QueryByUsernameAndPassword(identity.Username, password);
+                DAL.Structs.UserInfo dbInfo = await _db.QueryByUsernameAndPassword(identity.Username, password);
 
                 UserInfoWithID result = new UserInfoWithID
                 {
@@ -59,13 +59,13 @@ namespace Services.Auth
                 string password;
                 if (info.Password == null)
                 {
-                    DAL.Models.UserInfo curInfo = await _db.Query(id);
+                    DAL.Structs.UserInfo curInfo = await _db.Query(id);
                     password = curInfo.Password;
                 }
                 else
                     password = encodePassword(info.Password);
 
-                await _db.Update(new DAL.Models.UserInfo
+                await _db.Update(new DAL.Structs.UserInfo
                 {
                     ID = id,
                     Name = info.Name,

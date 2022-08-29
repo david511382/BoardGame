@@ -104,14 +104,14 @@ namespace BoardGameWebService.Controllers
                 {
                     using (RedisContext redis = new RedisContext(_redisConnectString))
                     {
-                        DAL.Models.UserModel redisUser = await redis.User.Get(user.Id);
+                        DAL.Structs.UserModel redisUser = await redis.User.Get(user.Id);
                         int gameRoomId = redisUser.GameRoomID.Value;
                         bool isNotInGame = gameRoomId >= 0;
                         if (isNotInGame)
                             throw new Exception("不在遊戲中");
 
                         int roomID = -gameRoomId;
-                        DAL.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
+                        DAL.Structs.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
                         if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
                             throw new Exception("錯誤遊戲");
 
@@ -215,13 +215,13 @@ namespace BoardGameWebService.Controllers
 
         private async Task<BigTwoLogic.BigTwo> vaildUserGame(RedisContext redis, int userId)
         {
-            DAL.Models.UserModel redisUser = await redis.User.Get(userId);
+            DAL.Structs.UserModel redisUser = await redis.User.Get(userId);
             bool isNotInGame = redisUser.GameRoomID.Value >= 0;
             if (isNotInGame)
                 throw new Exception("不在遊戲中");
 
             int roomID = -redisUser.GameRoomID.Value;
-            DAL.Models.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
+            DAL.Structs.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
             if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
                 throw new Exception("錯誤遊戲");
 
@@ -238,16 +238,16 @@ namespace BoardGameWebService.Controllers
 
                 ITransaction tran = redis.Begin();
 
-                Task<DAL.Models.UserModel>[] getUsers = playerIds.Select((id) => redis.User.Get(id))
+                Task<DAL.Structs.UserModel>[] getUsers = playerIds.Select((id) => redis.User.Get(id))
                       .Select(async (t) =>
                       {
-                          DAL.Models.UserModel u = await t;
+                          DAL.Structs.UserModel u = await t;
                           u.GameRoomID = null;
                           return u;
                       }).ToArray();
-                foreach (Task<DAL.Models.UserModel> getUser in getUsers)
+                foreach (Task<DAL.Structs.UserModel> getUser in getUsers)
                 {
-                    DAL.Models.UserModel u = await getUser;
+                    DAL.Structs.UserModel u = await getUser;
                     _ = redis.User.Set(u, tran);
                 }
 

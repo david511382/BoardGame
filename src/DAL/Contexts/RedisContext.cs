@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DAL.Utils;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;

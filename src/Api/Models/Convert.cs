@@ -1,4 +1,4 @@
-﻿using DAL.Models;
+﻿using DAL.Structs;
 using System.Linq;
 
 namespace BoardGameWebService

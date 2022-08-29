@@ -1,10 +1,11 @@
 ﻿using DAL;
-using DAL.Models;
+using DAL.Interfaces;
+using DAL.Structs;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Services.Auth
+namespace DAL
 {
     public class UserInfoDAL : IUserInfoDAL
     {

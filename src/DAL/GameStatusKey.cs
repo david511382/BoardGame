@@ -1,13 +1,13 @@
-﻿using DAL.Models;
+﻿using DAL.Structs;
+using DAL.Utils;
 using StackExchange.Redis;
-using System.Threading.Tasks;
 
 namespace DAL
 {
     public class GameStatusKey : RedisKey<GameStatusModel>
     {
         protected override string KEY => Key.GameStatus;
-        
+
         public GameStatusKey(ConnectionMultiplexer redis)
             : base(redis)
         { }

@@ -1,5 +1,6 @@
 using BoardGameWebService.Models;
 using DAL;
+using DAL.Interfaces;
 using Domain.Api.Interfaces;
 using Domain.Api.Services;
 using Domain.Logger;

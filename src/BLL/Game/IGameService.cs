@@ -1,4 +1,4 @@
-﻿using DAL.Models;
+﻿using DAL.Structs;
 using GameLogic.Game;
 
 namespace Services.Game
