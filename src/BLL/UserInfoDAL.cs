@@ -1,5 +1,5 @@
-﻿using MemberRepository;
-using MemberRepository.Models;
+﻿using DAL;
+using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;

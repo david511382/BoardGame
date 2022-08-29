@@ -11,7 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Domain\Domain.csproj" />
     <ProjectReference Include="..\Common\Util\Util.csproj" />
-    <ProjectReference Include="..\Repositories\Member\MemberRepository.csproj" />
+    <ProjectReference Include="..\DAL\DAL.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GameRespository.Models
+namespace DAL.Models
 {
     [Table("GameInfo")]
     public class GameInfo

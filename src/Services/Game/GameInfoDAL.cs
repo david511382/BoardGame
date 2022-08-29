@@ -1,5 +1,5 @@
-﻿using GameRespository;
-using GameRespository.Models;
+﻿using DAL;
+using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

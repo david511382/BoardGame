@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MemberRepository.Models
+namespace DAL.Models
 {
     [Table("UserInfo")]
     public class UserInfo

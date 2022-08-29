@@ -1,7 +1,7 @@
-﻿using MemberRepository.Models;
+﻿using DAL.Models;
 using System.Threading.Tasks;
 
-namespace MemberRepository
+namespace DAL
 {
     public interface IUserInfoDAL
     {

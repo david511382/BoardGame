@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Repositories\Game\GameRespository.csproj" />
+    <ProjectReference Include="..\..\DAL\DAL.csproj" />
     <ProjectReference Include="..\..\Repositories\Redis\RedisRepository.csproj" />
   </ItemGroup>
 

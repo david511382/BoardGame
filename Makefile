@@ -2,7 +2,7 @@
 ## docker-compose
 ##########################################
 
-DOCKER_SERVICE_LIST := member.db db.game redis.master redis-commander es01 es02 kibana
+DOCKER_SERVICE_LIST := msdb redis.master redis-commander es01 es02 kibana
 
 up: # debug 全開
 	docker-compose -f ./deployment/docker/docker-compose.yml up --build -d

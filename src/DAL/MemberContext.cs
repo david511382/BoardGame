@@ -1,9 +1,9 @@
 ﻿
-using MemberRepository.Models;
+using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace MemberRepository
+namespace DAL
 {
     public class MemberContext : DbContext
     {

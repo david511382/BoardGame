@@ -1,9 +1,9 @@
 ﻿
-using GameRespository.Models;
+using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace GameRespository
+namespace DAL
 {
     public class GameContext : DbContext
     {

@@ -1,9 +1,8 @@
 using BoardGameWebService.Models;
+using DAL;
 using Domain.Api.Interfaces;
 using Domain.Api.Services;
 using Domain.Logger;
-using GameRespository;
-using MemberRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

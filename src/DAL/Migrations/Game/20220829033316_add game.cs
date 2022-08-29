@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace GameRespository.Migrations
+namespace DAL.Migrations.Game
 {
-    public partial class InitialCreate : Migration
+    public partial class addgame : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -24,6 +24,16 @@ namespace GameRespository.Migrations
                 {
                     table.PrimaryKey("PK_GameInfo", x => x.ID);
                 });
+
+            migrationBuilder.InsertData(
+                table: "GameInfo",
+                columns: new[] { "ID", "CreateTime", "Description", "MaxPlayerCount", "MinPlayerCount", "Name" },
+                values: new object[] { 1, new DateTime(2022, 8, 29, 11, 33, 16, 338, DateTimeKind.Local).AddTicks(863), "象棋遊戲", 2, 2, "軍棋" });
+
+            migrationBuilder.InsertData(
+                table: "GameInfo",
+                columns: new[] { "ID", "CreateTime", "Description", "MaxPlayerCount", "MinPlayerCount", "Name" },
+                values: new object[] { 2, new DateTime(2022, 8, 29, 11, 33, 16, 340, DateTimeKind.Local).AddTicks(4867), "撲克牌遊戲", 4, 2, "大老二" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_GameInfo_Name",

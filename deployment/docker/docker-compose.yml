@@ -1,7 +1,6 @@
 version: '3.2'
 services:
-  member.db:
-    container_name: board-game-member-db
+  msdb:
     image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
     environment:
       - ACCEPT_EULA=Y
@@ -9,21 +8,7 @@ services:
     ports:
       - "1487:1433"
     volumes:
-      - member-db-volume:/var/opt/mssql
-    networks:
-      board-game-network:
-
-
-  db.game:
-    container_name: db-game
-    image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=f#JF39F3jds
-    ports:
-      - "1488:1433"
-    volumes:
-      - game-db-volume:/var/opt/mssql
+      - msdb:/var/opt/mssql
     networks:
       board-game-network:
 
@@ -125,8 +110,7 @@ services:
     ports:
       - 5283:80
     depends_on:
-      - member.db
-      - db.game
+      - msdb
       - redis.master
       - es01
     networks:
@@ -163,8 +147,7 @@ services:
         ipv4_address: 172.54.87.94
 
 volumes:
-  member-db-volume:
-  game-db-volume:
+  msdb:
   elasticsearch01:
   elasticsearch02:
 
