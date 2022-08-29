@@ -119,7 +119,7 @@ services:
   api:
     build:
       context: ../../.
-      dockerfile: src/API/BoardGameWebService/Dockerfile
+      dockerfile: src/Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     ports:
