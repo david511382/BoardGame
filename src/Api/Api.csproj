@@ -13,6 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Auth\**" />
+    <Content Remove="Models\Auth\**" />
+    <EmbeddedResource Remove="Models\Auth\**" />
+    <None Remove="Models\Auth\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="NLog.Targets.ElasticSearch" Version="7.1.0" />
@@ -24,10 +31,6 @@
     <ProjectReference Include="..\BLL\BLL.csproj" />
     <ProjectReference Include="..\Common\Domain\Domain.csproj" />
     <ProjectReference Include="..\Common\Util\Util.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Auth\" />
   </ItemGroup>
 
   <ItemGroup>

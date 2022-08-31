@@ -9,7 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{E7D8BAB1-3A3
 	ProjectSection(SolutionItems) = preProject
 		Makefile = Makefile
 		README.md = README.md
-		系統架構圖.png = 系統架構圖.png
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{0F33C1FD-85B8-4ADA-84BF-EA179CA14D66}"

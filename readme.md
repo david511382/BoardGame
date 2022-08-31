@@ -11,7 +11,51 @@
 	資料庫: MSSQL資料庫，Game(遊戲)、Member(用戶)
 	Redis:儲存遊戲房間跟遊戲狀態的3主3從叢集Redis，還有附加哨兵模式
 	日誌: 使用NLog發送至ELK(Elasticsearch、Kibana)。
-![avatar](系統架構圖.png)
+
+```mermaid
+flowchart TB
+    style User fill:#f9f,stroke:#333,stroke-width:4px
+    style Engineer fill:#f96
+
+    User-->Frontend
+    Engineer-->Monitor
+	
+	subgraph Frontend
+		Angular
+	end
+	Frontend-->Frontend-Backend
+    
+	subgraph Frontend-Backend
+		Angular.Net.Core
+	end
+	Frontend-Backend-->LoadBalance
+	Frontend-Backend-->Elasticsearch
+	
+	subgraph LoadBalance
+		Ingress
+	end
+	LoadBalance-->Backend
+
+	subgraph Backend
+		Net.Core
+	end
+	Backend-->Data
+
+	subgraph Monitor
+		Kibana
+		RedisCommander
+		MssqlManagement
+	end
+	Kibana-->Elasticsearch
+	RedisCommander-->Redis
+	MssqlManagement-->Mssql
+
+	subgraph Data
+		Mssql
+		Redis
+		Elasticsearch
+	end
+```
 
 ## 檔案結構
 	src┬ApiGateways-OcelotApiGateway
