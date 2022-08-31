@@ -1,21 +1,17 @@
 ﻿using BLL;
 using BLL.Interfaces;
-using DAL;
 using Domain.Api.Interfaces;
 using Domain.Api.Models.Base.Game.PokerGame;
 using Domain.Api.Models.Base.Game.PokerGame.BigTwo;
 using Domain.Api.Models.Request.Game;
 using Domain.Api.Models.Response.Game.PokerGame.BigTwo;
-using Domain.Api.Services;
 using GameLogic.PokerGame;
 using GameWebService.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,6 +23,8 @@ namespace BoardGameWebService.Controllers
     {
         private readonly IGameService _gameService;
         private readonly IResponseService _responseService;
+        private readonly ILobbyUser _lobbyUserBll;
+        private readonly ILobbyRoom _lobbyRoomBll;
         private readonly ILogger _logger;
 
         private readonly string _redisConnectString;
@@ -34,11 +32,17 @@ namespace BoardGameWebService.Controllers
         private const int TRY_LOCK_TIMES = 3;
         private const int WAIT_LOCK_MS = 50;
 
-        public BigTwoController(ConfigService configService, IGameService gameService, IResponseService responseService, ILogger<BigTwoController> logger)
+        public BigTwoController(
+            ILobbyUser lobbyUserBll,
+            ILobbyRoom lobbyRoomBll,
+            IGameService gameService,
+            IResponseService responseService,
+            ILogger<BigTwoController> logger)
         {
-            _redisConnectString = configService.RedisConnectString;
             _gameService = gameService;
             _responseService = responseService;
+            _lobbyUserBll = lobbyUserBll;
+            _lobbyRoomBll = lobbyRoomBll;
             _logger = logger;
         }
 
@@ -60,11 +64,8 @@ namespace BoardGameWebService.Controllers
                  .ValidateToken((user) => { })
                  .Do<SelectCardResponse>(async (result, user) =>
                  {
-                     BigTwoLogic.BigTwo game;
-                     using (RedisContext redis = new RedisContext(_redisConnectString))
-                     {
-                         game = await vaildUserGame(redis, user.Id);
-                     }
+                     VaildUserGameResult vaildResult = await vaildUserGame(user.Id);
+                     BigTwoLogic.BigTwo game = vaildResult.Game;
 
                      if (!game.IsTurn(user.Id))
                      {
@@ -103,64 +104,53 @@ namespace BoardGameWebService.Controllers
                 .ValidateToken((user) => { })
                 .Do<PlayCardResponse>(async (result, user) =>
                 {
-                    using (RedisContext redis = new RedisContext(_redisConnectString))
+                    VaildUserGameResult vaildResult = await vaildUserGame(user.Id);
+                    BigTwoLogic.BigTwo game = vaildResult.Game;
+                    GameStatus roomGameStatus = vaildResult.RoomGameStatus;
+                    LobbyUserStatus roomPlayer = vaildResult.LobbyUser;
+                    int roomID = roomPlayer.RoomID;
+
+                    if (!game.IsTurn(user.Id))
                     {
-                        DAL.Structs.UserModel redisUser = await redis.User.Get(user.Id);
-                        int gameRoomId = redisUser.GameRoomID.Value;
-                        bool isNotInGame = gameRoomId >= 0;
-                        if (isNotInGame)
-                            throw new Exception("不在遊戲中");
+                        result.Fail("不是你的回合");
+                        return result;
+                    }
 
-                        int roomID = -gameRoomId;
-                        DAL.Structs.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
-                        if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
-                            throw new Exception("錯誤遊戲");
+                    result.IsSuccess = game.PlayCard(user.Id, request.Indexes);
+                    if (result.IsSuccess)
+                    {
+                        roomGameStatus.DataJson = game.ExportData();
+                        await _lobbyRoomBll.SaveGameStatus(roomGameStatus);
 
-                        BigTwoLogic.BigTwo game = _gameService.LoadGame(redisGameStatus) as BigTwoLogic.BigTwo;
-
-                        if (!game.IsTurn(user.Id))
-                        {
-                            result.Fail("不是你的回合");
-                            return result;
-                        }
-
-                        result.IsSuccess = game.PlayCard(user.Id, request.Indexes);
-                        if (result.IsSuccess)
-                        {
-                            redisGameStatus.DataJson = game.ExportData();
-                            await redis.GameStatus.Set(redisGameStatus);
-
-                            result.Cards = game.GetTable().GetLastItem().GetCards()
-                                .Select((c) => new PockerCardModel
-                                {
-                                    Suit = (int)c.Suit,
-                                    Number = c.Number
-
-                                }).ToArray();
-
-                            GameLogic.Game.GameStatus gameState = game.GetCondition();
-                            bool isGameOver = gameState.WinPlayerIds != null && gameState.WinPlayerIds.Length > 0;
-                            if (isGameOver)
+                        result.Cards = game.GetTable().GetLastItem().GetCards()
+                            .Select((c) => new PockerCardModel
                             {
-                                if (!await gameOver(
-                                    redis,
-                                    game.GetResource().Select((s) => s.PlayerId),
-                                    roomID))
-                                {
-                                    result.Fail("遊戲結束失敗");
-                                    return result;
-                                }
-                                result.Condition = new ConditionModel(gameState.TurnId, gameState.WinPlayerIds.First());
-                            }
-                            else
+                                Suit = (int)c.Suit,
+                                Number = c.Number
+
+                            }).ToArray();
+
+                        GameLogic.Game.GameStatus gameState = game.GetCondition();
+                        bool isGameOver = gameState.WinPlayerIds != null && gameState.WinPlayerIds.Length > 0;
+                        if (isGameOver)
+                        {
+                            if (!await _lobbyRoomBll.GameOver(game
+                                .GetResource()
+                                .Select((s) => s.PlayerId)))
                             {
-                                result.Condition = new ConditionModel(gameState.TurnId, 0);
+                                result.Fail("遊戲結束失敗");
+                                return result;
                             }
+                            result.Condition = new ConditionModel(gameState.TurnId, gameState.WinPlayerIds.First());
                         }
                         else
                         {
-                            result.Message = "不能Pass";
+                            result.Condition = new ConditionModel(gameState.TurnId, 0);
                         }
+                    }
+                    else
+                    {
+                        result.Message = "不能Pass";
                     }
 
                     return result;
@@ -180,11 +170,8 @@ namespace BoardGameWebService.Controllers
               .ValidateToken((user) => { })
               .Do<GameStatusResponse>(async (result, user) =>
               {
-                  BigTwoLogic.BigTwo game;
-                  using (RedisContext redis = new RedisContext(_redisConnectString))
-                  {
-                      game = await vaildUserGame(redis, user.Id);
-                  }
+                  VaildUserGameResult vaildResult = await vaildUserGame(user.Id);
+                  BigTwoLogic.BigTwo game = vaildResult.Game;
 
                   result.TableCards = game.GetTable().Items
                       .Select((i) =>
@@ -214,56 +201,31 @@ namespace BoardGameWebService.Controllers
               });
         }
 
-        private async Task<BigTwoLogic.BigTwo> vaildUserGame(RedisContext redis, int userId)
+        private struct VaildUserGameResult
         {
-            DAL.Structs.UserModel redisUser = await redis.User.Get(userId);
-            bool isNotInGame = redisUser.GameRoomID.Value >= 0;
-            if (isNotInGame)
-                throw new Exception("不在遊戲中");
-
-            int roomID = -redisUser.GameRoomID.Value;
-            DAL.Structs.GameStatusModel redisGameStatus = await redis.GameStatus.Get(roomID);
-            if ((GameEnum)redisGameStatus.Room.Game.ID != GameEnum.BigTwo)
-                throw new Exception("錯誤遊戲");
-
-            return _gameService.LoadGame(redisGameStatus) as BigTwoLogic.BigTwo;
+            public BigTwoLogic.BigTwo Game;
+            public LobbyUserStatus LobbyUser;
+            public GameStatus RoomGameStatus;
         }
 
-        private async Task<bool> gameOver(RedisContext redis, IEnumerable<int> playerIds, int roomId)
+        private async Task<VaildUserGameResult> vaildUserGame(int userId)
         {
-            try
+            LobbyUserStatus lobbyUser = await _lobbyUserBll.GetUser(userId);
+            if (!lobbyUser.IsInGame)
+                throw new Exception("不在遊戲中");
+
+            int roomID = lobbyUser.RoomID;
+            GameStatus redisGameStatus = await _lobbyRoomBll.GameStatus(roomID);
+            if (!redisGameStatus.IsGame(GameEnum.BigTwo))
+                throw new Exception("錯誤遊戲");
+
+            BigTwoLogic.BigTwo game = _gameService.LoadGame(redisGameStatus) as BigTwoLogic.BigTwo;
+            return new VaildUserGameResult()
             {
-                foreach (int id in playerIds)
-                    if (!await HandlerService.Retry(TRY_LOCK_TIMES, () => redis.User.Lock(id), WAIT_LOCK_MS))
-                        return false;
-
-                ITransaction tran = redis.Begin();
-
-                Task<DAL.Structs.UserModel>[] getUsers = playerIds.Select((id) => redis.User.Get(id))
-                      .Select(async (t) =>
-                      {
-                          DAL.Structs.UserModel u = await t;
-                          u.GameRoomID = null;
-                          return u;
-                      }).ToArray();
-                foreach (Task<DAL.Structs.UserModel> getUser in getUsers)
-                {
-                    DAL.Structs.UserModel u = await getUser;
-                    _ = redis.User.Set(u, tran);
-                }
-
-                if (!await tran.ExecuteAsync())
-                    return false;
-
-                //刪除gamestatus
-                await redis.GameStatus.Delete(roomId);
-                return true;
-            }
-            finally
-            {
-                foreach (int id in playerIds)
-                    await redis.User.Release(id);
-            }
+                Game = game,
+                LobbyUser = lobbyUser,
+                RoomGameStatus = redisGameStatus
+            };
         }
     }
 }

@@ -1,14 +1,14 @@
-﻿using DAL.Structs;
+﻿using DAL.Interfaces;
+using DAL.Structs;
 using DAL.Utils;
-using StackExchange.Redis;
 
 namespace DAL
 {
-    public class UserKey : RedisKey<UserModel>
+    public class UserKey : RedisKey<UserModel>, IUserKey
     {
         protected override string KEY => Key.User;
 
-        public UserKey(ConnectionMultiplexer redis)
+        public UserKey(IRedisContext redis)
             : base(redis)
         { }
 

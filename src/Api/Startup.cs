@@ -41,6 +41,10 @@ namespace BoardGameWebService
             string serviceArg = getServiceArg();
             bool isAllService = serviceArg == null;
 
+            services
+                    .AddRedisContexts(() => Configuration.GetConnectionString("Redis"))
+                    .AddLogicServices();
+
             #region Auth
             if (isAllService || serviceArg == "auth")
             {
@@ -96,14 +100,6 @@ namespace BoardGameWebService
                     .AddScoped<IGameInfoDAL, GameInfoDAL>();
             }
             #endregion
-
-            #region Lobby
-            if (isAllService || serviceArg == "lobby")
-            {
-                services.AddSingleton<IRedisService>(new RedisService(Configuration.GetConnectionString("Redis")));
-            }
-            #endregion
-
 
             services.AddScoped<IResponseService, ResponseService>();
 

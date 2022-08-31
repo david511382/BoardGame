@@ -9,5 +9,11 @@
         {
             GameRoomID = null;
         }
+
+        public UserModel(UserModel data)
+        {
+            UserInfo = data.UserInfo;
+            GameRoomID = data.GameRoomID;
+        }
     }
 }

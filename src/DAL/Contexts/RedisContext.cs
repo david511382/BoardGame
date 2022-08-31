@@ -1,4 +1,5 @@
-﻿using DAL.Utils;
+﻿using DAL.Interfaces;
+using DAL.Utils;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -6,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class RedisContext : IDisposable
+    public class RedisContext : IRedisContext, IDisposable
     {
-        public UserKey User;
-        public RoomKey Room;
-        public GameStatusKey GameStatus;
-        public GameKey Game;
         public ChannelStatusManager ChannelManager;
 
         protected ConnectionMultiplexer _redis;
@@ -20,18 +17,11 @@ namespace DAL
         public RedisContext(string connectStr)
         {
             _redis = ConnectionMultiplexer.Connect(connectStr);
-
-            User = new UserKey(_redis);
-            Room = new RoomKey(_redis);
-            GameStatus = new GameStatusKey(_redis);
-            Game = new GameKey(_redis);
             ChannelManager = new ChannelStatusManager(_redis);
         }
 
-        public ITransaction Begin()
-        {
-            return _redis.GetDatabase().CreateTransaction();
-        }
+        public IDatabase GetDatabase(int db = -1, object asyncState = null) => _redis.GetDatabase(db, asyncState);
+        public ISubscriber GetSubscriber(object asyncState = null) => _redis.GetSubscriber(asyncState);
 
         public async Task Subscribe(Channel channel, Action<RedisChannel, RedisValue> handler)
         {

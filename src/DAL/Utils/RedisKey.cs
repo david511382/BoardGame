@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DAL.Interfaces;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.Threading.Tasks;
 
@@ -8,10 +9,10 @@ namespace DAL.Utils
     {
         protected abstract string KEY { get; }
 
-        protected readonly ConnectionMultiplexer _redis;
+        protected readonly IRedisContext _redis;
         protected IDatabase _db => _redis.GetDatabase();
 
-        public RedisKey(ConnectionMultiplexer redis)
+        public RedisKey(IRedisContext redis)
         {
             _redis = redis;
         }
@@ -45,6 +46,11 @@ namespace DAL.Utils
         virtual public async Task Release(int id)
         {
             await LockUtil.ReleaseLock(_db, $"{KEY}{id}");
+        }
+
+        public ITransaction Begin()
+        {
+            return _redis.GetDatabase().CreateTransaction();
         }
     }
 }

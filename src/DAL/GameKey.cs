@@ -1,4 +1,5 @@
-﻿using DAL.Structs;
+﻿using DAL.Interfaces;
+using DAL.Structs;
 using DAL.Utils;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class GameKey : RedisKey<GameModel>
+    public class GameKey : RedisKey<GameModel>, IGameKey
     {
         protected override string KEY => Key.Game;
 
-        public GameKey(ConnectionMultiplexer redis)
+        public GameKey(IRedisContext redis)
             : base(redis)
         { }
 

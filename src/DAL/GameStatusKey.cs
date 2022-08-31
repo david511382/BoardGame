@@ -1,14 +1,14 @@
-﻿using DAL.Structs;
+﻿using DAL.Interfaces;
+using DAL.Structs;
 using DAL.Utils;
-using StackExchange.Redis;
 
 namespace DAL
 {
-    public class GameStatusKey : RedisKey<GameStatusModel>
+    public class GameStatusKey : RedisKey<GameStatusModel>, IGameStatusKey
     {
         protected override string KEY => Key.GameStatus;
 
-        public GameStatusKey(ConnectionMultiplexer redis)
+        public GameStatusKey(IRedisContext redis)
             : base(redis)
         { }
 
